@@ -1,7 +1,6 @@
 {% extends 'visualization/base.html' %}
 {% block content %}
-
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar navbar navbar-fixed-top" role="navigation" id="navigationbar">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -10,51 +9,147 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Project name</a>
+                <a class="navbar-brand" href="#">Visualize</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="#">Dashboard</a></li>
                     <li><a href="#">Settings</a></li>
-                    <li><a href="#">Profile</a></li>
                     <li><a href="#">Help</a></li>
+                    <li><a href="#">About</a></li>
                 </ul>
-                <form class="navbar-form navbar-right">
-                    <input type="text" class="form-control" placeholder="Search...">
-                </form>
+
             </div>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar">
+
+            <div class="col-sm-3 col-md-2 sidebar panel panel-info">
+                <form name="search" id="search" role="form">
+                    <div class="input-group form-group search-group">
+                        <input type="text" class="form-control" id="search-term" placeholder="Search models..." required>
+                        <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search" onclick="search()"></span></span>
+                    </div>
+                </form>
                 <ul class="nav nav-sidebar">
-                    <li class="active"><a href="#">Overview</a></li>
-                    <li><a href="#">Reports</a></li>
-                    <li><a href="#">Analytics</a></li>
-                    <li><a href="#">Export</a></li>
-                </ul>
-                <ul class="nav nav-sidebar">
-                    <li><a href="">Nav item</a></li>
-                    <li><a href="">Nav item again</a></li>
-                    <li><a href="">One more nav</a></li>
-                    <li><a href="">Another nav item</a></li>
-                    <li><a href="">More navigation</a></li>
-                </ul>
-                <ul class="nav nav-sidebar">
-                    <li><a href="">Nav item again</a></li>
-                    <li><a href="">One more nav</a></li>
-                    <li><a href="">Another nav item</a></li>
+                    <div class="panel-group" id="accordion">
+                        <div class="panel-default">
+                            <h4 class="panel-title">
+                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" >
+                                    <a href="#">Overview<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></a>
+                                </li>
+
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel-group" id="accordion">
+                        <div class="panel-default">
+                            <h4 class="panel-title">
+                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                    <a href="#">Overview<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></a>
+                                </li>
+
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel-group" id="accordion">
+                        <div class="panel-default">
+                            <h4 class="panel-title">
+                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                                    <a href="#">Overview<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></a>
+                                </li>
+
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel-group" id="accordion">
+                        <div class="panel-default">
+                            <h4 class="panel-title">
+                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                                    <a href="#">Overview<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></a>
+                                </li>
+
+                            </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+
+                    </div>
                 </ul>
             </div>
-            <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Dashboard</h1>
+            <div id="playground" ondrop="drop(event)" ondragover="allowDrop(event)" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <div>
+                    <ul class="nav nav-tabs menu-options">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor</a>
+                        </li>
+                        <li class="dropdown " id="import" >
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<i class="fa fa-caret-right" id="import-caret"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="divider"></li>
+                                <li><a href="#">JSON</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">CSV</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Excel</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">txt</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">SQL</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown" id="export">
+                            <a class="dropdown-toggle  menu-option" data-toggle="dropdown" href="#">Export<i class="fa fa-caret-right" id="export-caret"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="divider"></li>
+                                <li><a href="#">PDF</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">JPEG</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">R</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Python</a></li>
+                            </ul>
+                        </li>
 
-                <br>
-                <img id="drag1" src="http://www.w3schools.com/html/img_logo.gif" draggable="true" ondragstart="drag(event)" width="336" height="69">
+
+                    </ul>
+
+
+                </div>
+
 
             </div>
+            <footer class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <div class="container">
+                    <p class="muted credit">Made by José Miguel Colella.</p>
+                    <p>With much <span class="glyphicon glyphicon-heart"></span> for Twitter Bootstrap and helping a css-impared person create this.</p>
+                </div>
+            </footer>
+
         </div>
     </div>
 {% endblock %}

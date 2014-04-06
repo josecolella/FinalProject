@@ -4,12 +4,15 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    {#    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">#}
+    <meta name="description" content="Visualization Project">
+    <meta name="author" content="Jose Miguel Colella">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title>Visualize.io</title>
     {% load staticfiles %}
+    <!--Favicon.ico-->
+    <link rel="shortcut icon" href="{% static "visualization/favicon.ico" %}">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
     <!-- Bootstrap core CSS -->
     <link href="{% static "visualization/bootstrap3/css/bootstrap.min.css" %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static "visualization/css/main.css" %}"/>
@@ -27,14 +30,16 @@
     <![endif]-->
 </head>
 
+
 <body>
 {% block content %}
 {% endblock %}
 <!-- Bootstrap core JavaScript
  ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="{% static "visualization/jquery/jquery.min.js" %}"></script>
 <script src="{% static "visualization/bootstrap3/js/bootstrap.js" %}"></script>
+<script src="{% static "visualization/js/animations.js" %}" type="application/javascript"></script>
 <script type="application/javascript">
     function allowDrop(ev)
     {
@@ -52,6 +57,14 @@
         var data=ev.dataTransfer.getData("Text");
         ev.target.appendChild(document.getElementById(data));
     }
+</script>
+<script>
+    $( document ).ready(function() {
+        changeIcon();
+        search();
+        changeExportCaretOnEvent();
+        changeImportCaretOnEvent();
+    });
 </script>
 </body>
 </html>

@@ -1,5 +1,63 @@
-#div1 {
+#playground {
     padding:10px;
     border:1px
     solid #aaaaaa;
+    height: 90em;
+}
+
+
+#navigationbar {
+    background-color: #e5e5e5;
+}
+
+
+.titles {
+    padding-left: 1em;
+    margin-right: 1em;
+    padding-bottom: 0.5em;
+    border-bottom: medium solid #a2ccef;
+    border-bottom-left-radius: 0.5em 0.5em;
+    border-bottom-right-radius: 0.5em 0.5em;
+    cursor: pointer;
+}
+
+
+.dropdown-icon {
+    float: right;
+}
+
+#search-icon {
+    background-color: #FFFFFF;
+    cursor: inherit;
+}
+
+.search-group {
+    padding-bottom: 0.5em;
+}
+
+.sidebar {
+    overflow: scroll;
+}
+
+.panel-body{
+    background-image: url(http://www.example.com/images/bck.png);
+}
+
+footer {
+    background-color: #e8e8e8;
+}
+
+
+.fa-caret-right,
+.fa-caret-down {
+    padding-left: 0.5em;
+}
+
+.menu-options {
+    padding-bottom: 0.5em;
+    float:right;
+}
+
+.menu-option {
+    background-color: #eeeeee;
 }
