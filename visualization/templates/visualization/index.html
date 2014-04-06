@@ -1,28 +1,5 @@
 {% extends 'visualization/base.html' %}
 {% block content %}
-    <div class="navbar navbar navbar-fixed-top" role="navigation" id="navigationbar">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Visualize</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Settings</a></li>
-                    <li><a href="#">Help</a></li>
-                    <li><a href="#">About</a></li>
-                </ul>
-
-            </div>
-        </div>
-    </div>
-
     <div class="container-fluid">
         <div class="row">
 
@@ -34,70 +11,29 @@
                     </div>
                 </form>
                 <ul class="nav nav-sidebar">
-                    <div class="panel-group" id="accordion">
+                    {% comment %}
+                        This for runs through all the models and creates a side bar with
+                        all the visualization models
+                    {% endcomment %}
+                    {% for model in models %}
+                        <div class="panel-group" id="accordion">
                         <div class="panel-default">
                             <h4 class="panel-title">
-                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" >
-                                    <a href="#">Overview<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></a>
+                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
+                                    <p>{{ model.title }}<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
                                 </li>
 
                             </h4>
                         </div>
-                        <div id="collapseOne" class="panel-collapse collapse">
+                        <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
                             <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                <p>{{ model.description }}</p>
+                                <button type="button" class="btn btn-info"><a class="example-button" href="{{ model.link }}">Show an example</a></button>
                             </div>
                         </div>
 
                     </div>
-                    <div class="panel-group" id="accordion">
-                        <div class="panel-default">
-                            <h4 class="panel-title">
-                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                    <a href="#">Overview<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></a>
-                                </li>
-
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="panel-group" id="accordion">
-                        <div class="panel-default">
-                            <h4 class="panel-title">
-                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                                    <a href="#">Overview<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></a>
-                                </li>
-
-                            </h4>
-                        </div>
-                        <div id="collapseThree" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="panel-group" id="accordion">
-                        <div class="panel-default">
-                            <h4 class="panel-title">
-                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
-                                    <a href="#">Overview<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></a>
-                                </li>
-
-                            </h4>
-                        </div>
-                        <div id="collapseFour" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                            </div>
-                        </div>
-
-                    </div>
+                    {% endfor %}
                 </ul>
             </div>
             <div id="playground" ondrop="drop(event)" ondragover="allowDrop(event)" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -143,12 +79,7 @@
 
 
             </div>
-            <footer class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <div class="container">
-                    <p class="muted credit">Made by José Miguel Colella.</p>
-                    <p>With much <span class="glyphicon glyphicon-heart"></span> for Twitter Bootstrap and helping a css-impared person create this.</p>
-                </div>
-            </footer>
+
 
         </div>
     </div>

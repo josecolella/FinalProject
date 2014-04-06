@@ -1,16 +1,20 @@
 'use strict';
 
+var i = 0;
+var initialState = "glyphicon-chevron-right";
+
 //Changes icon
-var changeIconAction = function() {
-    var dropdown = $(".dropdown-icon");
-    if (dropdown.hasClass('glyphicon-chevron-right')) {
-        dropdown.addClass('glyphicon-chevron-down').removeClass('glyphicon-chevron-right');
-    } else  {
-        dropdown.addClass('glyphicon-chevron-right').removeClass('glyphicon-chevron-down');
-    }
+//Fix
+var changeIconAction = function(event) {
+
+//    var dropdown = $(".dropdown-icon");
+//    if (dropdown.hasClass('glyphicon-chevron-right')) {
+//        dropdown.addClass('glyphicon-chevron-down').removeClass('glyphicon-chevron-right');
+//    } else  {
+//        dropdown.addClass('glyphicon-chevron-right').removeClass('glyphicon-chevron-down');
+//    }
 
 //$( "body" ).click(function( event ) {
-//    console.log($(event.target).parent().parent());
 //    var parent = $(event.target).parent().parent();
 //    console.log(parent[0].className);
 //
@@ -34,10 +38,29 @@ var changeIconAction = function() {
  * Function created to manage the change of icons when a user clicks to see
  * the visualization model
  */
-function changeIcon() {
-    $(".titles" ).bind( "click", function() {
-        changeIconAction();
+function change() {
+    $(".titles").click(function() {
+        console.log($(this.className.split(" ")).toArray());
+        if ($(this).hasClass('collapsed')) {
+            $(this)
+                .removeClass('collapsed');
+            var hello = $(this)
+            .find('glyphicon-chevron-right');
+
+            console.log(hello);
+            hello
+            .addClass('glyphicon-chevron-down')
+            .removeClass('glyphicon-chevron-right');
+            console.log(hello.className);
+        } else {
+            $(this)
+                .addClass('collapsed');
+        }
+
     });
+//    $(".titles" ).bind( "click", function() {
+//        changeIconAction();
+//    });
 };
 
 

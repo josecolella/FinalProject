@@ -16,22 +16,28 @@ from .models import VisualizationModelDescription
 
 class IndexListView (generic.ListView):
     """
-    This is the view that deals with the main page
+    This is the view that deals with the main page.
+    This deals with the different visualization models
+    and the user's workspace
     """
     template_name = 'visualization/index.html'
-    model = VisualizationModelDescription
+    model = VisualizationModelDescription.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'models': self.model})
+
+    def post(self, request, *args, **kwargs):
+        pass
 
 
-
-class About (generic.TemplateView):
+class AboutView (generic.TemplateView):
     """
     This class deals with the about part of the project that
     explains the underlying principles of the projects and
     the importance of visualization models
     """
+    template_name = 'visualization/about.html'
 
     def get(self, request, *args, **kwargs):
         pass
-
-
 

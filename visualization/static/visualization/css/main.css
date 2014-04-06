@@ -3,6 +3,7 @@
     border:1px
     solid #aaaaaa;
     height: 90em;
+    overflow: hidden;
 }
 
 
@@ -60,4 +61,10 @@ footer {
 
 .menu-option {
     background-color: #eeeeee;
+}
+
+.example-button {
+    color: #ffffff;
+    padding: 0.5em;
+    margin:0.5em;
 }
