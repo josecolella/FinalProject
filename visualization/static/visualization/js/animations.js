@@ -1,73 +1,39 @@
 'use strict';
 
 var i = 0;
-var initialState = "glyphicon-chevron-right";
-
-//Changes icon
-//Fix
-var changeIconAction = function(event) {
-
-//    var dropdown = $(".dropdown-icon");
-//    if (dropdown.hasClass('glyphicon-chevron-right')) {
-//        dropdown.addClass('glyphicon-chevron-down').removeClass('glyphicon-chevron-right');
-//    } else  {
-//        dropdown.addClass('glyphicon-chevron-right').removeClass('glyphicon-chevron-down');
-//    }
-
-//$( "body" ).click(function( event ) {
-//    var parent = $(event.target).parent().parent();
-//    console.log(parent[0].className);
-//
-//    var classes = $(event.target.className.split(" "));
-//    $.each(classes, function( index, value ) {
-//        if (value === "glyphicon-chevron-right") {
-//            $(event.target)
-//                .addClass("glyphicon-chevron-down")
-//                .removeClass("glyphicon-chevron-right");
-//        } else if(value === "glyphicon-chevron-down") {
-//            $(event.target)
-//                .addClass("glyphicon-chevron-right")
-//                .removeClass("glyphicon-chevron-down");
-//        }
-//    });
-//});
-};
-
-
+var rightStateClass = "glyphicon-chevron-right";
+var downStateClass = 'glyphicon-chevron-down';
 /**
  * Function created to manage the change of icons when a user clicks to see
- * the visualization model
+ * the visualization model. Uses $(this) to make sure that only one caret moves
+ * since the carets use the same clas
  */
-function change() {
-    $(".titles").click(function() {
-        console.log($(this.className.split(" ")).toArray());
-        if ($(this).hasClass('collapsed')) {
-            $(this)
-                .removeClass('collapsed');
-            var hello = $(this)
-            .find('glyphicon-chevron-right');
+var changeTitleCaretAction = function(event) {
 
-            console.log(hello);
-            hello
-            .addClass('glyphicon-chevron-down')
-            .removeClass('glyphicon-chevron-right');
-            console.log(hello.className);
+    $(".titles").click(function(){
+        //The element that is being clicked
+        var element = $(this);
+        var caret = element.find('span');
+        var classes = caret.attr('class').split(" ");
+        var inArray = jQuery.inArray(rightStateClass, classes);
+
+        if (inArray != -1) {
+            caret
+                .addClass(downStateClass)
+                .removeClass(rightStateClass);
         } else {
-            $(this)
-                .addClass('collapsed');
+            caret
+                .addClass(rightStateClass)
+                .removeClass(downStateClass);
         }
-
-    });
-//    $(".titles" ).bind( "click", function() {
-//        changeIconAction();
-//    });
+  });
 };
 
 
 /**
  * Function that binds the submit event to the search when the search glyphicon is clicked
  */
-var search = function() {
+ var search = function() {
     $('.glyphicon-search').bind("click", function() {
         if(!$("#search-term").val()) {
             alert("Search valid models");
@@ -85,21 +51,21 @@ var changeImportCaretOnEvent = function() {
     var importOption = $("#import");
     var importCaret = $("#import-caret");
     importOption
-        .mouseenter(function() {
+    .mouseenter(function() {
+        importCaret.addClass('fa-caret-down').removeClass('fa-caret-right');
+        importOption.addClass('open');
+    })
+    .click(function() {
+        if(importCaret.hasClass('fa-caret-right')) {
             importCaret.addClass('fa-caret-down').removeClass('fa-caret-right');
-            importOption.addClass('open');
-        })
-        .click(function() {
-            if(importCaret.hasClass('fa-caret-right')) {
-                importCaret.addClass('fa-caret-down').removeClass('fa-caret-right');
-            } else {
-                importCaret.addClass('fa-caret-right').removeClass('fa-caret-down');
-            }
-        })
-        .mouseleave(function() {
+        } else {
             importCaret.addClass('fa-caret-right').removeClass('fa-caret-down');
-            importOption.removeClass('open');
-        });
+        }
+    })
+    .mouseleave(function() {
+        importCaret.addClass('fa-caret-right').removeClass('fa-caret-down');
+        importOption.removeClass('open');
+    });
 };
 
 
@@ -107,21 +73,21 @@ var changeExportCaretOnEvent = function() {
     var exportOption = $("#export");
     var exportCaret = $("#export-caret");
     exportOption
-        .mouseenter(function() {
+    .mouseenter(function() {
+        exportCaret.addClass('fa-caret-down').removeClass('fa-caret-right');
+        exportOption.addClass('open');
+    })
+    .mouseleave(function() {
+        exportCaret.addClass('fa-caret-right').removeClass('fa-caret-down');
+        exportOption.removeClass('open');
+    })
+    .click(function() {
+        if(exportCaret.hasClass('fa-caret-right')) {
             exportCaret.addClass('fa-caret-down').removeClass('fa-caret-right');
-            exportOption.addClass('open');
-        })
-        .mouseleave(function() {
+        } else {
             exportCaret.addClass('fa-caret-right').removeClass('fa-caret-down');
-            exportOption.removeClass('open');
-        })
-        .click(function() {
-            if(exportCaret.hasClass('fa-caret-right')) {
-                exportCaret.addClass('fa-caret-down').removeClass('fa-caret-right');
-            } else {
-                exportCaret.addClass('fa-caret-right').removeClass('fa-caret-down');
-            }
-        });
+        }
+    });
 };
 
 
