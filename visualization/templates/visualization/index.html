@@ -15,6 +15,9 @@
                         This for runs through all the models and creates a side bar with
                         all the visualization models
                     {% endcomment %}
+{#                    <div class="sidebar-toggle">#}
+{#                        <i class="fa fa-angle-double-right"></i>#}
+{#                    </div>#}
                     {% for model in models %}
                         <div class="panel-group" id="accordion">
                         <div class="panel-default">
@@ -70,14 +73,9 @@
                                 <li><a href="#">Python</a></li>
                             </ul>
                         </li>
-
-
                     </ul>
-
-
                 </div>
-
-
+                {% include "visualization/playground.html" %}
             </div>
 
 

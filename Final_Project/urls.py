@@ -11,7 +11,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', views.IndexListView.as_view(), name='index'),
+    url(r'^$', views.Index.as_view(), name='index'),
     url(r'^about/', views.AboutView.as_view(), name='about'),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls), name='admin'),
 )

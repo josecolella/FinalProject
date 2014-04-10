@@ -15,3 +15,11 @@ class VisualizationModelDescription(models.Model):
     def __str__(self):
         return self.title + " " + self.link
 
+
+
+class UploadFile(models.Model):
+    """
+    This class represents the class in which the user can upload
+    files
+    """
+    file = models.FileField(upload_to='files/%Y/%m/%d')

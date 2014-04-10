@@ -1,6 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
-from django.views import generic
+from django.views.generic import ListView, TemplateView
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.template import RequestContext
+from .forms import UploadFileForm
+from .models import UploadFile
 
 from .models import VisualizationModelDescription
 
@@ -14,7 +19,7 @@ from .models import VisualizationModelDescription
 #     return render(request, 'visualization/index.html')
 
 
-class IndexListView (generic.ListView):
+class Index (ListView):
     """
     This is the view that deals with the main page.
     This deals with the different visualization models
@@ -22,15 +27,26 @@ class IndexListView (generic.ListView):
     """
     template_name = 'visualization/index.html'
     model = VisualizationModelDescription.objects.all()
+    form_class = UploadFileForm
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {'models': self.model})
+        return render(request, self.template_name, {'models': self.model,
+                                                    'form': self.form_class
+                                                    })
 
-    def post(self, request, *args, **kwargs):
-        pass
+    def post(self, request):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            new_file = UploadFile(file=request.FILES['file'])
+            new_file.save()
+        else:
+            form = self.form_class
+
+        data = {'form': form}
+        return render_to_response('visualization/index.html', data, context_instance=RequestContext(request))
 
 
-class AboutView (generic.TemplateView):
+class AboutView (TemplateView):
     """
     This class deals with the about part of the project that
     explains the underlying principles of the projects and
