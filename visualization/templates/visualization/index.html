@@ -1,4 +1,14 @@
 {% extends 'visualization/base.html' %}
+{% block stylesheets %}
+    {% load staticfiles %}
+    <!-- Project CSS-->
+    <link rel="stylesheet" href="{% static "visualization/css/main.css" %}"/>
+    <link rel="stylesheet" href="{% static "visualization/css/playground.css" %}"/>
+
+    <link rel="stylesheet" href="{% static "visualization/dropzone-3.8.4/css/dropzone.css" %}"/>
+    <!-- Custom styles for this template -->
+    <link href="{% static "visualization/css/dashboard.css"%}" rel="stylesheet">
+{% endblock stylesheets %}
 {% block content %}
     <div class="container-fluid">
         <div class="row">
@@ -15,38 +25,41 @@
                         This for runs through all the models and creates a side bar with
                         all the visualization models
                     {% endcomment %}
-{#                    <div class="sidebar-toggle">#}
-{#                        <i class="fa fa-angle-double-right"></i>#}
-{#                    </div>#}
+                    {#                    <div class="sidebar-toggle">#}
+                    {#                        <i class="fa fa-angle-double-right"></i>#}
+                    {#                    </div>#}
                     {% for model in models %}
                         <div class="panel-group" id="accordion">
-                        <div class="panel-default">
-                            <h4 class="panel-title">
-                                <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
-                                    <p>{{ model.title }}<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
-                                </li>
+                            <div class="panel-default">
+                                <h4 class="panel-title">
+                                    <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
+                                        <p>{{ model.title }}<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
+                                    </li>
 
-                            </h4>
-                        </div>
-                        <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <p>{{ model.description }}</p>
-                                <button type="button" class="btn btn-info"><a class="example-button" href="{{ model.link }}">Show an example</a></button>
+                                </h4>
                             </div>
-                        </div>
+                            <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <p>{{ model.description }}</p>
+                                    <button type="button" class="btn btn-info"><a class="example-button" href="{{ model.link }}">Show an example</a></button>
+                                </div>
+                            </div>
 
-                    </div>
+                        </div>
                     {% endfor %}
                 </ul>
             </div>
-            <div id="playground" ondrop="drop(event)" ondragover="allowDrop(event)" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <div>
+            <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <div ondrop="drop(event)" ondragover="allowDrop(event)">
                     <ul class="nav nav-tabs menu-options">
-                        <li class="dropdown">
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor</a>
+                        <li class="dropdown" id="workspace">
+                            <a class="dropdown-toggle menu-option" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
+                        </li>
+                        <li class="dropdown" id="editor">
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
                         </li>
                         <li class="dropdown " id="import" >
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<i class="fa fa-caret-right" id="import-caret"></i></a>
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="/import">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li class="divider"></li>
                                 <li><a href="#">JSON</a></li>
@@ -61,10 +74,10 @@
                             </ul>
                         </li>
                         <li class="dropdown" id="export">
-                            <a class="dropdown-toggle  menu-option" data-toggle="dropdown" href="#">Export<i class="fa fa-caret-right" id="export-caret"></i></a>
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li class="divider"></li>
-                                <li><a href="#">PDF</a></li>
+                                <li><a href="#" onclick="generatePDF();">PDF</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">JPEG</a></li>
                                 <li class="divider"></li>
@@ -75,10 +88,80 @@
                         </li>
                     </ul>
                 </div>
-                {% include "visualization/playground.html" %}
-            </div>
 
+                <div id="dropzone"  >
+                    <!-- IMPORTANT enctype attribute! -->
+                    <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {#        {{ form }}#}
+                    </form>
+                    <p>{{ form.non_field_errors }}</p>
+                    <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+                    <p>
+                        {{ form.docfile.errors }}
+                        {{ form.docfile }}
+                    </p>
+                </div>
+
+
+            </div>
 
         </div>
     </div>
 {% endblock %}
+{% block javascript %}
+    {% load staticfiles %}
+
+    <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
+    <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
+    <script type="application/javascript">
+        function allowDrop(ev)
+        {
+            ev.preventDefault();
+        }
+
+        function drag(ev)
+        {
+            ev.dataTransfer.setData("Text",ev.target.id);
+        }
+
+        function drop(ev)
+        {
+            ev.preventDefault();
+            var data=ev.dataTransfer.getData("Text");
+            ev.target.appendChild(document.getElementById(data));
+        }
+    </script>
+    <script>
+        $( document ).ready(function() {
+            changeTitleCaretAction();
+            search();
+            $("#dropzone").hide();
+        });
+    </script>
+    <script type="text/javascript">
+        Dropzone.options.myDropzone = {
+
+            // Prevents Dropzone from uploading dropped files immediately
+            autoProcessQueue : false,
+
+            init : function() {
+                var submitButton = document.querySelector("#submit-all")
+                myDropzone = this;
+
+                submitButton.addEventListener("click", function() {
+                    myDropzone.processQueue();
+                    // Tell Dropzone to process all queued files.
+                });
+
+                // You might want to show the submit button only when
+                // files are dropped here:
+                this.on("addedfile", function() {
+                    // Show submit button here and/or inform user to click it.
+                });
+
+            }
+        };
+    </script>
+
+{% endblock javascript %}

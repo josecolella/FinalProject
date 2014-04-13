@@ -1,8 +1,8 @@
-{#{{ form }}#}
-
+<div id="dropzone">
 <!-- IMPORTANT enctype attribute! -->
-<form class="dropzone"  action="#" method="post" enctype="multipart/form-data">
+<form  class="dropzone"  action="#" method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    {#        {{ form }}#}
 </form>
 <p>{{ form.non_field_errors }}</p>
 <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
@@ -10,10 +10,12 @@
     {{ form.docfile.errors }}
     {{ form.docfile }}
 </p>
-<button id="submit-all">
-    Submit all files
-</button>
-<script type="text/javascript">
+</div>
+{% block javascript %}
+    {% load staticfiles %}
+
+    <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
+    <script type="text/javascript">
     Dropzone.options.myDropzone = {
 
         // Prevents Dropzone from uploading dropped files immediately
@@ -37,3 +39,6 @@
         }
     };
 </script>
+
+{% endblock javascript %}
+

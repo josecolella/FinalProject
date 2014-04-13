@@ -78,3 +78,19 @@ footer {
   height: 20px;
   background-color: #f5f5f5;
 }
+
+#import-info {
+    border-spacing: 1em;
+    border-radius: 5em;
+}
+
+.menu-glyphicons {
+    padding-left: 0.5em;
+}
+
+#workspace a:link
+#editor a:link
+#import a:link
+#export a:link {
+    box-shadow: 0 0 2px;
+}

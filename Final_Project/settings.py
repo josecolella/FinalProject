@@ -94,4 +94,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # The templates directory
-TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'visualization/templates')]
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'visualization/templates')
+)

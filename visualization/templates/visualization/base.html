@@ -7,22 +7,19 @@
     <meta name="description" content="Visualization Project">
     <meta name="author" content="Jose Miguel Colella">
 
-    <title>Visualize.io</title>
+    <title>{% block title %}{% endblock title %}</title>
     {% load staticfiles %}
     <!--Favicon.ico-->
     <link rel="shortcut icon" href="{% static "visualization/favicon.ico" %}">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/font-comicneue/1.1/font.css">
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <!-- Project CSS-->
-    <link rel="stylesheet" href="{% static "visualization/css/main.css" %}"/>
     <link rel="stylesheet" href="{% static "visualization/css/base.css" %}"/>
-    <link rel="stylesheet" href="{% static "visualization/dropzone-3.8.4/css/dropzone.css" %}"/>
-    <!-- Custom styles for this template -->
-    <link href="{% static "visualization/css/dashboard.css"%}" rel="stylesheet">
+    {% block stylesheets %}{% endblock stylesheets%}
 
-
+    <script src="{% static "visualization/jsPDF/jspdf.min.js" %}"></script>
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
@@ -63,58 +60,6 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-<script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
-<script src="{% static "visualization/js/animations.js" %}" type="application/javascript"></script>
-<script type="application/javascript">
-    function allowDrop(ev)
-    {
-        ev.preventDefault();
-    }
-
-    function drag(ev)
-    {
-        ev.dataTransfer.setData("Text",ev.target.id);
-    }
-
-    function drop(ev)
-    {
-        ev.preventDefault();
-        var data=ev.dataTransfer.getData("Text");
-        ev.target.appendChild(document.getElementById(data));
-    }
-</script>
-<script>
-    $( document ).ready(function() {
-        changeTitleCaretAction();
-        search();
-        changeExportCaretOnEvent();
-        changeImportCaretOnEvent();
-        sidebarStatus = false;
-        $('.sidebar-toggle').click(function() {
-            if (sidebarStatus == false) {
-                $('.sidebar').animate({
-                    marginLeft: "0px",
-                    opacity: "1"
-                }, 200);
-                $('.content').animate({
-                    marginLeft: "150px",
-                    opacity: "1"
-                }, 200);
-                sidebarStatus = true;
-            }
-            else {
-                $('.sidebar').animate({
-                    marginLeft: "-150px",
-                    opacity: "1"
-                }, 200);
-                $('.content').animate({
-                    marginLeft: "0px",
-                    opacity: "1"
-                }, 200);
-                sidebarStatus = false;
-            }
-        });
-    });
-</script>
+{% block javascript %}{% endblock javascript %}
 </body>
 </html>
