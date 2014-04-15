@@ -10,6 +10,9 @@ Finished
 - ~~Sidebar~~
 - ~~Menu Buttons~~
 - ~~Added import functionality~~
+- ~~Added editor~~
+- ~~Choose visualization library~~ nvd3
+- 
 
 Todos
 =====
@@ -17,6 +20,7 @@ Todos
 - ~~Create dashboard template~~
 
 - Add draggable effect
+- integrate the editor with nvd3
 - finish adding the graphs images and effects
 - Integrate the import functionality as a view
 - Add users
