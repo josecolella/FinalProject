@@ -3,116 +3,216 @@
     {% load staticfiles %}
     <!-- Project CSS-->
     <link rel="stylesheet" href="{% static "visualization/css/main.css" %}"/>
-    <link rel="stylesheet" href="{% static "visualization/css/playground.css" %}"/>
+    <link rel="stylesheet" href="{% static "visualization/css/dropzone.css" %}"/>
 
-    <link rel="stylesheet" href="{% static "visualization/dropzone-3.8.4/css/dropzone.css" %}"/>
+    <link rel="stylesheet" href="{% static "visualization/dropzone-3.8.4/css/dropzone.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "visualization/ndv3/nv.d3.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "visualization/codemirror/lib/codemirror.css" %}"/>
     <!-- Custom styles for this template -->
     <link href="{% static "visualization/css/dashboard.css"%}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/codemirror.css' %} ">
+    <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/dialog.css' %} ">
+    <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/show-hint.css' %} ">
+    <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/tern.css' %} ">
+    <script src="{% static "visualization/codemirror/lib/codemirror.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/dialog.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/javascript.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/python.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/r.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/show-hint.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/tern.js" %}"></script>
+    {#    <script src="{% static "visualization/codemirror/lib/worker.js" %}"></script>#}
+    <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
+
+    <script>
+        $( document ).ready(function() {
+            changeTitleCaretAction();
+            search();
+            $("#dropzone").hide();
+            $(".editor").hide();
+        });
+    </script>
 {% endblock stylesheets %}
 {% block content %}
+    <style>
+        .CodeMirror {border: 1px solid #ddd;}
+    </style>
     <div class="container-fluid">
-        <div class="row">
+    <div class="row">
 
-            <div class="col-sm-3 col-md-2 sidebar panel panel-info">
-                <form name="search" id="search" role="form">
-                    <div class="input-group form-group search-group">
-                        <input type="text" class="form-control" id="search-term" placeholder="Search models..." required>
-                        <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search" onclick="search()"></span></span>
-                    </div>
-                </form>
-                <ul class="nav nav-sidebar">
-                    {% comment %}
+    <div class="col-sm-3 col-md-2 sidebar panel panel-info">
+        <form name="search" id="search" role="form">
+            <div class="input-group form-group search-group">
+                <input type="text" class="form-control" id="search-term" placeholder="Search models..." required>
+                <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search" onclick="search()"></span></span>
+            </div>
+        </form>
+        <ul class="nav nav-sidebar">
+            {% comment %}
                         This for runs through all the models and creates a side bar with
                         all the visualization models
                     {% endcomment %}
-                    {#                    <div class="sidebar-toggle">#}
-                    {#                        <i class="fa fa-angle-double-right"></i>#}
-                    {#                    </div>#}
-                    {% for model in models %}
-                        <div class="panel-group" id="accordion">
-                            <div class="panel-default">
-                                <h4 class="panel-title">
-                                    <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
-                                        <p>{{ model.title }}<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
-                                    </li>
+            {#                    <div class="sidebar-toggle">#}
+            {#                        <i class="fa fa-angle-double-right"></i>#}
+            {#                    </div>#}
+            {% for model in models %}
+                <div class="panel-group" id="accordion">
+                    <div class="panel-default">
+                        <h4 class="panel-title">
+                            <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
+                                <p>{{ model.title }}<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
+                            </li>
 
-                                </h4>
-                            </div>
-                            <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <p>{{ model.description }}</p>
-                                    <button type="button" class="btn btn-info"><a class="example-button" href="{{ model.link }}">Show an example</a></button>
-                                </div>
-                            </div>
-
+                        </h4>
+                    </div>
+                    <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p>{{ model.description }}</p>
+                            <button type="button" class="btn btn-info"><a class="example-button" href="{{ model.link }}">Show an example</a></button>
                         </div>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <div ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <ul class="nav nav-tabs menu-options">
-                        <li class="dropdown" id="workspace">
-                            <a class="dropdown-toggle menu-option" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
-                        </li>
-                        <li class="dropdown" id="editor">
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
-                        </li>
-                        <li class="dropdown " id="import" >
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="/import">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="divider"></li>
-                                <li><a href="#">JSON</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">CSV</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Excel</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">txt</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">SQL</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown" id="export">
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="divider"></li>
-                                <li><a href="#" onclick="generatePDF();">PDF</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">JPEG</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">R</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Python</a></li>
-                            </ul>
-                        </li>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </ul>
+    </div>
+    <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div ondrop="drop(event)" ondragover="allowDrop(event)">
+            <ul class="nav nav-tabs menu-options">
+                <li class="dropdown" id="workspace">
+                    <a class="dropdown-toggle menu-option" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
+                </li>
+                <li class="dropdown" id="editor">
+                    <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
+                </li>
+                <li class="dropdown " id="import" >
+                    <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="/import">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="divider"></li>
+                        <li><a href="#">JSON</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">CSV</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Excel</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">txt</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">SQL</a></li>
                     </ul>
-                </div>
-
-                <div id="dropzone"  >
-                    <!-- IMPORTANT enctype attribute! -->
-                    <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {#        {{ form }}#}
-                    </form>
-                    <p>{{ form.non_field_errors }}</p>
-                    <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-                    <p>
-                        {{ form.docfile.errors }}
-                        {{ form.docfile }}
-                    </p>
-                </div>
-
-
-            </div>
-
+                </li>
+                <li class="dropdown" id="export">
+                    <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="divider"></li>
+                        <li><a href="#" onclick="generatePDF();">PDF</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">JPEG</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">R</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Python</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
+
+
+
+
+
+
+        <div id="dropzone"  >
+            <!-- IMPORTANT enctype attribute! -->
+            <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {#        {{ form }}#}
+            </form>
+            <p>{{ form.non_field_errors }}</p>
+            <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+            <p>
+                {{ form.docfile.errors }}
+                {{ form.docfile }}
+            </p>
+        </div>
+
+
+        <div id="chart">
+            <svg></svg>
+        </div>
+
+        <article>
+            <form><textarea id="code" name="code">
+
+            </textarea></form>
+            <script>
+                var data =  [
+                    {
+                        "label": "One",
+                        "value" : 29.765957771107
+                    } ,
+                    {
+                        "label": "Two",
+                        "value" : 0
+                    } ,
+                    {
+                        "label": "Three",
+                        "value" : 135
+                    } ,
+                    {
+                        "label": "Four",
+                        "value" : 196.45946739256
+                    } ,
+                    {
+                        "label": "Five",
+                        "value" : 0.19434030906893
+                    } ,
+                    {
+                        "label": "Six",
+                        "value" : 98.079782601442
+                    } ,
+                    {
+                        "label": "Seven",
+                        "value" : 13.925743130903
+                    } ,
+                    {
+                        "label": "Eight",
+                        "value" : 100
+                    }
+                ];
+                nv.addGraph(function() {
+                    var chart = nv.models.pieChart()
+                            .x(function(d) { return d.label })
+                            .y(function(d) { return d.value })
+                            .showLabels(true);
+
+                    d3.select("#chart svg")
+                            .datum(data)
+                            .transition().duration(1200)
+                            .call(chart);
+
+                    return chart;
+                });
+            </script>
+            <script>
+
+                var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+                    lineNumbers: true,
+                    mode: "javascript",
+                    tabMode: 'indent'
+                });
+            </script>
+
+        </article>
+
+
+    </div>
+
+    </div>
     </div>
 {% endblock %}
 {% block javascript %}
     {% load staticfiles %}
 
-    <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
     <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
     <script type="application/javascript">
         function allowDrop(ev)
@@ -132,13 +232,7 @@
             ev.target.appendChild(document.getElementById(data));
         }
     </script>
-    <script>
-        $( document ).ready(function() {
-            changeTitleCaretAction();
-            search();
-            $("#dropzone").hide();
-        });
-    </script>
+
     <script type="text/javascript">
         Dropzone.options.myDropzone = {
 
@@ -163,5 +257,14 @@
             }
         };
     </script>
-
+    <script src="http://marijnhaverbeke.nl/acorn/acorn.js"></script>
+    <script src="http://marijnhaverbeke.nl/acorn/acorn_loose.js"></script>
+    <script src="http://marijnhaverbeke.nl/acorn/util/walk.js"></script>
+    <script src="http://ternjs.net/doc/demo/polyfill.js"></script>
+    <script src="http://ternjs.net/lib/signal.js"></script>
+    <script src="http://ternjs.net/lib/tern.js"></script>
+    <script src="http://ternjs.net/lib/def.js"></script>
+    <script src="http://ternjs.net/lib/comment.js"></script>
+    <script src="http://ternjs.net/lib/infer.js"></script>
+    <script src="http://ternjs.net/plugin/doc_comment.js"></script>
 {% endblock javascript %}

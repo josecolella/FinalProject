@@ -58,6 +58,9 @@ var manageImportClose = function() {
 
 
 $("#import").click(function() {
+    $("chart").hide();
+    $(".editor").hide();
+
     var dropzone = $("#dropzone");
     if (dropzone.is(":visible")) {
         dropzone.fadeOut("slow");
@@ -79,6 +82,8 @@ var closeAlert = function() {
 
 $("#workspace").click(function() {
     manageImportClose();
+    $("#chart").show();
+    $(".editor").remove();
 
 });
 
@@ -89,6 +94,8 @@ $("#export").click(function() {
 
 $("#editor").click(function() {
     manageImportClose();
+    $(".editor").show();
+    $("#playground").append('<div class="editor"><script>var myCodeMirror = CodeMirror(document.getElementById("chart"), {value: "function myScript(){return 100;}\n",mode:  "javascript"});</script></div>');
 });
 
 
@@ -187,3 +194,7 @@ var generatePDF = function() {
     pdf.save('Test.pdf');
 
 };
+
+
+
+

@@ -94,3 +94,7 @@ footer {
 #export a:link {
     box-shadow: 0 0 2px;
 }
+
+#chart svg {
+  height: 400px;
+}

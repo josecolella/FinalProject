@@ -90,5 +90,5 @@ class DropZoneView(TemplateView):
     """
     This class manages the dropzone where the user can upload files
     """
-    template_name = 'visualization/playground.html'
+    template_name = 'visualization/dropzone.html'
     form_class = UploadFileForm
