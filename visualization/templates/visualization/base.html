@@ -17,16 +17,10 @@
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static "visualization/css/base.css" %}"/>
-    <script src="{% static "visualization/jsPDF/jspdf.min.js" %}"></script>
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js" charset="utf-8"></script>
-
-    <script src="{% static "visualization/ndv3/nv.d3.min.js" %}"></script>
-
+    <link rel="stylesheet" href="{% static "visualization/css/main.css" %}"/>
     {% block stylesheets %}{% endblock stylesheets%}
-
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    {% block headjs %}{% endblock headjs %}
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -60,11 +54,9 @@
 </div>
 {% block content %}
 {% endblock %}
-<!-- Bootstrap core JavaScript
- ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
+{% block javascript %}{% endblock javascript %}
 
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-{% block javascript %}{% endblock javascript %}
+
 </body>
 </html>

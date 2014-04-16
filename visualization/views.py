@@ -9,7 +9,7 @@ from .models import UploadFile
 from .models import VisualizationModelDescription
 
 from reportlab.pdfgen import canvas
-
+import csv
 
 import io
 #The render() function takes the request object as its first argument,
@@ -92,3 +92,16 @@ class DropZoneView(TemplateView):
     """
     template_name = 'visualization/dropzone.html'
     form_class = UploadFileForm
+
+
+
+def some_view_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
+    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+
+    return response
