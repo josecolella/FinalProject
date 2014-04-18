@@ -1,6 +1,6 @@
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, View
 from django.template import RequestContext
 from setuptools.compat import BytesIO
 
@@ -10,6 +10,8 @@ from .models import VisualizationModelDescription
 
 from reportlab.pdfgen import canvas
 import csv
+from pandas import Series, DataFrame
+import pandas
 
 import io
 #The render() function takes the request object as its first argument,
@@ -105,3 +107,15 @@ def some_view_csv(request):
     writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
 
     return response
+
+
+class CSVReader(View):
+    """
+    The view that deals with the generation of csv
+    """
+    def get(self, request, *args, **kwargs):
+        """
+        The get method
+        """
+        pass
+
