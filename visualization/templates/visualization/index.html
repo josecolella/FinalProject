@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/dialog.css' %} "/>
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/show-hint.css' %}" />
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/tern.css' %} "/>
+    <link rel="stylesheet" href="{% static 'visualization/vex/vex.css' %}"/>
+
+    <link rel="stylesheet" href="{% static 'visualization/vex/vex-theme-flat-attack.css' %}"/>
+
 {% endblock stylesheets %}
 {% block headjs %}
     <script src="{% static "visualization/codemirror/lib/codemirror.js" %}"></script>
@@ -46,15 +50,15 @@
 
                     }
                 })
-                .done(function() {
-                    console.log("success");
-                })
-                .fail(function() {
-                    console.log("error");
-                })
-                .always(function() {
-                    console.log("complete");
-                });
+                        .done(function() {
+                            console.log("success");
+                        })
+                        .fail(function() {
+                            console.log("error");
+                        })
+                        .always(function() {
+                            console.log("complete");
+                        });
 
             });
         });
@@ -90,12 +94,14 @@
                                         <p>{{ model.title }}<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
                                     </li>
 
+
                                 </h4>
                             </div>
                             <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     <p>{{ model.description }}</p>
-                                    <button type="button" class="btn btn-info"><a class="example-button" href="{{ model.link }}">Show an example</a></button>
+                                    <button type="button" class="btn btn-info"><a class="example-button" id="{{model.title|slugify}}" href="{{ model.link }}" data-toggle="modal" data-target="#modal-{{ model.title|slugify }}">Show an example</a></button>
+
                                 </div>
                             </div>
 
@@ -103,6 +109,7 @@
                     {% endfor %}
                 </ul>
             </div>
+
             <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <div ondrop="drop(event)" ondragover="allowDrop(event)">
                     <ul class="nav nav-tabs menu-options">
@@ -286,6 +293,8 @@
             }
         };
     </script>
+    <script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>
     <script src="{% static "visualization/jsPDF/jspdf.min.js" %}"></script>
     <script src="http://marijnhaverbeke.nl/acorn/acorn.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/acorn_loose.js"></script>

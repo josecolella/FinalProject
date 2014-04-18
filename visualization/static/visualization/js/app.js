@@ -198,3 +198,71 @@ var generatePDF = function() {
 
 
 
+
+
+/**
+ * Function that retrieves the example description for the visualization model that
+ * is passed as a parameter
+ * @param model The url to the example
+ *
+ */
+var fetchExampleDescription = function(model) {
+
+    var getVisualizationModel = function(model) {
+        var visModel = null;
+        var regex = /(example\/)([\w\-]+)/;
+        var match = regex.exec(model);
+        if (match != null) {
+            visModel = match;
+            console.log(visModel);
+        }
+        return visModel;
+    };
+
+    var urlModel = getVisualizationModel(model);
+    $.ajax({
+        url: model,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            console.log(data);
+        },
+        error: function() {
+            console.log("Error");
+        }
+    })
+        .done(function() {
+            console.log("success");
+        })
+        .fail(function() {
+            console.log("error");
+        })
+        .always(function() {
+            console.log("complete");
+        });
+
+    return;
+
+};
+
+
+$("#stacked-area-charts").click(function() {
+    var todayDateString;
+    fetchExampleDescription("/example/stacked");
+    todayDateString = new Date().toJSON().slice(0, 10);
+    //Possible ajax petition to get the example text
+    vex.dialog.open({
+        message: 'Stacked Area Charts Example',
+        input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n    <label for=\"date\">Date</label>\n    <div class=\"vex-custom-input-wrapper\">\n        <input name=\"date\" type=\"date\" value=\"" + todayDateString + "\" />\n    </div>\n</div>\n<div class=\"vex-custom-field-wrapper\">\n    <label for=\"color\">Color</label>\n    <div class=\"vex-custom-input-wrapper\">\n        <input name=\"color\" type=\"color\" value=\"#ff00cc\" />\n    </div>\n</div>",
+        callback: function(data) {
+            if (data === false) {
+                return console.log('Cancelled');
+            }
+            console.log('Date', data.date, 'Color', data.color);
+            return $('.demo-result-custom-vex-dialog').show().html("<h4>Result</h4>\n<p>\n    Date: <b>" + data.date + "</b><br/>\n    Color: <input type=\"color\" value=\"" + data.color + "\" readonly />\n</p>");
+        }
+    });
+});
+
+
+

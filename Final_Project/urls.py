@@ -12,6 +12,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', views.Index.as_view(), name='index'),
+    url(r'^example/(?P<visualization>\w+)', views.ExampleView.as_view(), name='example'),
     url(r'^about/', views.AboutView.as_view(), name='about'),
     url(r'^import/', views.DropZoneView.as_view(), name='import'),
     url(r'^csv/', views.some_view_csv, name='csv'),
