@@ -12,14 +12,21 @@ Finished
 - ~~Added import functionality~~
 - ~~Added editor~~
 - ~~Choose visualization library~~ nvd3
-- 
+- ~~Create dashboard template~~
+
 
 Todos
 =====
 
-- ~~Create dashboard template~~
 - Using vex for modals, integrate them into the examples 
+    - Vex will be used to load the modal of the examples of
+    the visualization models. 
+        - One way to do is is that each “Show example” loads the example dinamically
+        of the each model has an Example description. The first way is better as it 
+        allows for custom example input.
 - Add draggable effect
+    - HTML5 of JQuery UI
+
 - integrate the editor with nvd3
 - finish adding the graphs images and effects
 - Integrate the import functionality as a view
