@@ -17,6 +17,41 @@ class VisualizationModelDescription(models.Model):
     def __str__(self):
         return self.title + " " + self.link
 
+    def __lt__(self, other):
+        try:
+            if self.title < other.title:
+                return True
+            else:
+                return False
+        except Exception:
+            print("Cannot compare objects")
+
+    def __gt__(self, other):
+        try:
+            if self.title > other.title:
+                return True
+            else:
+                return False
+        except Exception:
+            print("Cannot compare objects")
+
+    def __ge__(self, other):
+        try:
+            if self.title >= other.title:
+                return True
+            else:
+                return False
+        except Exception:
+            print("Cannot compare objects")
+
+    def __le__(self, other):
+        try:
+            if self.title <= other.title:
+                return True
+            else:
+                return False
+        except Exception:
+            print("Cannot compare objects")
 
 class UploadFile(models.Model):
 

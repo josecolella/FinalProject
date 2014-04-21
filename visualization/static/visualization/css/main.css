@@ -1,9 +1,5 @@
 #playground {
-    padding:10px;
-    border:1px
-    solid #aaaaaa;
-    height: 90em;
-    overflow: hidden;
+    padding:1em;
 }
 
 
@@ -25,6 +21,7 @@
 
 .dropdown-icon {
     float: right;
+    margin-top:0.5em;
 }
 
 #search-icon {
@@ -84,19 +81,18 @@ footer {
     border-radius: 5em;
 }
 
+.fa-table,
 .menu-glyphicons {
     padding-left: 0.5em;
 }
 
-#workspace a:link
-#editor a:link
-#import a:link
-#export a:link {
-    box-shadow: 0 0 2px;
-}
 
 #chart svg {
-    height: 400px;
+    height: 500px;
+    margin-top: 5em;
+    border: 1px solid #c8c8c8;
+    border-radius: 1em 1em;
+
 }
 
 
@@ -107,4 +103,21 @@ footer {
     border-top-right-radius: 0.5em;
     border-bottom-left-radius: 0.5em;
     border-bottom-right-radius: 0.5em;
+}
+
+.CodeMirror {
+    border: 1px solid #ddd;
+}
+
+.addbtn {
+    border-radius: 5em 5em;
+    margin-left: 1em;
+}
+
+#dataTable {
+    margin-top: 1em;
+}
+
+.highlight {
+    background-color: #FFFF88;
 }

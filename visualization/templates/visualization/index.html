@@ -14,9 +14,8 @@
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/show-hint.css' %}" />
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/tern.css' %} "/>
     <link rel="stylesheet" href="{% static 'visualization/vex/vex.css' %}"/>
-
     <link rel="stylesheet" href="{% static 'visualization/vex/vex-theme-flat-attack.css' %}"/>
-
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.css"/>
 {% endblock stylesheets %}
 {% block headjs %}
     <script src="{% static "visualization/codemirror/lib/codemirror.js" %}"></script>
@@ -28,8 +27,9 @@
     <script src="{% static "visualization/codemirror/lib/tern.js" %}"></script>
     {#    <script src="{% static "visualization/codemirror/lib/worker.js" %}"></script>#}
     <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
+    <script src="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js" charset="utf-8"></script>
-
+    <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
     <script src="{% static "visualization/ndv3/nv.d3.min.js" %}"></script>
 
     <script>
@@ -38,6 +38,12 @@
             search();
             $("#dropzone").hide();
             $(".editor").hide();
+            showAddPopOver();
+            addDataGrid();
+            {#            $("#work,#editor,#import,#export").click(function() {#}
+            {#               $(this).css('box-shadow', '0 0 2px');#}
+            {##}
+            {#            });#}
             $("#csv").click(function() {
                 $.ajax({
                     url: '/csv',
@@ -65,9 +71,6 @@
     </script>
 {% endblock headjs %}
 {% block content %}
-    <style>
-        .CodeMirror {border: 1px solid #ddd;}
-    </style>
     <div class="container-fluid">
         <div class="row">
 
@@ -83,18 +86,13 @@
                         This for runs through all the models and creates a side bar with
                         all the visualization models
                     {% endcomment %}
-                    {#                    <div class="sidebar-toggle">#}
-                    {#                        <i class="fa fa-angle-double-right"></i>#}
-                    {#                    </div>#}
                     {% for model in models %}
                         <div class="panel-group" id="accordion">
                             <div class="panel-default">
                                 <h4 class="panel-title">
                                     <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
-                                        <p>{{ model.title }}<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
+                                        <p>{{ model.title }}<button class="btn btn-default btn-sm addbtn" data-container="body" data-toggle="popover" data-placement="right" data-content="Click to add {{ model.title|capfirst }} model"><i class="fa fa-plus"></i></button></span><span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
                                     </li>
-
-
                                 </h4>
                             </div>
                             <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
@@ -104,20 +102,22 @@
 
                                 </div>
                             </div>
-
                         </div>
                     {% endfor %}
                 </ul>
             </div>
 
             <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <div ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div id="menu">
                     <ul class="nav nav-tabs menu-options">
-                        <li class="dropdown" id="workspace">
+                        <li class="dropdown">
                             <a class="dropdown-toggle menu-option" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
                         </li>
+                        <li id="data-grid">
+                            <a class="menu-option" href="#" id="work">Data Grid<i class="fa fa-table"></i></a>
+                        </li>
                         <li class="dropdown" id="editor">
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
+                            <a class="dropdown-toggle menu-option" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
                         </li>
                         <li class="dropdown " id="import" >
                             <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="/import">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
@@ -151,105 +151,99 @@
                         </li>
                     </ul>
                 </div>
+                <div id="workspace">
+                    {#                <div id="dropzone"  >#}
+                    {#                    <!-- IMPORTANT enctype attribute! -->#}
+                    {#                    <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">#}
+                    {#                        {% csrf_token %}#}
+                    {#                    </form>#}
+                    {#                    <p>{{ form.non_field_errors }}</p>#}
+                    {#                    <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>#}
+                    {#                    <p>#}
+                    {#                        {{ form.docfile.errors }}#}
+                    {#                        {{ form.docfile }}#}
+                    {#                    </p>#}
+                    {#                </div>#}
 
 
+                    <div id="chart">
+                        <svg></svg>
+                    </div>
 
-
-
-
-                <div id="dropzone"  >
-                    <!-- IMPORTANT enctype attribute! -->
-                    <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {#        {{ form }}#}
-                    </form>
-                    <p>{{ form.non_field_errors }}</p>
-                    <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-                    <p>
-                        {{ form.docfile.errors }}
-                        {{ form.docfile }}
-                    </p>
-                </div>
-
-
-                <div id="chart">
-                    <svg></svg>
-                </div>
-
-                <article id="texteditor">
-                    <form><textarea id="code" name="code">
-
-                    </textarea></form>
+                    {#                <article id="texteditor">#}
+                    {#                    <form><textarea id="code" name="code">#}
+                    {##}
+                    {#                    </textarea></form>#}
                     <script>
-                        var data =  [
-                            {
-                                "label": "One",
-                                "value" : 29.765957771107
-                            } ,
-                            {
-                                "label": "Two",
-                                "value" : 0
-                            } ,
-                            {
-                                "label": "Three",
-                                "value" : 135
-                            } ,
-                            {
-                                "label": "Four",
-                                "value" : 196.45946739256
-                            } ,
-                            {
-                                "label": "Five",
-                                "value" : 0.19434030906893
-                            } ,
-                            {
-                                "label": "Six",
-                                "value" : 98.079782601442
-                            } ,
-                            {
-                                "label": "Seven",
-                                "value" : 13.925743130903
-                            } ,
-                            {
-                                "label": "Eight",
-                                "value" : 100
-                            }
-                        ];
-                        nv.addGraph(function() {
-                            var chart = nv.models.pieChart()
-                                    .x(function(d) { return d.label })
-                                    .y(function(d) { return d.value })
-                                    .showLabels(true);
-
-                            d3.select("#chart svg")
-                                    .datum(data)
-                                    .transition().duration(1200)
-                                    .call(chart);
-
-                            return chart;
-                        });
+                        {#                        var data =  [#}
+                        {#                            {#}
+                        {#                                "label": "One",#}
+                        {#                                "value" : 29.765957771107#}
+                        {#                            } ,#}
+                        {#                            {#}
+                        {#                                "label": "Two",#}
+                        {#                                "value" : 0#}
+                        {#                            } ,#}
+                        {#                            {#}
+                        {#                                "label": "Three",#}
+                        {#                                "value" : 135#}
+                        {#                            } ,#}
+                        {#                            {#}
+                        {#                                "label": "Four",#}
+                        {#                                "value" : 196.45946739256#}
+                        {#                            } ,#}
+                        {#                            {#}
+                        {#                                "label": "Five",#}
+                        {#                                "value" : 0.19434030906893#}
+                        {#                            } ,#}
+                        {#                            {#}
+                        {#                                "label": "Six",#}
+                        {#                                "value" : 98.079782601442#}
+                        {#                            } ,#}
+                        {#                            {#}
+                        {#                                "label": "Seven",#}
+                        {#                                "value" : 13.925743130903#}
+                        {#                            } ,#}
+                        {#                            {#}
+                        {#                                "label": "Eight",#}
+                        {#                                "value" : 100#}
+                        {#                            }#}
+                        {#                        ];#}
+                        {#                        nv.addGraph(function() {#}
+                        {#                            var chart = nv.models.pieChart()#}
+                        {#                                    .x(function(d) { return d.label })#}
+                        {#                                    .y(function(d) { return d.value })#}
+                        {#                                    .showLabels(true);#}
+                        {##}
+                        {#                            d3.select("#chart svg")#}
+                        {#                                    .datum(data)#}
+                        {#                                    .transition().duration(1200)#}
+                        {#                                    .call(chart);#}
+                        {##}
+                        {#                            return chart;#}
+                        {#                        });#}
                     </script>
-                    <script>
+                    {#                    <script>#}
+                    {##}
+                    {#                        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {#}
+                    {#                            lineNumbers: true,#}
+                    {#                            mode: "javascript",#}
+                    {#                            tabMode: 'indent'#}
+                    {#                        });#}
+                    {#                    </script>#}
 
-                        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-                            lineNumbers: true,
-                            mode: "javascript",
-                            tabMode: 'indent'
-                        });
-                    </script>
-
-                </article>
+                    {#                </article>#}
 
 
+                </div>
             </div>
-
         </div>
     </div>
 {% endblock %}
 {% block javascript %}
     {% load staticfiles %}
 
-    <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
+
     <script type="application/javascript">
         function allowDrop(ev)
         {

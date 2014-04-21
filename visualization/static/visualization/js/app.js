@@ -8,7 +8,7 @@ var downStateClass = 'glyphicon-chevron-down';
  * the visualization model. Uses $(this) to make sure that only one caret moves
  * since the carets use the same clas
  */
-var changeTitleCaretAction = function(event) {
+var changeTitleCaretAction = function() {
 
     $(".titles").click(function(){
         //The element that is being clicked
@@ -28,6 +28,11 @@ var changeTitleCaretAction = function(event) {
         }
     });
 };
+
+
+
+
+
 
 
 /**
@@ -265,4 +270,51 @@ $("#stacked-area-charts").click(function() {
 });
 
 
+/**
+ * Function that manages the showing of popover when
+ * the add button is hovered
+ */
+var showAddPopOver = function() {
+
+    $(".addbtn").hover(function() {
+        $(this).popover('show');
+    }, function() {
+        $(this).popover('hide');
+    });
+
+};
+
+
+
+var addDataGrid = function() {
+
+    $("#data-grid").click(function() {
+        console.log("Hello");
+        var workspace = $("#workspace");
+        var dataTableDiv = $("#dataTable");
+        //Doesn't exist create it
+        if (dataTableDiv.length == 0) {
+            workspace.append('<div id="dataTable" class="highlight"></div>');
+            $("#dataTable").handsontable({
+                data: [],
+                dataSchema: {id: null, name: {first: null, last: null}, address: null},
+                startRows: 5,
+                startCols: 4,
+                colHeaders: [' ', ' ', ' ', ' '],
+                columns: [
+                    {data: "id"},
+                    {data: "name.first"},
+                    {data: "name.last"},
+                    {data: "address"}
+                ],
+                minSpareRows: 1
+            });
+        } else if(dataTableDiv.is(":visible")){
+            dataTableDiv.fadeOut();
+        } else {
+            dataTableDiv.fadeIn();
+            $(dataTableDiv).highlight("highlight");
+        }
+    });
+};
 

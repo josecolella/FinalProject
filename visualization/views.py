@@ -32,7 +32,7 @@ class Index (ListView):
     """
     template_name = 'visualization/index.html'
     form_class = UploadFileForm
-    model = VisualizationModelDescription.objects.all()
+    model = sorted(VisualizationModelDescription.objects.all())
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {
