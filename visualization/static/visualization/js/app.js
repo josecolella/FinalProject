@@ -59,30 +59,33 @@ var manageImportClose = function() {
         dropzone.fadeOut("fast");
         $("#import-info").remove();
     }
-}
+};
 
+var manageImportOpen = function() {
 
-$("#import").click(function() {
-    $("chart").hide();
-    $(".editor").hide();
+    $("#import").click(function() {
+        console.log("here");
+        $("#chart").hide();
+        $(".editor").hide();
 
-    var dropzone = $("#dropzone");
-    if (dropzone.is(":visible")) {
-        dropzone.fadeOut("slow");
-        $("#import-info").remove();
-    } else {
-        dropzone.fadeIn("slow");
-        dropzone.prepend("<div class='alert alert-info fade in' id='import-info'><button type='button' class='close data-dismiss='alert' aria-hidden='true' onclick='closeAlert();'>×</button><strong>Drop</strong> or <strong>Click</strong> on the panel below to import your data sets</div>");
+        var dropzone = $("#dropzone");
+        if (dropzone.is(":visible")) {
+            dropzone.fadeOut("slow");
+            $("#import-info").remove();
+        } else {
+            dropzone.fadeIn("slow");
+            dropzone.prepend("<div class='alert alert-info fade in' id='import-info'><button type='button' class='close data-dismiss='alert' aria-hidden='true' onclick='closeAlert();'>×</button><strong>Drop</strong> or <strong>Click</strong> on the panel below to import your data sets</div>");
 
-    }
+        }
 
-});
+    });
 
+};
 
 var closeAlert = function() {
     $(".alert")
         .alert("close");
-}
+};
 
 
 $("#workspace").click(function() {
@@ -285,16 +288,18 @@ var showAddPopOver = function() {
 };
 
 
-
+/**
+ * This function manages the integration of an excel-like grid that
+ * mirrors the model that is being visualized
+ */
 var addDataGrid = function() {
 
     $("#data-grid").click(function() {
-        console.log("Hello");
         var workspace = $("#workspace");
         var dataTableDiv = $("#dataTable");
         //Doesn't exist create it
         if (dataTableDiv.length == 0) {
-            workspace.append('<div id="dataTable" class="highlight"></div>');
+            workspace.append('<div id="dataTable"></div>');
             $("#dataTable").handsontable({
                 data: [],
                 dataSchema: {id: null, name: {first: null, last: null}, address: null},
@@ -313,8 +318,369 @@ var addDataGrid = function() {
             dataTableDiv.fadeOut();
         } else {
             dataTableDiv.fadeIn();
-            $(dataTableDiv).highlight("highlight");
         }
     });
 };
+
+/**
+ * This function manages everything with adding a visualization model to svg panel that is
+ * in the workspace
+ */
+var addChartEventHandler = function() {
+
+
+    var isSVGFree = function() {
+        var isFree = false;
+        var length = $("svg").children().length;
+        if (length == 0) {
+            isFree = true;
+        }
+
+        return isFree;
+
+    };
+    var addBarChart = function() {
+        $("#addbar").click(function() {
+            if (isSVGFree()) {
+                nv.addGraph(function() {
+                    var chart = nv.models.multiBarChart()
+                            .transitionDuration(350)
+                            .reduceXTicks(true)   //If 'false', every single x-axis tick label will be rendered.
+                            .rotateLabels(0)      //Angle to rotate x-axis labels.
+                            .showControls(true)   //Allow user to switch between 'Grouped' and 'Stacked' mode.
+                            .groupSpacing(0.1)    //Distance between each group of bars.
+                        ;
+
+                    chart.xAxis
+                        .tickFormat(d3.format(',f'));
+
+                    chart.yAxis
+                        .tickFormat(d3.format(',.1f'));
+
+                    d3.select('#chart1 svg')
+                        .datum(exampleData())
+                        .call(chart);
+
+                    nv.utils.windowResize(chart.update);
+
+                    return chart;
+                });
+            }
+        });
+    };
+
+
+    var addLineChart = function () {
+        if(isSVGFree()) {
+            $("#addline").click(function() {
+
+
+
+                /*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
+                nv.addGraph(function() {
+                    var chart = nv.models.lineChart()
+                            .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+                            .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
+                            .transitionDuration(350)  //how fast do you want the lines to transition?
+                            .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
+                            .showYAxis(true)        //Show the y-axis
+                            .showXAxis(true)        //Show the x-axis
+                        ;
+
+                    chart.xAxis     //Chart x-axis settings
+                        .axisLabel('Time (ms)')
+                        .tickFormat(d3.format(',r'));
+
+                    chart.yAxis     //Chart y-axis settings
+                        .axisLabel('Voltage (v)')
+                        .tickFormat(d3.format('.02f'));
+
+                    /* Done setting the chart up? Time to render it!*/
+                    var myData = sinAndCos();   //You need data...
+
+                    d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.
+                        .datum(myData)         //Populate the <svg> element with chart data...
+                        .call(chart);          //Finally, render the chart!
+
+                    //Update the chart when window resizes.
+                    nv.utils.windowResize(function() { chart.update() });
+                    return chart;
+                });
+                /**************************************
+                 * Simple test data generator
+                 */
+                function sinAndCos() {
+                    var sin = [],sin2 = [],
+                        cos = [];
+
+                    //Data is represented as an array of {x,y} pairs.
+                    for (var i = 0; i < 100; i++) {
+                        sin.push({x: i, y: Math.sin(i/10)});
+                        sin2.push({x: i, y: Math.sin(i/10) *0.25 + 0.5});
+                        cos.push({x: i, y: .5 * Math.cos(i/10)});
+                    }
+
+                    //Line chart data should be sent as an array of series objects.
+                    return [
+                        {
+                            values: sin,      //values - represents the array of {x,y} data points
+                            key: 'Sine Wave', //key  - the name of the series.
+                            color: '#ff7f0e'  //color - optional: choose your own line color.
+                        },
+                        {
+                            values: cos,
+                            key: 'Cosine Wave',
+                            color: '#2ca02c'
+                        },
+                        {
+                            values: sin2,
+                            key: 'Another sine wave',
+                            color: '#7777ff',
+                            area: true      //area - set to true if you want this line to turn into a filled area chart.
+                        }
+                    ];
+                }
+
+            });
+        }
+    }
+
+    var addBubbleChart = function() {
+        if(isSVGFree()) {
+            $("#addscatterbubble").click(function() {
+
+
+                nv.addGraph(function() {
+                    var chart = nv.models.scatterChart()
+                        .showDistX(true)    //showDist, when true, will display those little distribution lines on the axis.
+                        .showDistY(true)
+                        .transitionDuration(350)
+                        .color(d3.scale.category10().range());
+
+                    //Configure how the tooltip looks.
+                    chart.tooltipContent(function(key) {
+                        return '<h3>' + key + '</h3>';
+                    });
+
+                    //Axis settings
+                    chart.xAxis.tickFormat(d3.format('.02f'));
+                    chart.yAxis.tickFormat(d3.format('.02f'));
+
+                    //We want to show shapes other than circles.
+                    chart.scatter.onlyCircles(false);
+
+                    var myData = randomData(4,40);
+                    d3.select('#chart svg')
+                        .datum(myData)
+                        .call(chart);
+
+                    nv.utils.windowResize(chart.update);
+
+                    return chart;
+                });
+
+                /**************************************
+                 * Simple test data generator
+                 */
+                function randomData(groups, points) { //# groups,# points per group
+                    var data = [],
+                        shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'],
+                        random = d3.random.normal();
+
+                    for (i = 0; i < groups; i++) {
+                        data.push({
+                            key: 'Group ' + i,
+                            values: []
+                        });
+
+                        for (var j = 0; j < points; j++) {
+                            data[i].values.push({
+                                x: random()
+                                , y: random()
+                                , size: Math.random()   //Configure the size of each scatter point
+                                , shape: (Math.random() > 0.95) ? shapes[j % 6] : "circle"  //Configure the shape of each scatter point.
+                            });
+                        }
+                    }
+
+                    return data;
+                }
+            });
+        }
+    };
+
+
+
+    var addPieChart = function() {
+        if(isSVGFree()) {
+            $("#addpie").click(function() {
+
+
+                //Regular pie chart example
+                nv.addGraph(function() {
+                    var chart = nv.models.pieChart()
+                        .x(function(d) { return d.label })
+                        .y(function(d) { return d.value })
+                        .showLabels(true);
+
+                    d3.select("#chart svg")
+                        .datum(exampleData())
+                        .transition().duration(350)
+                        .call(chart);
+
+                    return chart;
+                });
+
+//Donut chart example
+                nv.addGraph(function() {
+                    var chart = nv.models.pieChart()
+                            .x(function(d) { return d.label })
+                            .y(function(d) { return d.value })
+                            .showLabels(true)     //Display pie labels
+                            .labelThreshold(.05)  //Configure the minimum slice size for labels to show up
+                            .labelType("percent") //Configure what type of data to show in the label. Can be "key", "value" or "percent"
+                            .donut(true)          //Turn on Donut mode. Makes pie chart look tasty!
+                            .donutRatio(0.35)     //Configure how big you want the donut hole size to be.
+                        ;
+
+                    d3.select("#chart2 svg")
+                        .datum(exampleData())
+                        .transition().duration(350)
+                        .call(chart);
+
+                    return chart;
+                });
+
+//Pie chart example data. Note how there is only a single array of key-value pairs.
+                function exampleData() {
+                    return  [
+                        {
+                            "label": "One",
+                            "value" : 29.765957771107
+                        } ,
+                        {
+                            "label": "Two",
+                            "value" : 0
+                        } ,
+                        {
+                            "label": "Three",
+                            "value" : 32.807804682612
+                        } ,
+                        {
+                            "label": "Four",
+                            "value" : 196.45946739256
+                        } ,
+                        {
+                            "label": "Five",
+                            "value" : 0.19434030906893
+                        } ,
+                        {
+                            "label": "Six",
+                            "value" : 98.079782601442
+                        } ,
+                        {
+                            "label": "Seven",
+                            "value" : 13.925743130903
+                        } ,
+                        {
+                            "label": "Eight",
+                            "value" : 5.1387322875705
+                        }
+                    ];
+                }
+            });
+        }
+    };
+
+    var addStackedAreaChart = function() {
+        if(isSVGFree()) {
+            $("#addstacked-area").click(function() {
+
+                /*Data sample:
+                 {
+                 "key" : "North America" ,
+                 "values" : [ [ 1025409600000 , 23.041422681023] , [ 1028088000000 , 19.854291255832],
+                 [ 1030766400000 , 21.02286281168],
+                 [ 1033358400000 , 22.093608385173],
+                 [ 1036040400000 , 25.108079299458],
+                 [ 1038632400000 , 26.982389242348]
+                 ...
+
+                 */
+                d3.json('http://nvd3.org/examples/stackedAreaData.json', function(data) {
+                    nv.addGraph(function() {
+                        var chart = nv.models.stackedAreaChart()
+                            .margin({right: 100})
+                            .x(function(d) { return d[0] })   //We can modify the data accessor functions...
+                            .y(function(d) { return d[1] })   //...in case your data is formatted differently.
+                            .useInteractiveGuideline(true)    //Tooltips which show all data points. Very nice!
+                            .rightAlignYAxis(true)      //Let's move the y-axis to the right side.
+                            .transitionDuration(500)
+                            .showControls(true)       //Allow user to choose 'Stacked', 'Stream', 'Expanded' mode.
+                            .clipEdge(true);
+
+                        //Format x-axis labels with custom function.
+                        chart.xAxis
+                            .tickFormat(function(d) {
+                                return d3.time.format('%x')(new Date(d))
+                            });
+
+                        chart.yAxis
+                            .tickFormat(d3.format(',.2f'));
+
+                        d3.select('#chart svg')
+                            .datum(data)
+                            .call(chart);
+
+                        nv.utils.windowResize(chart.update);
+
+                        return chart;
+                    });
+                })
+
+            });
+        }
+    }
+
+
+
+
+    addBarChart();
+    addLineChart();
+    addBubbleChart();
+    addStackedAreaChart();
+    addPieChart();
+};
+
+
+/**
+ * This function deals with
+ */
+var addEditor = function() {
+    $("#editor").click(function () {
+        var workspace = $("#workspace");
+        var codeEditor = $("#texteditor");
+
+        if (codeEditor.length == 0) {
+
+            workspace.append('<div id="texteditor"><form><textarea id="code" name="code"></textarea></form></div>');
+
+
+            var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+                lineNumbers: true,
+                mode: "javascript",
+                tabMode: 'indent'
+            });
+
+        } else if(codeEditor.is(":visible")){
+            console.log("It's visible");
+            codeEditor.slideUp();
+        } else {
+            console.log("It's not visible");
+            codeEditor.slideDown();
+        }
+
+    });
+};
+
 

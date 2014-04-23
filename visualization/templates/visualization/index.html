@@ -40,10 +40,10 @@
             $(".editor").hide();
             showAddPopOver();
             addDataGrid();
-            {#            $("#work,#editor,#import,#export").click(function() {#}
-            {#               $(this).css('box-shadow', '0 0 2px');#}
-            {##}
-            {#            });#}
+            addChartEventHandler();
+            addEditor();
+            manageImportClose();
+            manageImportOpen();
             $("#csv").click(function() {
                 $.ajax({
                     url: '/csv',
@@ -67,6 +67,8 @@
                         });
 
             });
+
+
         });
     </script>
 {% endblock headjs %}
@@ -91,7 +93,7 @@
                             <div class="panel-default">
                                 <h4 class="panel-title">
                                     <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
-                                        <p>{{ model.title }}<button class="btn btn-default btn-sm addbtn" data-container="body" data-toggle="popover" data-placement="right" data-content="Click to add {{ model.title|capfirst }} model"><i class="fa fa-plus"></i></button></span><span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
+                                        <p>{{ model.title }}<button class="btn btn-default btn-sm addbtn" id="add{{ model.title|slugify }}"data-container="body" data-toggle="popover" data-placement="right" data-content="Click to add {{ model.title|capfirst }} model"><i class="fa fa-plus"></i></button></span><span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
                                     </li>
                                 </h4>
                             </div>
@@ -120,19 +122,19 @@
                             <a class="dropdown-toggle menu-option" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
                         </li>
                         <li class="dropdown " id="import" >
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="/import">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="divider"></li>
-                                <li><a href="#">JSON</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">CSV</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Excel</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">txt</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">SQL</a></li>
-                            </ul>
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
+                            {#                            <ul class="dropdown-menu" role="menu">#}
+                            {#                                <li class="divider"></li>#}
+                            {#                                <li><a href="#">JSON</a></li>#}
+                            {#                                <li class="divider"></li>#}
+                            {#                                <li><a href="#">CSV</a></li>#}
+                            {#                                <li class="divider"></li>#}
+                            {#                                <li><a href="#">Excel</a></li>#}
+                            {#                                <li class="divider"></li>#}
+                            {#                                <li><a href="#">txt</a></li>#}
+                            {#                                <li class="divider"></li>#}
+                            {#                                <li><a href="#">SQL</a></li>#}
+                            {#                            </ul>#}
                         </li>
                         <li class="dropdown" id="export">
                             <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
@@ -152,88 +154,23 @@
                     </ul>
                 </div>
                 <div id="workspace">
-                    {#                <div id="dropzone"  >#}
-                    {#                    <!-- IMPORTANT enctype attribute! -->#}
-                    {#                    <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">#}
-                    {#                        {% csrf_token %}#}
-                    {#                    </form>#}
-                    {#                    <p>{{ form.non_field_errors }}</p>#}
-                    {#                    <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>#}
-                    {#                    <p>#}
-                    {#                        {{ form.docfile.errors }}#}
-                    {#                        {{ form.docfile }}#}
-                    {#                    </p>#}
-                    {#                </div>#}
+                    <div id="dropzone"  >
+                        <!-- IMPORTANT enctype attribute! -->
+                        <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                        </form>
+                        <p>{{ form.non_field_errors }}</p>
+                        <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+                        <p>
+                            {{ form.docfile.errors }}
+                            {{ form.docfile }}
+                        </p>
+                    </div>
 
 
                     <div id="chart">
                         <svg></svg>
                     </div>
-
-                    {#                <article id="texteditor">#}
-                    {#                    <form><textarea id="code" name="code">#}
-                    {##}
-                    {#                    </textarea></form>#}
-                    <script>
-                        {#                        var data =  [#}
-                        {#                            {#}
-                        {#                                "label": "One",#}
-                        {#                                "value" : 29.765957771107#}
-                        {#                            } ,#}
-                        {#                            {#}
-                        {#                                "label": "Two",#}
-                        {#                                "value" : 0#}
-                        {#                            } ,#}
-                        {#                            {#}
-                        {#                                "label": "Three",#}
-                        {#                                "value" : 135#}
-                        {#                            } ,#}
-                        {#                            {#}
-                        {#                                "label": "Four",#}
-                        {#                                "value" : 196.45946739256#}
-                        {#                            } ,#}
-                        {#                            {#}
-                        {#                                "label": "Five",#}
-                        {#                                "value" : 0.19434030906893#}
-                        {#                            } ,#}
-                        {#                            {#}
-                        {#                                "label": "Six",#}
-                        {#                                "value" : 98.079782601442#}
-                        {#                            } ,#}
-                        {#                            {#}
-                        {#                                "label": "Seven",#}
-                        {#                                "value" : 13.925743130903#}
-                        {#                            } ,#}
-                        {#                            {#}
-                        {#                                "label": "Eight",#}
-                        {#                                "value" : 100#}
-                        {#                            }#}
-                        {#                        ];#}
-                        {#                        nv.addGraph(function() {#}
-                        {#                            var chart = nv.models.pieChart()#}
-                        {#                                    .x(function(d) { return d.label })#}
-                        {#                                    .y(function(d) { return d.value })#}
-                        {#                                    .showLabels(true);#}
-                        {##}
-                        {#                            d3.select("#chart svg")#}
-                        {#                                    .datum(data)#}
-                        {#                                    .transition().duration(1200)#}
-                        {#                                    .call(chart);#}
-                        {##}
-                        {#                            return chart;#}
-                        {#                        });#}
-                    </script>
-                    {#                    <script>#}
-                    {##}
-                    {#                        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {#}
-                    {#                            lineNumbers: true,#}
-                    {#                            mode: "javascript",#}
-                    {#                            tabMode: 'indent'#}
-                    {#                        });#}
-                    {#                    </script>#}
-
-                    {#                </article>#}
-
 
                 </div>
             </div>
