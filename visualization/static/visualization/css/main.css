@@ -121,3 +121,19 @@ footer {
 #dataTable {
     margin-top: 1em;
 }
+
+.fa-upload {
+    margin-right: 0.3em;
+}
+
+#uploadButton {
+    border-radius: 1em;
+    font-size:1.5em;
+    float:right;
+    margin-right: 24em;
+    box-shadow: inset 0 0 0.1em #e8e8e8, 0 0 0.01em;
+}
+
+.remove-file {
+    margin-top: 0.5em;
+}

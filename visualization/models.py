@@ -1,7 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 import datetime
 from django.utils import timezone
-
+import jsonfield
 
 class VisualizationModelDescription(models.Model):
 
@@ -62,39 +63,17 @@ class UploadFile(models.Model):
     file = models.FileField(upload_to='files/%Y/%m/%d')
 
 
-class Description(models.Model):
 
+class VisualizationUser(User):
     """
-    Denotes what a description should be like. Meta class
+    This class represents the user that will be using the service
     """
-    description = models.TextField(db_index=True, max_length=200)
-
-    meta = True
+    uploadedFiles = jsonfield.JSONField()
 
 
-class ProjectDescription(Description):
-
-    """
-    This class represents the information about the project
-    and what is trying to be accomplished. This is what is
-    known as the
-    Application Definition Statement.
-    Concise 1-sentence declaration of what your app does and who it's specifically aimed at.
-
-    What is the application experience like?
-    What is the application meant to do?
-    Who is the intended audience?
-    """
-    title = models.CharField(db_index=True, max_length=50)
-
-
-class JavaScriptDescription(Description):
-    pathToImage = models.CharField(max_length=50)
-
-
-class PythonDescription(Description):
-    pathToImage = models.CharField(max_length=50)
-
-
-class RDescription(Description):
-    pathToImage = models.CharField(max_length=50)
+    def __str__(self):
+        """
+        __str__() -> String representation of a visualization user
+        Returns the users username, email, and uploadedFiles
+        """
+        return self.username + " " + self.email + " " + str(self.uploadedFiles)

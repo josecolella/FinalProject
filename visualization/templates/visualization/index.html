@@ -31,46 +31,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js" charset="utf-8"></script>
     <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
     <script src="{% static "visualization/ndv3/nv.d3.min.js" %}"></script>
-
-    <script>
-        $( document ).ready(function() {
-            changeTitleCaretAction();
-            search();
-            $("#dropzone").hide();
-            $(".editor").hide();
-            showAddPopOver();
-            addDataGrid();
-            addChartEventHandler();
-            addEditor();
-            manageImportClose();
-            manageImportOpen();
-            $("#csv").click(function() {
-                $.ajax({
-                    url: '/csv',
-                    type: 'GET',
-                    dataType: '',
-                    success: function(data) {
-                        alert("Data received");
-                    },
-                    error: function(data) {
-
-                    }
-                })
-                        .done(function() {
-                            console.log("success");
-                        })
-                        .fail(function() {
-                            console.log("error");
-                        })
-                        .always(function() {
-                            console.log("complete");
-                        });
-
-            });
-
-
-        });
-    </script>
 {% endblock headjs %}
 {% block content %}
     <div class="container-fluid">
@@ -79,8 +39,8 @@
             <div class="col-sm-3 col-md-2 sidebar panel panel-info">
                 <form name="search" id="search" role="form">
                     <div class="input-group form-group search-group">
-                        <input type="text" class="form-control" id="search-term" placeholder="Search models..." required>
-                        <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search" onclick="search()"></span></span>
+                        <input type="text" class="form-control" id="search-term" placeholder="Search models..." required maxlength="20">
+                        <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search"></span></span>
                     </div>
                 </form>
                 <ul class="nav nav-sidebar">
@@ -156,7 +116,7 @@
                 <div id="workspace">
                     <div id="dropzone"  >
                         <!-- IMPORTANT enctype attribute! -->
-                        <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">
+                        <form class="dropzone" id="myDropzone" action="#" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                         </form>
                         <p>{{ form.non_field_errors }}</p>
@@ -165,9 +125,10 @@
                             {{ form.docfile.errors }}
                             {{ form.docfile }}
                         </p>
+
+                        {#                        <img src="{% static "visualization/img/delete.svg"  %}" alt="Click me to remove the file." data-dz-remove />#}
+                        <button type="button" class="btn btn-default pagination-centered" id="uploadButton"><i class="fa fa-upload"></i>Upload</button>
                     </div>
-
-
                     <div id="chart">
                         <svg></svg>
                     </div>
@@ -179,8 +140,6 @@
 {% endblock %}
 {% block javascript %}
     {% load staticfiles %}
-
-
     <script type="application/javascript">
         function allowDrop(ev)
         {
@@ -201,28 +160,55 @@
     </script>
 
     <script type="text/javascript">
-        Dropzone.options.myDropzone = {
-
-            // Prevents Dropzone from uploading dropped files immediately
-            autoProcessQueue : false,
-
-            init : function() {
-                var submitButton = document.querySelector("#submit-all")
-                myDropzone = this;
-
-                submitButton.addEventListener("click", function() {
-                    myDropzone.processQueue();
-                    // Tell Dropzone to process all queued files.
-                });
-
-                // You might want to show the submit button only when
-                // files are dropped here:
-                this.on("addedfile", function() {
-                    // Show submit button here and/or inform user to click it.
-                });
-
-            }
-        };
+        {#    var manageDropzone = function() {#}
+        {#        Dropzone.options.myDropzone = {#}
+        {#            // Prevents Dropzone from uploading dropped files immediately#}
+        {#            autoProcessQueue : false,#}
+        {#            acceptedFiles: 'application/vnd.ms-excel,.txt,.json,.Rdata,text/csv',#}
+        {#            addRemoveLinks: false,#}
+        {#            previewsContainer: null,#}
+        {#            init : function() {#}
+        {#                var submitButton = document.querySelector("#uploadButton");#}
+        {#                myDropzone = this;#}
+        {##}
+        {#                submitButton.addEventListener("click", function() {#}
+        {#                    myDropzone.processQueue();#}
+        {#                    // Tell Dropzone to process all queued files.#}
+        {#                });#}
+        {##}
+        {#                // You might want to show the submit button only when#}
+        {#                // files are dropped here:#}
+        {#                this.on("addedfile", function(file) {#}
+        {#                    console.log(file['name']);#}
+        {#                    var removeButton = Dropzone.createElement('<button type="button" class="btn btn-danger remove-file">Remove File</button>');#}
+        {##}
+        {##}
+        {#                    // Capture the Dropzone instance as closure.#}
+        {#                    var _this = this;#}
+        {##}
+        {#                    // Listen to the click event#}
+        {#                    removeButton.addEventListener("click", function(e) {#}
+        {#                        // Make sure the button click doesn't submit the form:#}
+        {#                        e.preventDefault();#}
+        {#                        e.stopPropagation();#}
+        {##}
+        {#                        // Remove the file preview.#}
+        {#                        _this.removeFile(file);#}
+        {#                        // If you want to the delete the file on the server as well,#}
+        {#                        // you can do the AJAX request here.#}
+        {#                    });#}
+        {##}
+        {#                    // Add the button to the file preview element.#}
+        {#                    file.previewElement.appendChild(removeButton);#}
+        {#                    $("#uploadButton").show();#}
+        {#                    // Show submit button here and/or inform user to click it.#}
+        {#                });#}
+        {##}
+        {##}
+        {#            }#}
+        {#        };#}
+        {#    };#}
+        manageDropzone();
     </script>
     <script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
     <script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>
