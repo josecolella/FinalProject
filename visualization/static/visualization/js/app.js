@@ -29,49 +29,37 @@ var changeTitleCaretAction = function() {
     });
 };
 
-
-
-
-
-
-
-/**
- * Function that binds the submit event to the search when the search glyphicon is clicked
- */
-//var search = function() {
-//    $('.glyphicon-search').bind("click", function() {
-//        if(!$("#search-term").val()) {
-//            alert("Search valid models");
-//        } else {
-//            $("#search").submit();
-//
-//        }
-//    });
-//};
-
-
 /**
  * Function that handles the fading out of the import panel
  */
 var manageImportClose = function() {
     var dropzone = $("#dropzone");
     if (dropzone.is(":visible")) {
+        hideImportPanelButtons();
         dropzone.fadeOut("fast");
+
         $("#import-info").remove();
     }
 };
 
+/**
+ * Function that manages the opening of the import panel
+ */
 var manageImportOpen = function() {
 
     $("#import").click(function() {
-        console.log("here");
+
         $("#chart").hide();
         $(".editor").hide();
+        $("#texteditor").hide();
+        hideImportPanelButtons();
 
         var dropzone = $("#dropzone");
         if (dropzone.is(":visible")) {
             dropzone.fadeOut("slow");
             $("#import-info").remove();
+            hideImportPanelButtons();
+
         } else {
             dropzone.fadeIn("slow");
             dropzone.prepend("<div class='alert alert-info fade in' id='import-info'><button type='button' class='close data-dismiss='alert' aria-hidden='true' onclick='closeAlert();'>×</button><strong>Drop</strong> or <strong>Click</strong> on the panel below to import your data sets</div>");
@@ -82,16 +70,51 @@ var manageImportOpen = function() {
 
 };
 
-var closeAlert = function() {
-    $(".alert")
-        .alert("close");
+/**
+ * Function that shows the available options for the import panel
+ */
+var showImportPanelButtons = function() {
+    $("#uploadButton").show();
+    $("#clearAllButton").show();
 };
 
 
-$("#workspace").click(function() {
-    manageImportClose();
+/**
+ * Function that hides the available options for the import panel
+ */
+var hideImportPanelButtons = function() {
+    $("#uploadButton").hide();
+    $("#clearAllButton").hide();
+};
+
+var showVisualizationModel = function() {
     $("#chart").show();
+};
+
+var hideVisualizationModel = function() {
+    $("#chart").hide();
+};
+
+var showEditor = function() {
+    $(".editor").show();
+};
+
+var removeEditor = function() {
     $(".editor").remove();
+};
+
+var showDataGrid = function() {
+    $("#dataTable").show();
+};
+
+var hideDataGrid = function() {
+    $("#dataTable").hide();
+};
+
+$("#workspace-view").click(function() {
+
+    showVisualizationModel();
+    manageImportClose();
 
 });
 
@@ -99,12 +122,6 @@ $("#export").click(function() {
     manageImportClose();
 });
 
-
-$("#editor").click(function() {
-    manageImportClose();
-    $(".editor").show();
-    $("#playground").append('<div class="editor"><script>var myCodeMirror = CodeMirror(document.getElementById("chart"), {value: "function myScript(){return 100;}\n",mode:  "javascript"});</script></div>');
-});
 
 
 var generatePDF = function() {
@@ -202,8 +219,6 @@ var generatePDF = function() {
     pdf.save('Test.pdf');
 
 };
-
-
 
 
 
@@ -654,10 +669,12 @@ var addChartEventHandler = function() {
 
 
 /**
- * This function deals with
+ * This function deals with adding the editor to the workspace
  */
 var addEditor = function() {
     $("#editor").click(function () {
+        manageImportClose();
+
         var workspace = $("#workspace");
         var codeEditor = $("#texteditor");
 
@@ -685,85 +702,85 @@ var addEditor = function() {
 
 
 
+/*
+ var manageDropzone = function() {
+ Dropzone.options.myDropzone = {
+ // Prevents Dropzone from uploading dropped files immediately
+ autoProcessQueue : false,
+ acceptedFiles: 'application/vnd.ms-excel,.txt,.json,.Rdata,text/csv',
+ addRemoveLinks: false,
+ previewsContainer: null,
+ init : function() {
+ var submitButton = document.querySelector("#uploadButton");
+ var myDropzone = this;
 
-var manageDropzone = function() {
-    Dropzone.options.myDropzone = {
-        // Prevents Dropzone from uploading dropped files immediately
-        autoProcessQueue : false,
-        acceptedFiles: 'application/vnd.ms-excel,.txt,.json,.Rdata,text/csv',
-        addRemoveLinks: false,
-        previewsContainer: null,
-        init : function() {
-            var submitButton = document.querySelector("#uploadButton");
-            var myDropzone = this;
-
-            submitButton.addEventListener("click", function() {
-                myDropzone.processQueue();
-                // Tell Dropzone to process all queued files.
-            });
-
-
-            // You might want to show the submit button only when
-            // files are dropped here:
-            this.on("addedfile", function(file) {
-
-                var removeButton = Dropzone.createElement('<button type="button" class="btn btn-danger remove-file">Remove File</button>');
-
-                // Capture the Dropzone instance as closure.
-                var _this = this;
-
-                // Listen to the click event
-                removeButton.addEventListener("click", function(e) {
-                    // Make sure the button click doesn't submit the form:
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    // Remove the file preview.
-                    _this.removeFile(file);
-                    // If you want to the delete the file on the server as well,
-                    // you can do the AJAX request here.
-                });
-
-                // Add the button to the file preview element.
-                file.previewElement.appendChild(removeButton);
-                $("#uploadButton").show();
-                // Show submit button here and/or inform user to click it.
-            });
-
-            this.on("success", function(file) {
-                ///TODO: Create table with files that have been uploaded by the user if the table exists, then just add files
-                ///TODO: Create an additional tab for My Files
-                var fileUpload = file["name"];
+ submitButton.addEventListener("click", function() {
+ myDropzone.processQueue();
+ // Tell Dropzone to process all queued files.
+ });
 
 
-                //The user has uploaded no previous files
-                if ($("#files").length == 0 && localStorage["files"] == null) {
-                    var menu = $(".menu-options");
-                    menu.append('<li class="dropdown" id="files"><a class="dropdown-toggle menu-option" href="#">My Files<i class="fa fa-files-o fa-fw menu-glyphicons"></i></a></li>');
-                    localStorage.setItem("files", JSON.stringify(fileUpload));
-                } else {
-                    //The user has uploaded previous files
-                    var array = [];
-                    var filesUploaded = JSON.parse(localStorage.getItem("files"));
-                    console.log(filesUploaded);
-                    filesUploaded.push(fileUpload);
-                    console.log(filesUploaded);
-                    localStorage.setItem("files", JSON.stringify(fileUpload));
-                }
+ // You might want to show the submit button only when
+ // files are dropped here:
+ this.on("addedfile", function(file) {
 
-            });
-        }
-    };
+ var removeButton = Dropzone.createElement('<button type="button" class="btn btn-danger remove-file">Remove File</button>');
+
+ // Capture the Dropzone instance as closure.
+ var _this = this;
+
+ // Listen to the click event
+ removeButton.addEventListener("click", function(e) {
+ // Make sure the button click doesn't submit the form:
+ e.preventDefault();
+ e.stopPropagation();
+
+ // Remove the file preview.
+ _this.removeFile(file);
+ // If you want to the delete the file on the server as well,
+ // you can do the AJAX request here.
+ });
+
+ // Add the button to the file preview element.
+ file.previewElement.appendChild(removeButton);
+ $("#uploadButton").show();
+ // Show submit button here and/or inform user to click it.
+ });
+
+ this.on("success", function(file) {
+ ///TODO: Create table with files that have been uploaded by the user if the table exists, then just add files
+ ///TODO: Create an additional tab for My Files
+ var fileUpload = file["name"];
 
 
-};
+ //The user has uploaded no previous files
+ if ($("#files").length == 0 && localStorage["files"] == null) {
+ var menu = $(".menu-options");
+ menu.append('<li class="dropdown" id="files"><a class="dropdown-toggle menu-option" href="#">My Files<i class="fa fa-files-o fa-fw menu-glyphicons"></i></a></li>');
+ localStorage.setItem("files", JSON.stringify(fileUpload));
+ } else {
+ //The user has uploaded previous files
+ var array = [];
+ var filesUploaded = JSON.parse(localStorage.getItem("files"));
+ console.log(filesUploaded);
+ filesUploaded.push(fileUpload);
+ console.log(filesUploaded);
+ localStorage.setItem("files", JSON.stringify(fileUpload));
+ }
 
+ });
+ }
+ };
+
+
+ };
+ */
 
 var manageOnlyTableOpen = function() {
-    $("#dropzone").hide();
-    $("#chart").hide();
-    $("#texteditor").hide();
-    $("#data-grid").hide();
+    manageImportClose();
+    hideVisualizationModel();
+    removeEditor();
+    hideDataGrid();
 };
 var fileTable = function() {
 
@@ -821,12 +838,13 @@ var getVisualizationModelTitles = function() {
 
 var visualizationModels = getVisualizationModelTitles();
 
+
 $(function() {
     var modelTitles = getVisualizationModelTitles();
     changeTitleCaretAction();
     $("#dropzone").hide();
     $(".editor").hide();
-    $("#uploadButton").hide();
+
     showAddPopOver();
     addDataGrid();
     addChartEventHandler();
@@ -876,11 +894,13 @@ $(function() {
         var input = $(this).val();
         var regex = new RegExp(input.replace(input, '^'+ input), "i");
         $.each(modelTitles, function(index, value) {
-           if (!regex.exec(index)) {
-               $(value).slideUp();
-           } else if(input === "") {
-               $(value).slideDown();
-           }
+            if (!regex.exec(index)) {
+                $(value).slideUp();
+            } else if(input === "") {
+                $(value).slideDown();
+            }
         });
     });
 });
+
+

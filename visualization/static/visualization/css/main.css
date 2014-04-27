@@ -126,14 +126,47 @@ footer {
     margin-right: 0.3em;
 }
 
-#uploadButton {
+#uploadButton,
+#clearAllButton {
     border-radius: 1em;
     font-size:1.5em;
-    float:right;
-    margin-right: 24em;
     box-shadow: inset 0 0 0.1em #e8e8e8, 0 0 0.01em;
+}
+
+#uploadButton:focus,
+#clearAllButton:focus {
+    outline: 0 !important;
+    -webkit-appearance:none;
+
+}
+
+
+.dropzone-options {
+    margin-left: 30em;
 }
 
 .remove-file {
     margin-top: 0.5em;
+}
+
+.alert-vex-content {
+    border-radius: 0.5em;
+    font-size: 1.5em;
+}
+
+.alert-vex-close {
+    border-radius: 1em;
+}
+
+
+.dropdown-menu {
+    background-color: #e8e8e8;
+}
+
+.dropdown-option {
+    text-align: center;
+}
+
+.limit {
+    display: inline-block;
 }
