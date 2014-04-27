@@ -37,7 +37,6 @@ var manageImportClose = function() {
     if (dropzone.is(":visible")) {
         hideImportPanelButtons();
         dropzone.fadeOut("fast");
-
         $("#import-info").remove();
     }
 };
@@ -49,9 +48,9 @@ var manageImportOpen = function() {
 
     $("#import").click(function() {
 
-        $("#chart").hide();
-        $(".editor").hide();
-        $("#texteditor").hide();
+        hideVisualizationModel();
+        hideEditor();
+        hideDataGrid();
         hideImportPanelButtons();
 
         var dropzone = $("#dropzone");
@@ -96,11 +95,11 @@ var hideVisualizationModel = function() {
 };
 
 var showEditor = function() {
-    $(".editor").show();
+    $("#texteditor").show();
 };
 
-var removeEditor = function() {
-    $(".editor").remove();
+var hideEditor = function() {
+    $("#texteditor").hide();
 };
 
 var showDataGrid = function() {
@@ -310,6 +309,8 @@ var showAddPopOver = function() {
 var addDataGrid = function() {
 
     $("#data-grid").click(function() {
+        manageImportClose();
+        hideEditor();
         var workspace = $("#workspace");
         var dataTableDiv = $("#dataTable");
         //Doesn't exist create it
@@ -674,7 +675,7 @@ var addChartEventHandler = function() {
 var addEditor = function() {
     $("#editor").click(function () {
         manageImportClose();
-
+        hideDataGrid();
         var workspace = $("#workspace");
         var codeEditor = $("#texteditor");
 
@@ -779,7 +780,7 @@ var addEditor = function() {
 var manageOnlyTableOpen = function() {
     manageImportClose();
     hideVisualizationModel();
-    removeEditor();
+    hideEditor();
     hideDataGrid();
 };
 var fileTable = function() {
