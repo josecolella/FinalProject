@@ -105,13 +105,13 @@
                 <div id="menu">
                     <ul class="nav nav-tabs menu-options">
                         <li class="dropdown" id="workspace-view">
-                            <a class="dropdown-toggle menu-option" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
                         </li>
                         <li class="dropdown" id="data-grid">
-                            <a class="menu-option" href="#" id="work">Data Grid<i class="fa fa-table"></i></a>
+                            <a class="menu-option" data-toggle="dropdown" href="#" >Data Grid<i class="fa fa-table"></i></a>
                         </li>
                         <li class="dropdown" id="editor">
-                            <a class="dropdown-toggle menu-option" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
                         </li>
                         <li class="dropdown" id="import" >
                             <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
@@ -119,15 +119,15 @@
                         <li class="dropdown" id="export">
                             <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li class="dropdown-option"><a href="#" onclick="generatePDF();">PDF</a></li>
+                                <li class="dropdown-option" id="exportPdf"><a href="#">PDF</a></li>
                                 <li class="divider"></li>
-                                <li class="dropdown-option"><a href="#">JPEG</a></li>
+                                <li class="dropdown-option" id="exportJpeg"><a href="#">JPEG</a></li>
                                 <li class="divider"></li>
-                                <li class="dropdown-option"><a id="csv" href="#">CSV</a></li>
+                                <li class="dropdown-option" id="exportCsv"><a href="#">CSV</a></li>
                                 <li class="divider"></li>
-                                <li class="dropdown-option"><a href="#">R</a></li>
+                                <li class="dropdown-option" id="exportR"><a href="#">R</a></li>
                                 <li class="divider"></li>
-                                <li class="dropdown-option"><a href="#">Python</a></li>
+                                <li class="dropdown-option" id="exportPython"><a href="#">Python</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -150,9 +150,7 @@
 
                     </span>
                     </div>
-                    <div id="chart">
-                        <svg></svg>
-                    </div>
+                    <div id="container"></div>
                 </div>
             </div>
         </div>
@@ -261,6 +259,11 @@
         };
     </script>
     <script src="{% static "visualization/jsPDF/jspdf.min.js" %}"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
+    <script src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
+    <script src="https://rawgithub.com/highslide-software/export-csv/master/export-csv.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/acorn.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/acorn_loose.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/util/walk.js"></script>

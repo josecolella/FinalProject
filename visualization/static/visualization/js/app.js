@@ -87,11 +87,11 @@ var hideImportPanelButtons = function() {
 };
 
 var showVisualizationModel = function() {
-    $("#chart").show();
+    $("#container").show();
 };
 
 var hideVisualizationModel = function() {
-    $("#chart").hide();
+    $("#container").hide();
 };
 
 var showEditor = function() {
@@ -122,104 +122,104 @@ $("#export").click(function() {
 });
 
 
+/*
+ var generatePDF = function() {
+ alert("Hello");
+ //    var doc = new jsPDF();
+ //    doc.text(20, 20, 'Hello world!');
+ //    doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
+ //    doc.addPage();
+ //    doc.text(20, 20, 'Do you like that?');
+ //    doc.setProperties({
+ //        title: 'Title',
+ //        subject: 'This is the subject',
+ //        author: 'James Hall',
+ //        keywords: 'generated, javascript, web 2.0, ajax',
+ //        creator: 'MEEE'
+ //    });
+ //
+ //
+ //    doc.save('Test.pdf');
+ //    var name = prompt('What is your name?');
+ //    var multiplier = prompt('Enter a number:');
+ //    multiplier = parseInt(multiplier);
+ //
+ //    var doc = new jsPDF();
+ //    doc.setFontSize(22);
+ //    doc.text(20, 20, 'Questions');
+ //    doc.setFontSize(16);
+ //    doc.setFont("helvetica");
+ //    doc.setFontSize(16);
+ //    doc.text(20, 30, 'This belongs to: ' + name);
+ //
+ //    for(var i = 1; i <= 12; i ++) {
+ //        doc.text(20, 30 + (i * 10), i + ' x ' + multiplier + ' = ___');
+ //    }
+ //
+ //    doc.addPage();
+ //    doc.setFontSize(22);
+ //    doc.text(20, 20, 'Answers');
+ //    doc.setFontSize(16);
+ //
+ //    for(var i = 1; i <= 12; i ++) {
+ //        doc.text(20, 30 + (i * 10), i + ' x ' + multiplier + ' = ' + (i * multiplier));
+ //    }
+ //    doc.save('Test.pdf');
+ //    var doc = new jsPDF();
+ //
+ //doc.text(20, 20, 'This is the default font.');
+ //
+ //doc.setFont("courier");
+ //doc.text(20, 30, 'This is courier normal.');
+ //
+ //doc.setFont("times");
+ //doc.setFontType("italic");
+ //doc.text(20, 40, 'This is times italic.');
+ //
+ //doc.setFont("helvetica");
+ //doc.setFontType("bold");
+ //doc.text(20, 50, 'This is helvetica bold.');
+ //doc.setTextColor(150);
+ //doc.setFont("courier");
+ //doc.setFontType("bolditalic");
+ //doc.text(20, 60, 'This is courier bolditalic.');
+ //
+ //doc.save('Test.pdf');
+ var pdf = new jsPDF('p','in','letter')
 
-var generatePDF = function() {
-    alert("Hello");
-//    var doc = new jsPDF();
-//    doc.text(20, 20, 'Hello world!');
-//    doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
-//    doc.addPage();
-//    doc.text(20, 20, 'Do you like that?');
-//    doc.setProperties({
-//        title: 'Title',
-//        subject: 'This is the subject',
-//        author: 'James Hall',
-//        keywords: 'generated, javascript, web 2.0, ajax',
-//        creator: 'MEEE'
-//    });
-//
-//
-//    doc.save('Test.pdf');
-//    var name = prompt('What is your name?');
-//    var multiplier = prompt('Enter a number:');
-//    multiplier = parseInt(multiplier);
-//
-//    var doc = new jsPDF();
-//    doc.setFontSize(22);
-//    doc.text(20, 20, 'Questions');
-//    doc.setFontSize(16);
-//    doc.setFont("helvetica");
-//    doc.setFontSize(16);
-//    doc.text(20, 30, 'This belongs to: ' + name);
-//
-//    for(var i = 1; i <= 12; i ++) {
-//        doc.text(20, 30 + (i * 10), i + ' x ' + multiplier + ' = ___');
-//    }
-//
-//    doc.addPage();
-//    doc.setFontSize(22);
-//    doc.text(20, 20, 'Answers');
-//    doc.setFontSize(16);
-//
-//    for(var i = 1; i <= 12; i ++) {
-//        doc.text(20, 30 + (i * 10), i + ' x ' + multiplier + ' = ' + (i * multiplier));
-//    }
-//    doc.save('Test.pdf');
-//    var doc = new jsPDF();
-//
-//doc.text(20, 20, 'This is the default font.');
-//
-//doc.setFont("courier");
-//doc.text(20, 30, 'This is courier normal.');
-//
-//doc.setFont("times");
-//doc.setFontType("italic");
-//doc.text(20, 40, 'This is times italic.');
-//
-//doc.setFont("helvetica");
-//doc.setFontType("bold");
-//doc.text(20, 50, 'This is helvetica bold.');
-//doc.setTextColor(150);
-//doc.setFont("courier");
-//doc.setFontType("bolditalic");
-//doc.text(20, 60, 'This is courier bolditalic.');
-//
-//doc.save('Test.pdf');
-    var pdf = new jsPDF('p','in','letter')
+ // source can be HTML-formatted string, or a reference
+ // to an actual DOM element from which the text will be scraped.
+ , source = $('#playground')[0]
 
-// source can be HTML-formatted string, or a reference
-// to an actual DOM element from which the text will be scraped.
-        , source = $('#playground')[0]
+ // we support special element handlers. Register them with jQuery-style
+ // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+ // There is no support for any other type of selectors
+ // (class, of compound) at this time.
+ , specialElementHandlers = {
+ // element with id of "bypass" - jQuery style selector
+ '#bypassme': function(element, renderer){
+ // true = "handled elsewhere, bypass text extraction"
+ return true
+ }
+ }
 
-// we support special element handlers. Register them with jQuery-style
-// ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
-// There is no support for any other type of selectors
-// (class, of compound) at this time.
-        , specialElementHandlers = {
-            // element with id of "bypass" - jQuery style selector
-            '#bypassme': function(element, renderer){
-                // true = "handled elsewhere, bypass text extraction"
-                return true
-            }
-        }
+ // all coords and widths are in jsPDF instance's declared units
+ // 'inches' in this case
+ pdf.fromHTML(
+ source // HTML string or DOM elem ref.
+ , 0.5 // x coord
+ , 0.5 // y coord
+ , {
+ 'width':7.5 // max width of content on PDF
+ , 'elementHandlers': specialElementHandlers
+ }
+ )
 
-// all coords and widths are in jsPDF instance's declared units
-// 'inches' in this case
-    pdf.fromHTML(
-        source // HTML string or DOM elem ref.
-        , 0.5 // x coord
-        , 0.5 // y coord
-        , {
-            'width':7.5 // max width of content on PDF
-            , 'elementHandlers': specialElementHandlers
-        }
-    )
+ pdf.save('Test.pdf');
 
-    pdf.save('Test.pdf');
+ };
 
-};
-
-
+ */
 
 
 /**
@@ -414,7 +414,7 @@ var addChartEventHandler = function() {
                     /* Done setting the chart up? Time to render it!*/
                     var myData = sinAndCos();   //You need data...
 
-                    d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.
+                    d3.select('#container svg')    //Select the <svg> element you want to render the chart in.
                         .datum(myData)         //Populate the <svg> element with chart data...
                         .call(chart);          //Finally, render the chart!
 
@@ -486,7 +486,7 @@ var addChartEventHandler = function() {
                     chart.scatter.onlyCircles(false);
 
                     var myData = randomData(4,40);
-                    d3.select('#chart svg')
+                    d3.select('#container svg')
                         .datum(myData)
                         .call(chart);
 
@@ -539,7 +539,7 @@ var addChartEventHandler = function() {
                         .y(function(d) { return d.value })
                         .showLabels(true);
 
-                    d3.select("#chart svg")
+                    d3.select("#container svg")
                         .datum(exampleData())
                         .transition().duration(350)
                         .call(chart);
@@ -644,7 +644,7 @@ var addChartEventHandler = function() {
                         chart.yAxis
                             .tickFormat(d3.format(',.2f'));
 
-                        d3.select('#chart svg')
+                        d3.select('#container svg')
                             .datum(data)
                             .call(chart);
 
@@ -702,87 +702,13 @@ var addEditor = function() {
 };
 
 
-
-/*
- var manageDropzone = function() {
- Dropzone.options.myDropzone = {
- // Prevents Dropzone from uploading dropped files immediately
- autoProcessQueue : false,
- acceptedFiles: 'application/vnd.ms-excel,.txt,.json,.Rdata,text/csv',
- addRemoveLinks: false,
- previewsContainer: null,
- init : function() {
- var submitButton = document.querySelector("#uploadButton");
- var myDropzone = this;
-
- submitButton.addEventListener("click", function() {
- myDropzone.processQueue();
- // Tell Dropzone to process all queued files.
- });
-
-
- // You might want to show the submit button only when
- // files are dropped here:
- this.on("addedfile", function(file) {
-
- var removeButton = Dropzone.createElement('<button type="button" class="btn btn-danger remove-file">Remove File</button>');
-
- // Capture the Dropzone instance as closure.
- var _this = this;
-
- // Listen to the click event
- removeButton.addEventListener("click", function(e) {
- // Make sure the button click doesn't submit the form:
- e.preventDefault();
- e.stopPropagation();
-
- // Remove the file preview.
- _this.removeFile(file);
- // If you want to the delete the file on the server as well,
- // you can do the AJAX request here.
- });
-
- // Add the button to the file preview element.
- file.previewElement.appendChild(removeButton);
- $("#uploadButton").show();
- // Show submit button here and/or inform user to click it.
- });
-
- this.on("success", function(file) {
- ///TODO: Create table with files that have been uploaded by the user if the table exists, then just add files
- ///TODO: Create an additional tab for My Files
- var fileUpload = file["name"];
-
-
- //The user has uploaded no previous files
- if ($("#files").length == 0 && localStorage["files"] == null) {
- var menu = $(".menu-options");
- menu.append('<li class="dropdown" id="files"><a class="dropdown-toggle menu-option" href="#">My Files<i class="fa fa-files-o fa-fw menu-glyphicons"></i></a></li>');
- localStorage.setItem("files", JSON.stringify(fileUpload));
- } else {
- //The user has uploaded previous files
- var array = [];
- var filesUploaded = JSON.parse(localStorage.getItem("files"));
- console.log(filesUploaded);
- filesUploaded.push(fileUpload);
- console.log(filesUploaded);
- localStorage.setItem("files", JSON.stringify(fileUpload));
- }
-
- });
- }
- };
-
-
- };
- */
-
 var manageOnlyTableOpen = function() {
     manageImportClose();
     hideVisualizationModel();
     hideEditor();
     hideDataGrid();
 };
+
 var fileTable = function() {
 
 
@@ -819,10 +745,6 @@ var fileTable = function() {
     return table;
 };
 
-$(document).click(function() {
-//    console.log('Helloasjdlkasjd');
-
-});
 
 var getVisualizationModelTitles = function() {
     var visualizationModels = {};
@@ -839,8 +761,68 @@ var getVisualizationModelTitles = function() {
 
 var visualizationModels = getVisualizationModelTitles();
 
+var exportCSV = function() {
+
+};
+
+
+
+var saveFileAsPrompt = function(chart, file) {
+    vex.dialog.prompt({
+        message: 'Save '+file.toUpperCase()+' file as...',
+        placeholder: 'data.'+file.toLowerCase()+'...',
+        contentClassName: 'alert-vex-content',
+        closeClassName: 'alert-vex-close',
+        callback: function(value) {
+
+            switch (file) {
+                case 'csv':
+                    console.log("Helajsdlkajsd");
+                    Highcharts.post('http://www.highcharts.com/studies/csv-export/csv.php', {
+                        filename: value,
+                        csv: chart.getCSV()
+                    });
+//                       chart.exportChart({type: 'text/csv', filename: value}, {subtitle: {text:''}});
+                    break;
+                    case 'png':
+                        chart.exportChart({type: 'image/png', filename: value}, {subtitle: {text:''}});
+                        break;
+                case 'jpeg':
+                    chart.exportChart({type: 'image/jpeg', filename: value}, {subtitle: {text:''}});
+                    break;
+                case 'pdf':
+                    chart.exportChart({type: 'application/pdf', filename: value}, {subtitle: {text:''}});
+                    break;
+                case 'svg':
+                    chart.exportChart({type: 'image/svg+xml', filename: value}, {subtitle: {text:''}});
+                    break;
+                default:
+                    vex.dialog.alert("Unknown Extension");
+            }
+            return 0;
+        }
+    });
+};
+
+
+var showSearchFilterFeature = function() {
+    $("#search-term").bind('input', function() {
+
+        var input = $(this).val();
+        var regex = new RegExp(input.replace(input, '^'+ input), "i");
+        $.each(modelTitles, function(index, value) {
+            if (!regex.exec(index)) {
+                $(value).slideUp();
+            } else if(input === "") {
+                $(value).slideDown();
+            }
+        });
+    });
+};
 
 $(function() {
+
+
     var modelTitles = getVisualizationModelTitles();
     changeTitleCaretAction();
     $("#dropzone").hide();
@@ -852,29 +834,8 @@ $(function() {
     addEditor();
     manageImportClose();
     manageImportOpen();
-    $("#csv").click(function() {
-        $.ajax({
-            url: '/csv',
-            type: 'GET',
-            dataType: '',
-            success: function(data) {
-                alert("Data received");
-            },
-            error: function(data) {
+    showSearchFilterFeature();
 
-            }
-        })
-            .done(function() {
-                console.log("success");
-            })
-            .fail(function() {
-                console.log("error");
-            })
-            .always(function() {
-                console.log("complete");
-            });
-
-    });
     $(document).on('click','#files' ,function() {
         manageImportClose();
         manageOnlyTableOpen();
@@ -890,18 +851,56 @@ $(function() {
 
 
 
-    $("#search-term").bind('input', function() {
 
-        var input = $(this).val();
-        var regex = new RegExp(input.replace(input, '^'+ input), "i");
-        $.each(modelTitles, function(index, value) {
-            if (!regex.exec(index)) {
-                $(value).slideUp();
-            } else if(input === "") {
-                $(value).slideDown();
+    var chart = new Highcharts.Chart({
+
+        chart: {
+            renderTo: 'container',
+            zoomType: 'x'
+        },
+
+        credits: {
+            enabled: false
+        },
+        subtitle: {
+            text: 'Click and drag in the plot area to zoom in'
+        },
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }],
+
+        navigation: {
+            buttonOptions: {
+                enabled: false
             }
-        });
+        }
     });
+
+    $('#exportCsv').click(function () {
+        saveFileAsPrompt(chart,"csv");
+    });
+
+    $('#exportPdf').on('click', function() {
+        saveFileAsPrompt(chart, "pdf");
+    });
+
+    $('#exportJpeg').on('click', function() {
+        saveFileAsPrompt(chart, "jpeg");
+    });
+
+    $('#exportR').click(function() {
+        saveFileAsPrompt(chart, "r");
+    });
+
+    $('#exportPython').click(function() {
+        saveFileAsPrompt(chart, "py");
+    });
+
+
 });
 
 

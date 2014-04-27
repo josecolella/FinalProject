@@ -90,7 +90,7 @@ footer {
 #workspace {
     margin-top: 4em;
 }
-
+#container,
 #chart svg {
     height: 400px;
 
@@ -134,7 +134,8 @@ footer {
 }
 
 #uploadButton:focus,
-#clearAllButton:focus {
+#clearAllButton:focus
+.addbtn:focus{
     outline: 0 !important;
     -webkit-appearance:none;
 
@@ -169,4 +170,13 @@ footer {
 
 .limit {
     display: inline-block;
+}
+
+#workspace-view:active,
+#data-grid:active
+#editor:active,
+#import:active,
+#export:active
+{
+    box-shadow: 0 0 0.3em #e5e5e5;
 }
