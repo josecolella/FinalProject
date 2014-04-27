@@ -15,7 +15,8 @@ Finished
 - ~~Create dashboard template~~
 - ~~Found spreadsheet library so that user can insert data~~
 - ~~Integrated add button~~
-
+- ~~Implement search functionality~~
+- 
 Todos
 =====
 
