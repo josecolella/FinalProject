@@ -43,9 +43,11 @@ class Index (ListView):
     def post(self, request):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
+            print("Form valid")
             new_file = UploadFile(file=request.FILES['file'])
             new_file.save()
         else:
+            print("Form not valid")
             form = self.form_class
 
         data = {'form': form}

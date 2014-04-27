@@ -106,7 +106,7 @@
             <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <div ondrop="drop(event)" ondragover="allowDrop(event)">
                     <ul class="nav nav-tabs menu-options">
-                        <li class="dropdown" id="workspace">
+                        <li style="margin-top: 0em" class="dropdown" id="workspace">
                             <a class="dropdown-toggle menu-option" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
                         </li>
                         <li class="dropdown" id="editor">
@@ -154,7 +154,7 @@
                     <!-- IMPORTANT enctype attribute! -->
                     <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        {#        {{ form }}#}
+{#                                {{ form }}#}
                     </form>
                     <p>{{ form.non_field_errors }}</p>
                     <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
