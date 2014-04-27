@@ -32,7 +32,7 @@ class Index (ListView):
     """
     template_name = 'visualization/index.html'
     form_class = UploadFileForm
-    model = VisualizationModelDescription.objects.all()
+    model = sorted(VisualizationModelDescription.objects.all())
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {
@@ -43,24 +43,37 @@ class Index (ListView):
     def post(self, request):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
-            print("Form valid")
             new_file = UploadFile(file=request.FILES['file'])
             new_file.save()
         else:
-            print("Form not valid")
+            print("form is not valid")
             form = self.form_class
 
         data = {'form': form}
         return render_to_response(self.template_name, data, context_instance=RequestContext(request))
 
 
+class ExampleView (ListView):
+    """
+    This view provides the different examples of how to use the visualization
+    models.
+    """
+    def get(self, request, *args, **kwargs):
+
+        return HttpResponse(self.kwargs['visualization'])
+        #self.kwargs['slug']
+
+
+
 class AboutView (TemplateView):
     """
     This class deals with the about part of the project that
     explains the underlying principles of the projects and
-    the importance of visualization models
+    the importance of visualization models.
+    Since it only provides information, it extends a TemplateView
     """
     template_name = 'visualization/about.html'
+
 
 
 
@@ -120,4 +133,6 @@ class CSVReader(View):
         The get method
         """
         pass
+
+
 

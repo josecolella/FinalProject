@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/dialog.css' %} "/>
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/show-hint.css' %}" />
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/tern.css' %} "/>
+    <link rel="stylesheet" href="{% static 'visualization/vex/vex.css' %}"/>
+    <link rel="stylesheet" href="{% static 'visualization/vex/vex-theme-flat-attack.css' %}"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.css"/>
 {% endblock stylesheets %}
 {% block headjs %}
     <script src="{% static "visualization/codemirror/lib/codemirror.js" %}"></script>
@@ -24,54 +27,52 @@
     <script src="{% static "visualization/codemirror/lib/tern.js" %}"></script>
     {#    <script src="{% static "visualization/codemirror/lib/worker.js" %}"></script>#}
     <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
+    <script src="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js" charset="utf-8"></script>
-
+    <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
     <script src="{% static "visualization/ndv3/nv.d3.min.js" %}"></script>
-
-    <script>
-        $( document ).ready(function() {
-            changeTitleCaretAction();
-            search();
-            $("#dropzone").hide();
-            $(".editor").hide();
-            $("#csv").click(function() {
-                $.ajax({
-                    url: '/csv',
-                    type: 'GET',
-                    dataType: '',
-                    success: function(data) {
-                        alert("Data received");
-                    },
-                    error: function(data) {
-
-                    }
-                })
-                .done(function() {
-                    console.log("success");
-                })
-                .fail(function() {
-                    console.log("error");
-                })
-                .always(function() {
-                    console.log("complete");
-                });
-
-            });
-        });
-    </script>
+    {#    <script>#}
+    {#        $( document ).ready(function() {#}
+    {#            changeTitleCaretAction();#}
+    {#            manageImportOpen();#}
+    {#            //manageImportOpen();#}
+    {#            $("#dropzone").hide();#}
+    {#            $(".editor").hide();#}
+    {#            $("#csv").click(function() {#}
+    {#                $.ajax({#}
+    {#                    url: '/csv',#}
+    {#                    type: 'GET',#}
+    {#                    dataType: '',#}
+    {#                    success: function(data) {#}
+    {#                        alert("Data received");#}
+    {#                    },#}
+    {#                    error: function(data) {#}
+    {##}
+    {#                    }#}
+    {#                })#}
+    {#                        .done(function() {#}
+    {#                            console.log("success");#}
+    {#                        })#}
+    {#                        .fail(function() {#}
+    {#                            console.log("error");#}
+    {#                        })#}
+    {#                        .always(function() {#}
+    {#                            console.log("complete");#}
+    {#                        });#}
+    {##}
+    {#            });#}
+    {#        });#}
+    {#    </script>#}
 {% endblock headjs %}
 {% block content %}
-    <style>
-        .CodeMirror {border: 1px solid #ddd;}
-    </style>
     <div class="container-fluid">
         <div class="row">
 
             <div class="col-sm-3 col-md-2 sidebar panel panel-info">
                 <form name="search" id="search" role="form">
                     <div class="input-group form-group search-group">
-                        <input type="text" class="form-control" id="search-term" placeholder="Search models..." required>
-                        <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search" onclick="search()"></span></span>
+                        <input type="text" class="form-control" id="search-term" placeholder="Search models..." required maxlength="20">
+                        <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search"></span></span>
                     </div>
                 </form>
                 <ul class="nav nav-sidebar">
@@ -79,197 +80,111 @@
                         This for runs through all the models and creates a side bar with
                         all the visualization models
                     {% endcomment %}
-                    {#                    <div class="sidebar-toggle">#}
-                    {#                        <i class="fa fa-angle-double-right"></i>#}
-                    {#                    </div>#}
                     {% for model in models %}
                         <div class="panel-group" id="accordion">
                             <div class="panel-default">
                                 <h4 class="panel-title">
                                     <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
-                                        <p>{{ model.title }}<span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
+                                        <p>{{ model.title }}<button class="btn btn-default btn-sm addbtn" id="add{{ model.title|slugify }}"data-container="body" data-toggle="popover" data-placement="right" data-content="Click to add {{ model.title|capfirst }} model"><i class="fa fa-plus"></i></button></span><span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
                                     </li>
-
                                 </h4>
                             </div>
                             <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     <p>{{ model.description }}</p>
-                                    <button type="button" class="btn btn-info"><a class="example-button" href="{{ model.link }}">Show an example</a></button>
+                                    <button type="button" class="btn btn-info"><a class="example-button" id="{{model.title|slugify}}" href="{{ model.link }}" data-toggle="modal" data-target="#modal-{{ model.title|slugify }}">Show an example</a></button>
+
                                 </div>
                             </div>
-
                         </div>
                     {% endfor %}
                 </ul>
             </div>
+
             <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <div ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div id="menu">
                     <ul class="nav nav-tabs menu-options">
-                        <li style="margin-top: 0em" class="dropdown" id="workspace">
+                        <li class="dropdown" id="workspace-view">
                             <a class="dropdown-toggle menu-option" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
                         </li>
-                        <li class="dropdown" id="editor">
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
+                        <li class="dropdown" id="data-grid">
+                            <a class="menu-option" href="#" id="work">Data Grid<i class="fa fa-table"></i></a>
                         </li>
-                        <li class="dropdown " id="import" >
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="/import">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="divider"></li>
-                                <li><a href="#">JSON</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">CSV</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Excel</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">txt</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">SQL</a></li>
-                            </ul>
+                        <li class="dropdown" id="editor">
+                            <a class="dropdown-toggle menu-option" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
+                        </li>
+                        <li class="dropdown" id="import" >
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
                         </li>
                         <li class="dropdown" id="export">
                             <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
                             <ul class="dropdown-menu" role="menu">
+                                <li class="dropdown-option"><a href="#" onclick="generatePDF();">PDF</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#" onclick="generatePDF();">PDF</a></li>
+                                <li class="dropdown-option"><a href="#">JPEG</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">JPEG</a></li>
+                                <li class="dropdown-option"><a id="csv" href="#">CSV</a></li>
                                 <li class="divider"></li>
-                                <li><a id="csv" href="#">CSV</a></li>
+                                <li class="dropdown-option"><a href="#">R</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">R</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Python</a></li>
+                                <li class="dropdown-option"><a href="#">Python</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
+                <div id="workspace">
+                    <div id="dropzone"  >
+                        <!-- IMPORTANT enctype attribute! -->
+                        <form class="dropzone" id="myDropzone" action="#" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                        </form>
+                        <p>{{ form.non_field_errors }}</p>
+                        <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+                        <p>
+                            {{ form.docfile.errors }}
+                            {{ form.docfile }}
+                        </p>
+                    <span class="dropzone-options">
+                        <button type="button" class="btn btn-default pagination-centered" id="uploadButton"><i class="fa fa-upload"></i>Upload</button>
+                        <button type="button" class="btn btn-default pagination-center" id="clearAllButton"><i class="fa fa-times"></i>Remove All</button>
 
-
-
-
-
-
-                <div id="dropzone"  >
-                    <!-- IMPORTANT enctype attribute! -->
-                    <form  class="dropzone" action="#" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-{#                                {{ form }}#}
-                    </form>
-                    <p>{{ form.non_field_errors }}</p>
-                    <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-                    <p>
-                        {{ form.docfile.errors }}
-                        {{ form.docfile }}
-                    </p>
+                    </span>
+                    </div>
+                    <div id="chart">
+                        <svg></svg>
+                    </div>
                 </div>
-
-
-                <div id="chart">
-                    <svg></svg>
-                </div>
-
-                <article id="texteditor">
-                    <form><textarea id="code" name="code">
-
-                    </textarea></form>
-                    <script>
-                        var data =  [
-                            {
-                                "label": "One",
-                                "value" : 29.765957771107
-                            } ,
-                            {
-                                "label": "Two",
-                                "value" : 0
-                            } ,
-                            {
-                                "label": "Three",
-                                "value" : 135
-                            } ,
-                            {
-                                "label": "Four",
-                                "value" : 196.45946739256
-                            } ,
-                            {
-                                "label": "Five",
-                                "value" : 0.19434030906893
-                            } ,
-                            {
-                                "label": "Six",
-                                "value" : 98.079782601442
-                            } ,
-                            {
-                                "label": "Seven",
-                                "value" : 13.925743130903
-                            } ,
-                            {
-                                "label": "Eight",
-                                "value" : 100
-                            }
-                        ];
-                        nv.addGraph(function() {
-                            var chart = nv.models.pieChart()
-                                    .x(function(d) { return d.label })
-                                    .y(function(d) { return d.value })
-                                    .showLabels(true);
-
-                            d3.select("#chart svg")
-                                    .datum(data)
-                                    .transition().duration(1200)
-                                    .call(chart);
-
-                            return chart;
-                        });
-                    </script>
-                    <script>
-
-                        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-                            lineNumbers: true,
-                            mode: "javascript",
-                            tabMode: 'indent'
-                        });
-                    </script>
-
-                </article>
-
-
             </div>
-
         </div>
     </div>
 {% endblock %}
 {% block javascript %}
     {% load staticfiles %}
-
-    <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
-    <script type="application/javascript">
-        function allowDrop(ev)
-        {
-            ev.preventDefault();
-        }
-
-        function drag(ev)
-        {
-            ev.dataTransfer.setData("Text",ev.target.id);
-        }
-
-        function drop(ev)
-        {
-            ev.preventDefault();
-            var data=ev.dataTransfer.getData("Text");
-            ev.target.appendChild(document.getElementById(data));
-        }
-    </script>
+    <script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>
 
     <script type="text/javascript">
+        var limit = 15;
+        var emptyFileMessage = function(file) {
+            var message = "Uploaded Files cannot be empty<br/>File: " + "<i>"+file["name"] +"</i> "+ 'Size: '+ file["size"];
+            return message;
+        };
+        var fileLimitExceededMessage = function(limit) {
+            var message = "Upload File Limit Exceeded.<span class='limit'>Limit:"+limit+"</span>";
+            return message;
+        };
+        var showAlert = false;
         Dropzone.options.myDropzone = {
 
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue : false,
+            {#            acceptedFiles: 'application/vnd.ms-excel,.txt,.json,.Rdata,text/csv',#}
+            parallelUploads: limit -1 ,
+            maxFiles: limit,
 
             init : function() {
-                var submitButton = document.querySelector("#submit-all")
+                var submitButton = document.querySelector("#uploadButton");
+                var clearAllButton = document.querySelector("#clearAllButton");
                 myDropzone = this;
 
                 submitButton.addEventListener("click", function() {
@@ -277,10 +192,69 @@
                     // Tell Dropzone to process all queued files.
                 });
 
+                clearAllButton.addEventListener("click",  function() {
+                    myDropzone.removeAllFiles();
+                });
+
                 // You might want to show the submit button only when
                 // files are dropped here:
-                this.on("addedfile", function() {
-                    // Show submit button here and/or inform user to click it.
+                this.on("addedfile", function(file) {
+                    showImportPanelButtons();
+                    //Check file size
+                    if(file["size"] != 0) {
+
+                        if(myDropzone.files.length < limit){
+
+                            var removeButton = Dropzone.createElement('<button type="button" class="btn btn-danger remove-file">Remove File</button>');
+
+                            // Capture the Dropzone instance as closure.
+                            var _this = this;
+
+                            // Listen to the click event
+                            removeButton.addEventListener("click", function(e) {
+                                // Make sure the button click doesn't submit the form:
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                // Remove the file preview.
+                                _this.removeFile(file);
+                            });
+
+                            // Add the button to the file preview element.
+                            file.previewElement.appendChild(removeButton);
+                            // Show submit button here and/or inform user to click it.
+                        } else {
+                            vex.dialog.alert({
+                                message: fileLimitExceededMessage(limit -1),
+                                contentClassName: 'alert-vex-content',
+                                closeClassName: 'alert-vex-close'
+                            });
+                            myDropzone.removeFile(file);
+                        }
+                    } else {
+                        vex.dialog.alert({
+                            message: emptyFileMessage(file),
+                            contentClassName: 'alert-vex-content',
+                            closeClassName: 'alert-vex-close'
+
+                        });
+                        myDropzone.removeFile(file);
+                    }
+                });
+
+                //Even for when the file is successfully sent to server
+                this.on("success",  function(file) {
+                    ///Todo: Create a table with all the uploaded files
+                });
+
+                //When max file upload has been reached
+                this.on("maxfilesreached", function(file) {
+                    vex.dialog.alert({
+                        message: fileLimitExceededMessage(limit),
+                        contentClassName: 'alert-vex-content',
+                        closeClassName: 'alert-vex-close'
+                    });
+
                 });
 
             }

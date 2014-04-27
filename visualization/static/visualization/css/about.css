@@ -1,0 +1,21 @@
+.img-circle {
+    height: 140px;
+    width: 140px;
+    border: 0.2em solid #FCFCFC;
+}
+
+.jumbotron {
+    margin-left: 5em;
+    margin-right: 5em;
+    margin-top: 5em;
+    border-radius: 1em;
+    border-right: 1px solid #f8f8f8;
+}
+
+.img-desc {
+    border-right: 0.1em solid #f8f8f8;
+}
+
+.img-desc-first {
+    border-left: 0.1em solid #f8f8f8;
+}
