@@ -69,29 +69,68 @@ $(function () {
 
     };
 
-    $(document).on('click', '#signupbutton', function() {
+    var checkPasswordStrength  = function(password) {
+
+        var passwordStrength;
+
+        var weak = /[a-z]{4,10}/;
+        var secure = /[a-zA-Z\d]{4,25}/
+        var strong = /[\w\d&^%$#*]{4,25}/;
+
+        if(weak.test(password)) {
+            passwordStrength = 'Weak'
+        } else if(secure.test(password)) {
+            passwordStrength = 'Secure'
+        } else if(strong.test(password)) {
+            passwordStrength = 'Strong'
+        }
+
+
+    };
+
+    $(document).on('click', '#signupbutton', function(e) {
+        e.preventDefault();
         var validUsername = checkValidUsername();
         var validPassword = checkPasswordEquality();
 
-        if(validUsername && validPassword) {
+
+        if (!validUsername || !validPassword) {
+            if (!validUsername) {
+                console.log("Not Valid")
+            }
+            if (!validPassword) {
+                console.log("Not Valid")
+            }
+
+        } else {
             var username = $.trim($("[name=username]").val());
             var password = $.trim($("[name=password1]").val());
+            var password2 = $.trim($("[name=password2]").val());
 
-            var singup = function() {
+            var signUp = function() {
 
                 $.ajax({
                     url: '/accounts/authenticate',
                     type: 'POST',
                     dataType: 'json',
+                    headers: {
+                        'X-CSRFToken' : $.cookie('csrftoken')
+                    },
                     data: {
+                        csrfmiddlewaretoken: $.cookie('csrftoken'),
                         username: username,
-                        password: password
+                        password1: password,
+                        password2: password2
                     },
                     success: function(data) {
                         console.log(data);
+                        if(data.status == 1)
+                            alertify.success("Your account has been created");
+                        else if(data.status == 0)
+                            alertify.error("Unable to create account");
                     },
-                    error: function() {
-                        console.log("Error");
+                    error: function(data) {
+                        alertify.error("User could not be saved")
                     }
                 })
                     .done(function() {
@@ -105,12 +144,9 @@ $(function () {
                     });
 
             };
-        }
-        if (!validUsername) {
-            console.log("Not valid username");
-        }
-        if(!validPassword) {
-            console.log("Not valid password");
+
+            signUp();
+
         }
 
     });

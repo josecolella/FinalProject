@@ -27,6 +27,7 @@ class SignInForm(AuthenticationForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
         'placeholder': 'Password',
+        'minlength': 6,
         'maxlength': 25
     }))
 
@@ -45,13 +46,13 @@ class SignUpForm(UserCreationForm):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
         'placeholder': 'Password',
-        'minlength': 10,
+        'minlength': 6,
         'maxlength': 25
     }))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
         'placeholder': 'Repeat Password',
-        'minlength': 10,
+        'minlength': 6,
         'maxlength': 25
     }))
 

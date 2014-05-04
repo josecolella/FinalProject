@@ -68,12 +68,11 @@ class UploadFile(models.Model):
     def __str__(self):
         return self.file.url
 
-class VisualizationUser(models.Model):
+class UserUploadedFiles(models.Model):
     """
     This class represents the user that will be using the service
     """
-    user_id = models.IntegerField(max_length=256, primary_key=True, db_index=True)
-    user = models.OneToOneField(User, unique=True)
+    user = models.ForeignKey(User)
     uploadedFiles = jsonfield.JSONField(db_index=True, blank=True)
 
     def __str__(self):
@@ -81,6 +80,6 @@ class VisualizationUser(models.Model):
         __str__() -> String representation of a visualization user
         Returns the users username, email, and uploadedFiles
         """
-        return str(self.user_id)
+        return str(self.user)
 
 

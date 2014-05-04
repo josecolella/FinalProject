@@ -16,7 +16,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
                        # Examples:
                        url(r'^$', views.Index.as_view(), name='index'),
-                       url(r'^accounts/authenticate', views.authenticate, name='authenticate'),
+                       url(r'^accounts/authenticate', views.authenticateView, name='authenticate'),
                        url(r'^accounts/signin', views.signin, name='signin'),
                        url(r'^accounts/signup', views.signup, name='signup'),
                        url(r'^example/(?P<visualization>\w+)',

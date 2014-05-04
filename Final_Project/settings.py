@@ -111,6 +111,3 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'visualization/templates')
 )
 
-
-
-AUTH_PROFILE_MODULE = 'visualization.VisualizationUser'

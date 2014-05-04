@@ -1,11 +1,14 @@
+import json
 from django.shortcuts import render, render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, TemplateView, View
 from django.template import RequestContext
 from setuptools.compat import BytesIO
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 
 from .forms import UploadFileForm, SignUpForm, SignInForm
-from .models import UploadFile, VisualizationUser,VisualizationModelDescription
+from .models import UploadFile, UserUploadedFiles,VisualizationModelDescription
 
 from reportlab.pdfgen import canvas
 import csv
@@ -59,21 +62,72 @@ class Index (ListView):
 #
 #     if request.method == 'GET':
 #
-def authenticate(request):
+def authenticateView(request):
     sign_in_form = SignInForm
     template_name = 'visualization/authentication.html'
-    data = {
-        'sign_in_form': sign_in_form
 
-    }
 
     if request.method == "GET":
+        form = SignInForm
+        data = {
+            'sign_in_form': form
 
+        }
         return render_to_response(template_name, data, context_instance = RequestContext(request))
 
-    elif request.method == "POST":
-        print(request.POST)
-        return HttpResponse(request.POST)
+    elif request.method == 'POST':
+        form = None
+        if 'password' in request.POST:
+            form = SignInForm(request.POST)
+            print("It's a sign in form")
+        if 'password2' in request.POST:
+            print("It's a sign up form")
+            form = SignUpForm(request.POST)
+        response_data = {}
+        if form.is_valid():
+            cleaned_data = form.clean()
+            user = User.objects.filter(username=cleaned_data.get('username'))
+            # Sign Up
+            if 'password2' in request.POST:
+                # User doesn't exist
+                if len(user) == 0:
+                    username = cleaned_data.get('username')
+                    password1 = cleaned_data.get('password1')
+                    password2 = cleaned_data.get('password2')
+                    if password1 == password2 and len(password1) != 0:
+                        if len(username) != 0:
+                            saveUser = User.objects.create_user(username=username, password=password1)
+                            saveUser.save()
+                            response_data['status'] = 1
+                        return HttpResponse(json.dumps(response_data), content_type="application/json")
+                    else:
+                        response_data['status'] = 0
+                    return HttpResponse(json.dumps(response_data), content_type="application/json")
+                else:
+                    response_data['status'] = 0
+                    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+            # Sign In
+            elif 'password' in request.POST:
+                # user = authenticate(username=request.POST, password=)
+                # if user is not None:
+                #     # the password verified for the user
+                #     if user.is_active:
+                #         print("User is valid, active and authenticated")
+                #     else:
+                #         print("The password is valid, but the account has been disabled!")
+                # else:
+                #     # the authentication system was unable to verify the username and password
+                    print("The username and password were incorrect.")
+
+            else:
+                response_data['status'] = 0
+                HttpResponse(json.dumps(response_data), content_type="application/json")
+
+        else:
+            response_data['status'] = 0
+            HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 
@@ -88,8 +142,7 @@ def signin(request):
         return render_to_response(template_name, {
             'sign_in_form': sign_in_form
         }, context_instance = RequestContext(request))
-    elif request.method == 'POST':
-        print("Sign in POST")
+
 
 def signup(request):
     template_name = 'visualization/authentication/signup.html'
@@ -99,15 +152,6 @@ def signup(request):
         return render_to_response(template_name, {
             'sign_up_form': sign_up_form
         }, context_instance = RequestContext(request))
-    elif request.method == 'POST':
-        """TODO: Check if user already exists
-         If user exists, then returns error
-         else insert user in database
-
-        """
-
-        return HttpResponse(request.POST)
-
 
 
 
