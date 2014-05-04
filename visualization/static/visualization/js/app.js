@@ -784,9 +784,9 @@ var saveFileAsPrompt = function(chart, file) {
                     });
 //                       chart.exportChart({type: 'text/csv', filename: value}, {subtitle: {text:''}});
                     break;
-                    case 'png':
-                        chart.exportChart({type: 'image/png', filename: value}, {subtitle: {text:''}});
-                        break;
+                case 'png':
+                    chart.exportChart({type: 'image/png', filename: value}, {subtitle: {text:''}});
+                    break;
                 case 'jpeg':
                     chart.exportChart({type: 'image/jpeg', filename: value}, {subtitle: {text:''}});
                     break;
@@ -822,6 +822,27 @@ var showSearchFilterFeature = function() {
 
 $(function() {
 
+    $("#authetication").click(function() {
+        console.log("Hello");
+        vex.dialog.open({
+            message: 'Enter your username and password:',
+            input: "<input name=\"username\" type=\"text\" placeholder=\"Username\" required />\n<input name=\"password\" type=\"password\" placeholder=\"Password\" required />",
+            buttons: [
+                $.extend({}, vex.dialog.buttons.YES, {
+                    text: 'Login'
+                }), $.extend({}, vex.dialog.buttons.NO, {
+                    text: 'Back'
+                })
+            ],
+            callback: function(data) {
+                if (data === false) {
+                    return console.log('Cancelled');
+                }
+
+                return console.log('Username', data.username, 'Password', data.password);
+            }
+        });
+    });
 
     var modelTitles = getVisualizationModelTitles();
     changeTitleCaretAction();

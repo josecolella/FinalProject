@@ -4,9 +4,8 @@ from django.views.generic import ListView, TemplateView, View
 from django.template import RequestContext
 from setuptools.compat import BytesIO
 
-from .forms import UploadFileForm
-from .models import UploadFile
-from .models import VisualizationModelDescription
+from .forms import UploadFileForm, SignUpForm, SignInForm
+from .models import UploadFile, VisualizationUser,VisualizationModelDescription
 
 from reportlab.pdfgen import canvas
 import csv
@@ -51,6 +50,66 @@ class Index (ListView):
 
         data = {'form': form}
         return render_to_response(self.template_name, data, context_instance=RequestContext(request))
+
+
+
+
+
+# def authentication(request):
+#
+#     if request.method == 'GET':
+#
+def authenticate(request):
+    sign_in_form = SignInForm
+    template_name = 'visualization/authentication.html'
+    data = {
+        'sign_in_form': sign_in_form
+
+    }
+
+    if request.method == "GET":
+
+        return render_to_response(template_name, data, context_instance = RequestContext(request))
+
+    elif request.method == "POST":
+        print(request.POST)
+        return HttpResponse(request.POST)
+
+
+
+def signin(request):
+    """
+    This view provides the
+    """
+    template_name = 'visualization/authentication/signin.html'
+    sign_in_form = SignInForm
+
+    if request.method == 'GET':
+        return render_to_response(template_name, {
+            'sign_in_form': sign_in_form
+        }, context_instance = RequestContext(request))
+    elif request.method == 'POST':
+        print("Sign in POST")
+
+def signup(request):
+    template_name = 'visualization/authentication/signup.html'
+    sign_up_form = SignUpForm
+
+    if request.method == 'GET':
+        return render_to_response(template_name, {
+            'sign_up_form': sign_up_form
+        }, context_instance = RequestContext(request))
+    elif request.method == 'POST':
+        """TODO: Check if user already exists
+         If user exists, then returns error
+         else insert user in database
+
+        """
+
+        return HttpResponse(request.POST)
+
+
+
 
 
 class ExampleView (ListView):
@@ -135,4 +194,11 @@ class CSVReader(View):
         pass
 
 
+class fileList(ListView):
+    template_name = 'visualization/list.html'
+    model = UploadFile.objects.all()
 
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {
+            'documents': self.model
+        })

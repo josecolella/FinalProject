@@ -1,0 +1,21 @@
+{% extends 'visualization/base.html' %}
+{% block stylesheets %}
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'visualization/css/authentication.css' %}"/>
+{% endblock stylesheets%}
+{% block content %}
+    <div class="container">
+        <div class="form-container">
+        {% if sign_in_form %}
+            {% include 'visualization/authentication/signin.html' %}
+        {% endif %}
+        {% if sign_up_form %}
+            {% include 'visualization/authentication/signup.html' %}
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'visualization/js/authenticate.js' %}"></script>
+{% endblock javascript %}

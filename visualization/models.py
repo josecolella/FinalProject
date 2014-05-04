@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from hashlib import sha256
+
 import datetime
+from django.db.models.signals import post_save
 from django.utils import timezone
 import jsonfield
 
@@ -62,18 +65,22 @@ class UploadFile(models.Model):
     """
     file = models.FileField(upload_to='files/%Y/%m/%d')
 
+    def __str__(self):
+        return self.file.url
 
-
-class VisualizationUser(User):
+class VisualizationUser(models.Model):
     """
     This class represents the user that will be using the service
     """
-    uploadedFiles = jsonfield.JSONField()
-
+    user_id = models.IntegerField(max_length=256, primary_key=True, db_index=True)
+    user = models.OneToOneField(User, unique=True)
+    uploadedFiles = jsonfield.JSONField(db_index=True, blank=True)
 
     def __str__(self):
         """
         __str__() -> String representation of a visualization user
         Returns the users username, email, and uploadedFiles
         """
-        return self.username + " " + self.email + " " + str(self.uploadedFiles)
+        return str(self.user_id)
+
+

@@ -1,0 +1,15 @@
+{% if sign_in_form %}
+
+    <form action="{% url 'signin' %}" method="post" role="form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ sign_in_form.username }}
+        </div>
+        <div class="form-group">
+            {{ sign_in_form.password }}
+        </div>
+        <button type="submit" class="btn btn-primary" id="signinbutton">Submit</button>
+    </form>
+    <a href="#" id="signup">Have an account? Register here</a>
+
+{% endif %}
