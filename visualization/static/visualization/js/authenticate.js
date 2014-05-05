@@ -88,6 +88,61 @@ $(function () {
 
     };
 
+    $(document).on('click', '#signinbutton', function(e) {
+        e.preventDefault();
+        var validUsername = checkValidUsername();
+        var password = $.trim($("[name=password]").val());
+
+        if (password.length !== 0 && validUsername) {
+            var username = $("[name=username]").val();
+
+
+
+            var signIn = function() {
+                 $.ajax({
+                    url: '/accounts/authenticate',
+                    type: 'POST',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRFToken' : $.cookie('csrftoken')
+                    },
+                    data: {
+                        username: username,
+                        password: password
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if(data.status !== 0) {
+                            location.href = data.status
+                        } else if(data.status == 0)
+                            alertify.error("Unsuccessful Sign In");
+                    },
+                    error: function(data) {
+                        alertify.error("User could not be saved")
+                    }
+                })
+                    .done(function() {
+                        console.log("success");
+                    })
+                    .fail(function() {
+                        console.log("error");
+                    })
+                    .always(function() {
+                        console.log("complete");
+                    });
+
+            };
+
+            signIn();
+
+        } else {
+            alertify.error('Not valid Sign in');
+        }
+
+    });
+
+
+
     $(document).on('click', '#signupbutton', function(e) {
         e.preventDefault();
         var validUsername = checkValidUsername();

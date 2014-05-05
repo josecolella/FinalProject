@@ -1,6 +1,6 @@
 {% if sign_in_form %}
 
-    <form action="#" role="form">
+    <form action="#" method="post" role="form">
         {% csrf_token %}
         <div class="form-group">
             {{ sign_in_form.username }}

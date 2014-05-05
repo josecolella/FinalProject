@@ -44,10 +44,14 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/">Dashboard</a></li>
+                <li><a href="{% url 'index' %}">Dashboard</a></li>
                 <li><a href="#">Tutorial</a></li>
-                <li><a href="/about/">About</a></li>
-                <li><a href="/accounts/authentication">SingIn/Up</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="#">{{ user.username }}</a></li>
+                {% else %}
+                <li><a href="{% url 'authenticate' %}">SingIn/Up</a></li>
+                {% endif %}
             </ul>
 
         </div>

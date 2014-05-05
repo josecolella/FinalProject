@@ -4,8 +4,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, TemplateView, View
 from django.template import RequestContext
 from setuptools.compat import BytesIO
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 from .forms import UploadFileForm, SignUpForm, SignInForm
 from .models import UploadFile, UserUploadedFiles,VisualizationModelDescription
@@ -79,12 +80,27 @@ def authenticateView(request):
         form = None
         if 'password' in request.POST:
             form = SignInForm(request.POST)
-            print("It's a sign in form")
         if 'password2' in request.POST:
-            print("It's a sign up form")
             form = SignUpForm(request.POST)
         response_data = {}
-        if form.is_valid():
+        if 'password' in request.POST:
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    request.session['username'] = username
+                    response_data['status'] = reverse('index')
+                    return HttpResponse(json.dumps(response_data), content_type="application/json")
+                else:
+                    response_data['status'] = 0
+                    return HttpResponse(json.dumps(response_data), content_type="application/json")
+            else:
+                response_data['status'] = 0
+                return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+        elif form.is_valid():
             cleaned_data = form.clean()
             user = User.objects.filter(username=cleaned_data.get('username'))
             # Sign Up
@@ -108,26 +124,11 @@ def authenticateView(request):
                     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-            # Sign In
-            elif 'password' in request.POST:
-                # user = authenticate(username=request.POST, password=)
-                # if user is not None:
-                #     # the password verified for the user
-                #     if user.is_active:
-                #         print("User is valid, active and authenticated")
-                #     else:
-                #         print("The password is valid, but the account has been disabled!")
-                # else:
-                #     # the authentication system was unable to verify the username and password
-                    print("The username and password were incorrect.")
-
-            else:
-                response_data['status'] = 0
-                HttpResponse(json.dumps(response_data), content_type="application/json")
-
         else:
-            response_data['status'] = 0
-            HttpResponse(json.dumps(response_data), content_type="application/json")
+
+            print("asdasd")
+            response_data['status'] = form.error_messages
+            return HttpResponse(response_data['status'])
 
 
 

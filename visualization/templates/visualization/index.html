@@ -25,44 +25,11 @@
     <script src="{% static "visualization/codemirror/lib/r.js" %}"></script>
     <script src="{% static "visualization/codemirror/lib/show-hint.js" %}"></script>
     <script src="{% static "visualization/codemirror/lib/tern.js" %}"></script>
-    {#    <script src="{% static "visualization/codemirror/lib/worker.js" %}"></script>#}
     <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
     <script src="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js" charset="utf-8"></script>
     <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
     <script src="{% static "visualization/ndv3/nv.d3.min.js" %}"></script>
-    {#    <script>#}
-    {#        $( document ).ready(function() {#}
-    {#            changeTitleCaretAction();#}
-    {#            manageImportOpen();#}
-    {#            //manageImportOpen();#}
-    {#            $("#dropzone").hide();#}
-    {#            $(".editor").hide();#}
-    {#            $("#csv").click(function() {#}
-    {#                $.ajax({#}
-    {#                    url: '/csv',#}
-    {#                    type: 'GET',#}
-    {#                    dataType: '',#}
-    {#                    success: function(data) {#}
-    {#                        alert("Data received");#}
-    {#                    },#}
-    {#                    error: function(data) {#}
-    {##}
-    {#                    }#}
-    {#                })#}
-    {#                        .done(function() {#}
-    {#                            console.log("success");#}
-    {#                        })#}
-    {#                        .fail(function() {#}
-    {#                            console.log("error");#}
-    {#                        })#}
-    {#                        .always(function() {#}
-    {#                            console.log("complete");#}
-    {#                        });#}
-    {##}
-    {#            });#}
-    {#        });#}
-    {#    </script>#}
 {% endblock headjs %}
 {% block content %}
     <div class="container-fluid">
