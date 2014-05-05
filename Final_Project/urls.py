@@ -23,9 +23,10 @@ urlpatterns = patterns('',
                            views.ExampleView.as_view(), name='example'),
                        url(r'^about/', views.AboutView.as_view(), name='about'),
                        url(r'^import/', views.DropZoneView.as_view(), name='import'),
+                       url(r'^files/', views.fileview, name='file'),
                        url(r'^csv/', views.some_view_csv, name='csv'),
                        url(r'^admin/', include(admin.site.urls), name='admin'),
-                       url(r'^list/', views.fileList.as_view(), name='list'),
+
 
                        ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

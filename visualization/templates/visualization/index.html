@@ -97,6 +97,11 @@
                                 <li class="dropdown-option" id="exportPython"><a href="#">Python</a></li>
                             </ul>
                         </li>
+                        {% if user.is_authenticated %}
+                            <li class="dropdown" id="files">
+                                <a class="dropdown-toggle menu-option" href="#">My Files<span class="glyphicon glyphicon-th-list menu-glyphicons"></span></a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
                 <div id="workspace">
@@ -118,6 +123,31 @@
                     </span>
                     </div>
                     <div id="container"></div>
+
+                    <div style="display: none" class="bs-example" id="files-table">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>File Name</th>
+                                <th>File Size</th>
+                                <th>File Url</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for file in files %}
+                                <tr>
+                                    <td></td>
+                                    <td>{{ file.filename }}</td>
+                                    <td>{{ file.filesize }}</td>
+                                    <td><a href="{{ file.fileurl }}">{{ file.fileurl }}</a></td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -143,7 +173,7 @@
 
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue : false,
-            {#            acceptedFiles: 'application/vnd.ms-excel,.txt,.json,.Rdata,text/csv',#}
+            acceptedFiles: 'application/vnd.ms-excel,.txt,.json,.Rdata,text/csv',
             parallelUploads: limit -1 ,
             maxFiles: limit,
 

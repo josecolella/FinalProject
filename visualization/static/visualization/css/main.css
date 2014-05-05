@@ -180,3 +180,11 @@ footer {
 {
     box-shadow: 0 0 0.3em #e5e5e5;
 }
+
+
+
+ul[aria-labelledby=drop2] {
+    background-color: rgba(248, 248, 248, 0.45);
+    border-radius: 0.3em;
+    text-align: center;
+}

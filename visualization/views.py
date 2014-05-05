@@ -38,33 +38,73 @@ class Index (ListView):
     model = sorted(VisualizationModelDescription.objects.all())
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {
-                                                    'models': self.model,
-                                                    'form': self.form_class
-                                                    })
+        data = {}
+        if request.user.is_authenticated():
+            userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
+            data = {
+                'models': self.model,
+                'form': self.form_class,
+                'files': userUploadedFiles.uploadedFiles
+            }
+        else:
+            data = {
+                'models': self.model,
+                'form': self.form_class
+            }
+
+        return render(request, self.template_name, data)
 
     def post(self, request):
         form = self.form_class(request.POST, request.FILES)
-        if form.is_valid():
-            new_file = UploadFile(file=request.FILES['file'])
-            new_file.save()
+        if request.user.is_authenticated():
+            if form.is_valid():
+
+                new_file = UploadFile(file=request.FILES['file'])
+                print(new_file)
+                userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
+                userUploadedFiles.uploadedFiles.append({
+                    'filename': new_file.file.name,
+                    'fileurl': new_file.file.url,
+                    'filesize': new_file.file.size
+                })
+
+
+                new_file.save()
+                userUploadedFiles.save()
+            else:
+                form = self.form_class
+                return HttpResponseRedirect(reverse('authenticate'))
+
+            data = {
+                'form': form,
+                'files': userUploadedFiles.uploadedFiles
+            }
+
+            return render_to_response(self.template_name, data, context_instance=RequestContext(request))
+
+
+
+def fileview(request):
+    """
+    This view manages the ajax request for a user's files
+    """
+
+    if request.is_ajax():
+        if request.user.is_authenticated():
+            userFiles = UserUploadedFiles.objects.get(user=request.user)
+            # User has no uploaded files
+            if len(userFiles.uploadedFiles) == 0:
+                return HttpResponse(userFiles.uploadedFiles)
+            else:
+                return HttpResponse(json.dumps(userFiles.uploadedFiles), content_type="application/json")
         else:
-            print("form is not valid")
-            form = self.form_class
+            #Return error
+            pass
 
-        data = {'form': form}
-        return render_to_response(self.template_name, data, context_instance=RequestContext(request))
-
-
-
-
-
-# def authentication(request):
-#
-#     if request.method == 'GET':
-#
 def authenticateView(request):
-    sign_in_form = SignInForm
+    """
+    The view that manages the authentication of the user
+    """
     template_name = 'visualization/authentication.html'
 
 
@@ -90,7 +130,7 @@ def authenticateView(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    request.session['username'] = username
+                    request.session['user'] = user
                     response_data['status'] = reverse('index')
                     return HttpResponse(json.dumps(response_data), content_type="application/json")
                 else:
@@ -103,7 +143,6 @@ def authenticateView(request):
         elif form.is_valid():
             cleaned_data = form.clean()
             user = User.objects.filter(username=cleaned_data.get('username'))
-            # Sign Up
             if 'password2' in request.POST:
                 # User doesn't exist
                 if len(user) == 0:
@@ -113,7 +152,9 @@ def authenticateView(request):
                     if password1 == password2 and len(password1) != 0:
                         if len(username) != 0:
                             saveUser = User.objects.create_user(username=username, password=password1)
+                            files = UserUploadedFiles(user = saveUser,uploadedFiles = [])
                             saveUser.save()
+                            files.save()
                             response_data['status'] = 1
                         return HttpResponse(json.dumps(response_data), content_type="application/json")
                     else:
@@ -239,11 +280,3 @@ class CSVReader(View):
         pass
 
 
-class fileList(ListView):
-    template_name = 'visualization/list.html'
-    model = UploadFile.objects.all()
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {
-            'documents': self.model
-        })
