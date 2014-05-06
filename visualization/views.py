@@ -13,6 +13,7 @@ from .models import UploadFile, UserUploadedFiles,VisualizationModelDescription
 
 from reportlab.pdfgen import canvas
 import csv
+import re
 from pandas import Series, DataFrame
 import pandas
 
@@ -60,11 +61,11 @@ class Index (ListView):
             if form.is_valid():
 
                 new_file = UploadFile(file=request.FILES['file'])
-                print(new_file)
+                print(new_file.file)
                 userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
                 userUploadedFiles.uploadedFiles.append({
                     'filename': new_file.file.name,
-                    'fileurl': new_file.file.url,
+                    'fileurl': re.sub(r'/media/', r'/media/files/', new_file.file.url),
                     'filesize': new_file.file.size
                 })
 

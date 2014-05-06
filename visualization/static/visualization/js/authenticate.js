@@ -172,17 +172,20 @@ $(function () {
                         'X-CSRFToken' : $.cookie('csrftoken')
                     },
                     data: {
-                        csrfmiddlewaretoken: $.cookie('csrftoken'),
                         username: username,
                         password1: password,
                         password2: password2
                     },
                     success: function(data) {
                         console.log(data);
-                        if(data.status == 1)
+                        if(data.status == 1) {
+                            console.log("HERE");
+
+                            location.href = '/';
                             alertify.success("Your account has been created");
-                        else if(data.status == 0)
+                        } else if(data.status == 0) {
                             alertify.error("Unable to create account");
+                        }
                     },
                     error: function(data) {
                         alertify.error("User could not be saved")

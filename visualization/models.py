@@ -63,7 +63,7 @@ class UploadFile(models.Model):
     This class represents the class in which the user can upload
     files
     """
-    file = models.FileField(upload_to='files/%Y/%m/%d')
+    file = models.FileField(upload_to='files/')
 
     def __str__(self):
         return self.file.url

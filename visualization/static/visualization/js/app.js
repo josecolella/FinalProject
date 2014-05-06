@@ -399,70 +399,6 @@ var manageOnlyTableOpen = function() {
     hideDataGrid();
 };
 
-var fileTable = function() {
-
-
-    var fetchFilesForUser = function() {
-        $.ajax({
-            url: '/files',
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                console.log(data)
-            },
-            error: function() {
-                console.log('error');
-            }
-        })
-            .done(function() {
-                console.log("success");
-            })
-            .fail(function() {
-                console.log("error");
-            })
-            .always(function() {
-                console.log("complete");
-            });
-
-
-    };
-
-    fetchFilesForUser();
-
-    var table = '<div class="bs-example" id="files-table">\
-                        <table class="table table-hover">\
-                          <thead>\
-                            <tr>\
-                              <th>#</th>\
-                              <th>First Name</th>\
-                              <th>Last Name</th>\
-                              <th>Username</th>\
-                            </tr>\
-                          </thead>\
-                          <tbody>\
-                            <tr>\
-                              <td>Mark</td>\
-                              <td>Otto</td>\
-                              <td>@mdo</td>\
-                            </tr>\
-                            <tr>\
-                              <td>2</td>\
-                              <td>Jacob</td>\
-                              <td>Thornton</td>\
-                              <td>@fat</td>\
-                            </tr>\
-                            <tr>\
-                              <td>3</td>\
-                              <td colspan="2">Larry the Bird</td>\
-                              <td>@twitter</td>\
-                            </tr>\
-                          </tbody>\
-                        </table>\
-                      </div>';
-    return table;
-};
-
-
 var getVisualizationModelTitles = function() {
     var visualizationModels = {};
     var titles = $(".titles p");
@@ -497,8 +433,9 @@ var saveFileAsPrompt = function(chart, file) {
 };
 
 
-var showSearchFilterFeature = function() {
-    $("#search-term").bind('input', function() {
+$(function() {
+    //Shows the Filter feature for the search input functionality
+     $("#search-term").bind('input', function() {
 
         var input = $(this).val();
         var regex = new RegExp(input.replace(input, '^'+ input), "i");
@@ -510,9 +447,6 @@ var showSearchFilterFeature = function() {
             }
         });
     });
-};
-
-$(function() {
 
     $("#authetication").click(function() {
         console.log("Hello");
@@ -547,21 +481,11 @@ $(function() {
     addEditor();
     manageImportClose();
     manageImportOpen();
-    showSearchFilterFeature();
 
     $(document).on('click','#files' ,function() {
-        console.log('Clicked me');
-        $("#files-table").css('display', 'inline-grid')
-//        manageImportClose();
-//        manageOnlyTableOpen();
-//        var fileTable = $("#files-table");
-//        if(fileTable.length == 0) {
-//            $("#workspace").prepend(fileTable);
-//        } else if(fileTable.is(':visible')) {
-//            fileTable.hide();
-//        } else {
-//            fileTable.show();
-//        }
+
+        $("#files-table").css('display', 'inline-grid');
+        hideVisualizationModel();
     });
 
 
