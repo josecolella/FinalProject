@@ -3,7 +3,6 @@
 {% block stylesheets %}
     {% load staticfiles %}
     <!-- Project CSS-->
-
     <link rel="stylesheet" href="{% static "visualization/css/dropzone.css" %}"/>
     <link rel="stylesheet" href="{% static "visualization/dropzone-3.8.4/css/dropzone.min.css" %}"/>
     <link rel="stylesheet" href="{% static "visualization/ndv3/nv.d3.min.css" %}"/>
@@ -34,129 +33,134 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row">
-
-            <div class="col-sm-3 col-md-2 sidebar panel panel-info">
-                <form name="search" id="search" role="form">
-                    <div class="input-group form-group search-group">
-                        <input type="text" class="form-control" id="search-term" placeholder="Search models..." required maxlength="20">
-                        <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search"></span></span>
-                    </div>
-                </form>
-                <ul class="nav nav-sidebar">
-                    {% comment %}
+                <div class="col-sm-3 col-md-2 sidebar panel panel-info">
+                    <form name="search" id="search" role="form">
+                        <div class="input-group form-group search-group">
+                            <input type="text" class="form-control" id="search-term" placeholder="Search models..." required maxlength="20">
+                            <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search"></span></span>
+                        </div>
+                    </form>
+                    <ul class="nav nav-sidebar">
+                        {% comment %}
                         This for runs through all the models and creates a side bar with
                         all the visualization models
                     {% endcomment %}
-                    {% for model in models %}
-                        <div class="panel-group" id="accordion">
-                            <div class="panel-default">
-                                <h4 class="panel-title">
-                                    <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
-                                        <p>{{ model.title }}<button class="btn btn-default btn-sm addbtn" id="add{{ model.title|slugify }}"data-container="body" data-toggle="popover" data-placement="right" data-content="Click to add {{ model.title|capfirst }} model"><i class="fa fa-plus"></i></button></span><span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
-                                    </li>
-                                </h4>
-                            </div>
-                            <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <p>{{ model.description }}</p>
-                                    <button type="button" class="btn btn-info"><a class="example-button" id="{{model.title|slugify}}" href="{{ model.link }}" data-toggle="modal" data-target="#modal-{{ model.title|slugify }}">Show an example</a></button>
+                        {% for model in models %}
+                            <div class="panel-group" id="accordion">
+                                <div class="panel-default">
+                                    <h4 class="panel-title">
+                                        <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
+                                            <p>{{ model.title }}<button class="btn btn-default btn-sm addbtn" id="add{{ model.title|slugify }}"data-container="body" data-toggle="popover" data-placement="right" data-content="Click to add {{ model.title|capfirst }} model"><i class="fa fa-plus"></i></button></span><span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
+                                        </li>
+                                    </h4>
+                                </div>
+                                <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <p>{{ model.description }}</p>
+                                        <button type="button" class="btn btn-info"><a class="example-button" id="{{model.title|slugify}}" href="{{ model.link }}" data-toggle="modal" data-target="#modal-{{ model.title|slugify }}">Show an example</a></button>
 
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <div id="menu">
-                    <ul class="nav nav-tabs menu-options">
-                        <li class="dropdown" id="workspace-view">
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
-                        </li>
-                        <li class="dropdown" id="data-grid">
-                            <a class="menu-option" data-toggle="dropdown" href="#" >Data Grid<i class="fa fa-table"></i></a>
-                        </li>
-                        <li class="dropdown" id="editor">
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
-                        </li>
-                        <li class="dropdown" id="import" >
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
-                        </li>
-                        <li class="dropdown" id="export">
-                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="dropdown-option" id="exportPdf"><a href="#">PDF</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportJpeg"><a href="#">JPEG</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportCsv"><a href="#">CSV</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportR"><a href="#">R</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportPython"><a href="#">Python</a></li>
-                            </ul>
-                        </li>
-                        {% if user.is_authenticated %}
-                            <li class="dropdown" id="files">
-                                <a class="dropdown-toggle menu-option" href="#">My Files<span class="glyphicon glyphicon-th-list menu-glyphicons"></span></a>
-                            </li>
-                        {% endif %}
+                        {% endfor %}
                     </ul>
+
                 </div>
-                <div id="workspace">
-                    <div id="dropzone"  >
-                        <!-- IMPORTANT enctype attribute! -->
-                        <form class="dropzone" id="myDropzone" action="#" method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                        </form>
-                        <p>{{ form.non_field_errors }}</p>
-                        <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-                        <p>
-                            {{ form.docfile.errors }}
-                            {{ form.docfile }}
-                        </p>
+
+
+                <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <div id="menu">
+                        <ul class="nav nav-tabs menu-options">
+                            <li class="dropdown" id="workspace-view">
+                                <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
+                            </li>
+                            <li class="dropdown" id="data-grid">
+                                <a class="menu-option" data-toggle="dropdown" href="#" >Data Grid<i class="fa fa-table"></i></a>
+                            </li>
+                            <li class="dropdown" id="editor">
+                                <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
+                            </li>
+                            <li class="dropdown" id="import" >
+                                <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
+                            </li>
+                            <li class="dropdown" id="export">
+                                <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li class="dropdown-option" id="exportPdf"><a href="#">PDF</a></li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-option" id="exportPng"><a href="#">PNG</a></li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-option" id="exportJpeg"><a href="#">JPEG</a></li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-option" id="exportCsv"><a href="#">CSV</a></li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-option" id="exportR"><a href="#">R</a></li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-option" id="exportPython"><a href="#">Python</a></li>
+                                </ul>
+                            </li>
+                            {% if user.is_authenticated %}
+                                <li class="dropdown" id="files">
+                                    <a class="dropdown-toggle menu-option" href="#">My Files<span class="glyphicon glyphicon-th-list menu-glyphicons"></span></a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div id="workspace">
+                        <div id="dropzone"  style="display: none" >
+                            <!-- IMPORTANT enctype attribute! -->
+                            <form class="dropzone" id="myDropzone" action="#" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                            </form>
+                            <p>{{ form.non_field_errors }}</p>
+                            <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+                            <p>
+                                {{ form.docfile.errors }}
+                                {{ form.docfile }}
+                            </p>
                     <span class="dropzone-options">
                         <button type="button" class="btn btn-default pagination-centered" id="uploadButton"><i class="fa fa-upload"></i>Upload</button>
                         <button type="button" class="btn btn-default pagination-center" id="clearAllButton"><i class="fa fa-times"></i>Remove All</button>
 
                     </span>
-                    </div>
-                    <div id="container" class="chart">
-                        <svg></svg>
-                    </div>
+                        </div>
+                        <div id="container" class="chart">
+                            <svg></svg>
+                        </div>
 
-                    <div style="display: none;font-size: 1.3em;" class="bs-example" id="files-table">
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>File Name</th>
-                                <th>File Size</th>
-                                <th>File Url</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for file in files %}
+                        <div style="display: none;font-size: 1.3em;" class="bs-example" id="files-table">
+                            <table class="table table-hover">
+                                <thead>
                                 <tr>
-                                    <td></td>
-                                    <td>{{ file.filename }}</td>
-                                    <td>{{ file.filesize }}</td>
-                                    <td><a href="{{ file.fileurl }}">{{ file.fileurl }}</a></td>
+                                    <th>#</th>
+                                    <th>File Name</th>
+                                    <th>File Size</th>
+                                    <th>File Url</th>
                                 </tr>
-                            {% endfor %}
+                                </thead>
+                                <tbody>
+                                {% for file in files %}
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ file.filename }}</td>
+                                        <td>{{ file.filesize }}</td>
+                                        <td><a href="{{ file.fileurl }}">{{ file.fileurl }}</a></td>
+                                    </tr>
+                                {% endfor %}
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
-
                 </div>
-            </div>
         </div>
     </div>
 {% endblock %}
 {% block javascript %}
     {% load staticfiles %}
+
+    <script src="{% static "visualization/js/exports.js" %}"></script>
     <script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
     <script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>
 
@@ -257,12 +261,12 @@
             }
         };
     </script>
-    <script src="{% static "visualization/jsPDF/jspdf.min.js" %}"></script>
+
+
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
     <script src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
     <script src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
-    <script src="https://rawgithub.com/highslide-software/export-csv/master/export-csv.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/acorn.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/acorn_loose.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/util/walk.js"></script>

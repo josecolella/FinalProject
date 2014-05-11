@@ -490,15 +490,7 @@ $(function() {
 
 
     $('#exportCsv').click(function () {
-        saveFileAsPrompt(chart,"csv");
-    });
 
-    $('#exportPdf').on('click', function() {
-        saveFileAsPrompt(chart, "pdf");
-    });
-
-    $('#exportJpeg').on('click', function() {
-        saveFileAsPrompt(chart, "jpeg");
     });
 
     $('#exportR').click(function() {

@@ -3,7 +3,9 @@
     overflow: scroll;
 }
 
-
+#dropzone {
+    display: none;
+}
 #navigationbar {
     background-color: #e5e5e5;
 }
