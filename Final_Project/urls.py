@@ -24,6 +24,7 @@ urlpatterns = patterns('',
                        url(r'^about/', views.AboutView.as_view(), name='about'),
                        url(r'^import/', views.DropZoneView.as_view(), name='import'),
                        url(r'^files/', views.fileview, name='file'),
+                       url(r'^createSVG/', views.createSVGview, name='createcsv'),
                        url(r'^csv/', views.some_view_csv, name='csv'),
                        url(r'^admin/', include(admin.site.urls), name='admin'),
 

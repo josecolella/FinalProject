@@ -5,7 +5,7 @@
     <!-- Project CSS-->
     <link rel="stylesheet" href="{% static "visualization/css/dropzone.css" %}"/>
     <link rel="stylesheet" href="{% static "visualization/dropzone-3.8.4/css/dropzone.min.css" %}"/>
-    <link rel="stylesheet" href="{% static "visualization/ndv3/nv.d3.min.css" %}"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/nvd3/1.1.15-beta/nv.d3.min.css"/>
     <link rel="stylesheet" href="{% static "visualization/codemirror/lib/codemirror.css" %}"/>
     <link rel="stylesheet" href="{% static "visualization/css/dashboard.css"%}" />
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/codemirror.css' %} " />
@@ -17,143 +17,179 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.css"/>
 {% endblock stylesheets %}
 {% block headjs %}
-    <script src="{% static "visualization/codemirror/lib/codemirror.js" %}"></script>
-    <script src="{% static "visualization/codemirror/lib/dialog.js" %}"></script>
-    <script src="{% static "visualization/codemirror/lib/javascript.js" %}"></script>
-    <script src="{% static "visualization/codemirror/lib/python.js" %}"></script>
-    <script src="{% static "visualization/codemirror/lib/r.js" %}"></script>
-    <script src="{% static "visualization/codemirror/lib/show-hint.js" %}"></script>
-    <script src="{% static "visualization/codemirror/lib/tern.js" %}"></script>
     <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
     <script src="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js" charset="utf-8"></script>
+    <script src="//cdn.jsdelivr.net/nvd3/1.1.15-beta/nv.d3.min.js"></script>
     <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
-    <script src="{% static "visualization/ndv3/nv.d3.min.js" %}"></script>
+
 {% endblock headjs %}
 {% block content %}
     <div class="container-fluid">
         <div class="row">
-                <div class="col-sm-3 col-md-2 sidebar panel panel-info">
-                    <form name="search" id="search" role="form">
-                        <div class="input-group form-group search-group">
-                            <input type="text" class="form-control" id="search-term" placeholder="Search models..." required maxlength="20">
-                            <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search"></span></span>
-                        </div>
-                    </form>
-                    <ul class="nav nav-sidebar">
-                        {% comment %}
+            <div class="col-sm-3 col-md-2 sidebar panel panel-info">
+                <form name="search" id="search" role="form">
+                    <div class="input-group form-group search-group">
+                        <input type="text" class="form-control" id="search-term" placeholder="Search models..." required maxlength="20">
+                        <span class="input-group-addon" id="search-icon"><span class="glyphicon glyphicon-search"></span></span>
+                    </div>
+                </form>
+                <ul class="nav nav-sidebar">
+                    {% comment %}
                         This for runs through all the models and creates a side bar with
                         all the visualization models
                     {% endcomment %}
-                        {% for model in models %}
-                            <div class="panel-group" id="accordion">
-                                <div class="panel-default">
-                                    <h4 class="panel-title">
-                                        <li class="active titles" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ model.title|slugify }}">
-                                            <p>{{ model.title }}<button class="btn btn-default btn-sm addbtn" id="add{{ model.title|slugify }}"data-container="body" data-toggle="popover" data-placement="right" data-content="Click to add {{ model.title|capfirst }} model"><i class="fa fa-plus"></i></button></span><span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
-                                        </li>
-                                    </h4>
-                                </div>
-                                <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <p>{{ model.description }}</p>
-                                        <button type="button" class="btn btn-info"><a class="example-button" id="{{model.title|slugify}}" href="{{ model.link }}" data-toggle="modal" data-target="#modal-{{ model.title|slugify }}">Show an example</a></button>
+                    {% for model in models %}
+                        <div class="panel-group accordion" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            <div class="panel-default">
+                                <h4 class="panel-title">
+                                    <li class="active titles" data-toggle="collapse" data-parent=".accordion" href="#collapse{{ model.title|slugify }}">
+                                        <p>{{ model.title }}<button class="btn btn-default btn-sm addbtn" id="add{{ model.title|slugify }}"data-container="body" data-toggle="popover" data-placement="right" data-content="Click to add {{ model.title|capfirst }} model"><i class="fa fa-plus"></i></button></span><span class="glyphicon glyphicon-chevron-right dropdown-icon"></span></p>
+                                    </li>
+                                </h4>
+                            </div>
+                            <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <p>{{ model.description }}</p>
+                                    <button type="button" class="btn btn-info"><a class="example-button" id="{{model.title|slugify}}" href="{{ model.link }}" data-toggle="modal" data-target="#modal-{{ model.title|slugify }}">Show an example</a></button>
 
-                                    </div>
                                 </div>
                             </div>
-                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+
+            <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <div id="menu">
+                    <ul class="nav nav-tabs menu-options">
+                        <li class="dropdown" id="workspace-view">
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
+                        </li>
+                        <li class="dropdown" id="data-grid">
+                            <a class="menu-option" data-toggle="dropdown" href="#" >Data Grid<i class="fa fa-table"></i></a>
+                        </li>
+                        <li class="dropdown" id="editor">
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
+                        </li>
+                        <li class="dropdown" id="import" >
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
+                        </li>
+                        <li class="dropdown" id="export">
+                            <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="dropdown-option" id="exportPdf"><a href="#">PDF</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-option" id="exportPng"><a href="#">PNG</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-option" id="exportSVG"><a href="#">SVG</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-option" id="exportJpeg"><a href="#">JPEG</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-option" id="exportCsv"><a href="#">CSV</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-option" id="exportR"><a href="#">R</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-option" id="exportPython"><a href="#">Python</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-option" id="exportExcel"><a href="#">Excel</a></li>
+
+                            </ul>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="dropdown" id="files">
+                                <a class="dropdown-toggle menu-option" href="#">My Files<span class="glyphicon glyphicon-th-list menu-glyphicons"></span></a>
+                            </li>
+                        {% endif %}
                     </ul>
-
                 </div>
-
-
-                <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <div id="menu">
-                        <ul class="nav nav-tabs menu-options">
-                            <li class="dropdown" id="workspace-view">
-                                <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Workspace<span class="glyphicon glyphicon-stats menu-glyphicons"></span></a>
-                            </li>
-                            <li class="dropdown" id="data-grid">
-                                <a class="menu-option" data-toggle="dropdown" href="#" >Data Grid<i class="fa fa-table"></i></a>
-                            </li>
-                            <li class="dropdown" id="editor">
-                                <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Editor<span class="glyphicon glyphicon-file menu-glyphicons"></span></a>
-                            </li>
-                            <li class="dropdown" id="import" >
-                                <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Import<span class="glyphicon glyphicon-import menu-glyphicons"></span></a>
-                            </li>
-                            <li class="dropdown" id="export">
-                                <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li class="dropdown-option" id="exportPdf"><a href="#">PDF</a></li>
-                                    <li class="divider"></li>
-                                    <li class="dropdown-option" id="exportPng"><a href="#">PNG</a></li>
-                                    <li class="divider"></li>
-                                    <li class="dropdown-option" id="exportJpeg"><a href="#">JPEG</a></li>
-                                    <li class="divider"></li>
-                                    <li class="dropdown-option" id="exportCsv"><a href="#">CSV</a></li>
-                                    <li class="divider"></li>
-                                    <li class="dropdown-option" id="exportR"><a href="#">R</a></li>
-                                    <li class="divider"></li>
-                                    <li class="dropdown-option" id="exportPython"><a href="#">Python</a></li>
-                                </ul>
-                            </li>
-                            {% if user.is_authenticated %}
-                                <li class="dropdown" id="files">
-                                    <a class="dropdown-toggle menu-option" href="#">My Files<span class="glyphicon glyphicon-th-list menu-glyphicons"></span></a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                    <div id="workspace">
-                        <div id="dropzone"  style="display: none" >
-                            <!-- IMPORTANT enctype attribute! -->
-                            <form class="dropzone" id="myDropzone" action="#" method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                            </form>
-                            <p>{{ form.non_field_errors }}</p>
-                            <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-                            <p>
-                                {{ form.docfile.errors }}
-                                {{ form.docfile }}
-                            </p>
+                <div id="workspace">
+                    <div id="dropzone"  style="display: none" >
+                        <!-- IMPORTANT enctype attribute! -->
+                        <form class="dropzone" id="myDropzone" action="#" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                        </form>
+                        <p>{{ form.non_field_errors }}</p>
+                        <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+                        <p>
+                            {{ form.docfile.errors }}
+                            {{ form.docfile }}
+                        </p>
                     <span class="dropzone-options">
                         <button type="button" class="btn btn-default pagination-centered" id="uploadButton"><i class="fa fa-upload"></i>Upload</button>
                         <button type="button" class="btn btn-default pagination-center" id="clearAllButton"><i class="fa fa-times"></i>Remove All</button>
 
                     </span>
-                        </div>
-                        <div id="container" class="chart">
-                            <svg></svg>
-                        </div>
-
-                        <div style="display: none;font-size: 1.3em;" class="bs-example" id="files-table">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>File Name</th>
-                                    <th>File Size</th>
-                                    <th>File Url</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for file in files %}
-                                    <tr>
-                                        <td></td>
-                                        <td>{{ file.filename }}</td>
-                                        <td>{{ file.filesize }}</td>
-                                        <td><a href="{{ file.fileurl }}">{{ file.fileurl }}</a></td>
-                                    </tr>
-                                {% endfor %}
-
-                                </tbody>
-                            </table>
-                        </div>
-
                     </div>
+                    <div id="container" class="chart">
+                        <svg>
+                            <rect x="0" y="99.93608898716047" width="20" height="0.25564405135810375" fill="rgb(0, 0, 0.6391101283952594)"></rect>
+                            <rect x="48" y="82.70467814290896" width="20" height="69.18128742836416" fill="rgb(0, 0, 172.9532185709104)"></rect>
+                            <rect x="72" y="76.16569978184998" width="20" height="95.33720087260008" fill="rgb(0, 0, 238.3430021815002)"></rect>
+                            <rect x="96" y="87.89635605178773" width="20" height="48.414575792849064" fill="rgb(0, 0, 121.03643948212266)"></rect>
+                            <rect x="120" y="90.27451384812593" width="20" height="38.90194460749626" fill="rgb(0, 0, 97.25486151874065)"></rect>
+                            <rect x="144" y="78.2426892593503" width="20" height="87.0292429625988" fill="rgb(0, 0, 217.573107406497)"></rect>
+                            <rect x="168" y="90.7219203026034" width="20" height="37.112318789586425" fill="rgb(0, 0, 92.78079697396606)"></rect>
+                            <rect x="192" y="87.87821516860276" width="20" height="48.48713932558894" fill="rgb(0, 0, 121.21784831397235)"></rect>
+                            <rect x="216" y="89.7445843857713" width="20" height="41.02166245691478" fill="rgb(0, 0, 102.55415614228696)"></rect>
+                            <rect x="240" y="81.89703780924901" width="20" height="72.41184876300395" fill="rgb(0, 0, 181.02962190750986)"></rect>
+                            <rect x="264" y="86.09844483435154" width="20" height="55.60622066259384" fill="rgb(0, 0, 139.0155516564846)"></rect>
+                            <rect x="288" y="85.26989130303264" width="20" height="58.92043478786945" fill="rgb(0, 0, 147.30108696967363)"></rect>
+                            <rect x="312" y="96.30623895907775" width="20" height="14.775044163689017" fill="rgb(0, 0, 36.93761040922254)"></rect>
+                            <rect x="336" y="71.00287860725075" width="20" height="115.988485570997" fill="rgb(0, 0, 289.9712139274925)"></rect>
+                            <rect x="360" y="96.06189443264157" width="20" height="15.752422269433737" fill="rgb(0, 0, 39.38105567358434)"></rect>
+                            <rect x="384" y="78.63153313053772" width="20" height="85.47386747784913" fill="rgb(0, 0, 213.68466869462281)"></rect>
+                            <rect x="408" y="83.978997154627" width="20" height="64.08401138149202" fill="rgb(0, 0, 160.21002845373005)"></rect>
+                            <rect x="432" y="85.72604364482686" width="20" height="57.09582542069256" fill="rgb(0, 0, 142.7395635517314)"></rect>
+                            <rect x="456" y="95.33667707582936" width="20" height="18.653291696682572" fill="rgb(0, 0, 46.63322924170643)"></rect>
+                        </svg>
+                    </div>
+                    <div style="display: none;font-size: 1.3em;" class="bs-example" id="files-table">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>File Name</th>
+                                <th>File Size</th>
+                                <th>File Url</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for file in files %}
+                                <tr draggable="true">
+                                    <td></td>
+                                    <td>{{ file.filename }}</td>
+                                    <td>{{ file.filesize }}</td>
+                                    <td><a class="file-location" href="{{ file.fileurl }}" ondragstart="drag(event)">{{ file.fileurl }}</a></td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                        <script>
+                            function allowDrop(ev)
+                            {
+                                ev.preventDefault();
+                            }
+
+                            function drag(ev)
+                            {
+                                ev.dataTransfer.setData("Text",ev.target.id);
+                            }
+
+                            function drop(ev)
+                            {
+                                ev.preventDefault();
+                                var data=ev.dataTransfer.getData("Text");
+                                ev.target.appendChild(document.getElementById(data));
+                            }
+                        </script>
+                    </div>
+
                 </div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -261,12 +297,16 @@
             }
         };
     </script>
-
-
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script src="http://code.highcharts.com/modules/exporting.js"></script>
-    <script src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
-    <script src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
+    <script src="{% static "visualization/jquery/jquery.base64.min.js" %}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js"></script>
+    <script src="{% static "visualization/codemirror/lib/codemirror.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/dialog.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/javascript.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/python.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/r.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/show-hint.js" %}"></script>
+    <script src="{% static "visualization/codemirror/lib/tern.js" %}"></script>
     <script src="http://marijnhaverbeke.nl/acorn/acorn.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/acorn_loose.js"></script>
     <script src="http://marijnhaverbeke.nl/acorn/util/walk.js"></script>

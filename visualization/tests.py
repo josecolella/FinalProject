@@ -1,5 +1,4 @@
 from django.test import TestCase
-from visualization.models import VisualizationModelDescription
 from django.test.client import Client
 
 

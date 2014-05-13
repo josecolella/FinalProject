@@ -25,7 +25,7 @@ var exportSVG = function(outputFormat) {
         $.ajax({
             url: 'https://api.cloudconvert.org/process',
             type: 'POST',
-            dataType: 'json',
+            dataType: '',
             data: {
                 apikey: 't-APsbQ2IpfweLVeBQZgeZi4hEluptiRiJiImQuJuwiZ0ARQUIQ4hMCIDwSb8_Vg92Wp316XSdJDHUhIqzO1ug',
                 inputformat: "svg",
@@ -97,5 +97,55 @@ $(document).ready(function() {
 
     $('#exportJpeg').on('click', function() {
         exportSVG("jpg");
+    });
+
+    $('#exportExcel').click(function() {
+
+    });
+
+
+    $('#exportSVG').on('click', function() {
+
+        var createSVGFileInformation = function() {
+            var html = d3.select("svg")
+                        .attr("title", "test2")
+                        .attr("version", 1.1)
+                        .attr("xmlns", "http://www.w3.org/2000/svg")
+                        .node().parentNode.innerHTML.trim();
+
+            return html;
+        };
+
+        var sendSVGInfo = function(svg) {
+            $.ajax({
+                url: 'createSVG/',
+                type: 'POST',
+                dataType: 'html',
+                headers: {
+                    'X-CSRFToken' : $.cookie('csrftoken')
+                },
+                data: {
+                    svg: $.base64.encode(createSVGFileInformation())
+                },
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function() {
+                    console.log("error");
+                }
+            })
+                .done(function() {
+                    console.log("success");
+                })
+                .fail(function() {
+                    console.log("error");
+                })
+                .always(function() {
+                    console.log("complete");
+                });
+
+        };
+
+        sendSVGInfo();
     });
 });

@@ -7,13 +7,20 @@ from setuptools.compat import BytesIO
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
+from django.core.files import File
+from django.core.servers.basehttp import FileWrapper
 
 from .forms import UploadFileForm, SignUpForm, SignInForm
-from .models import UploadFile, UserUploadedFiles,VisualizationModelDescription
+from .models import UploadFile, UserUploadedFiles,VisualizationModelDescription, UploadSVGFile
 
 from reportlab.pdfgen import canvas
 import csv
 import re
+import base64
+
+import tempfile
 from pandas import Series, DataFrame
 import pandas
 
@@ -39,7 +46,6 @@ class Index (ListView):
     model = sorted(VisualizationModelDescription.objects.all())
 
     def get(self, request, *args, **kwargs):
-        data = {}
         if request.user.is_authenticated():
             userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
             data = {
@@ -61,7 +67,6 @@ class Index (ListView):
             if form.is_valid():
 
                 new_file = UploadFile(file=request.FILES['file'])
-                print(new_file.file)
                 userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
                 userUploadedFiles.uploadedFiles.append({
                     'filename': new_file.file.name,
@@ -280,4 +285,21 @@ class CSVReader(View):
         """
         pass
 
+
+
+def createSVGview(request):
+    """
+    This view receives the svg information from the workspace and saves the file
+    """
+    if request.is_ajax():
+        newFile = ContentFile('newfile.svg', 'w')
+        newFile.name = 'newfile.svg'
+        newFile.write(str(base64.b64decode(request.POST['svg'])).strip())
+
+        newFileDB = UploadSVGFile(file=newFile)
+        newFileDB.save()
+
+
+        response_data = {'url': re.sub(r'/media/', r'/media/files/', newFileDB.file.url)}
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 

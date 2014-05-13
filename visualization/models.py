@@ -68,6 +68,15 @@ class UploadFile(models.Model):
     def __str__(self):
         return self.file.url
 
+class UploadSVGFile(models.Model):
+    """
+    This class represents the class where the svg files are uploaded
+    """
+    file = models.FileField(upload_to='svg/')
+
+    def __str__(self):
+        return self.file.url
+
 class UserUploadedFiles(models.Model):
     """
     This class represents the user that will be using the service

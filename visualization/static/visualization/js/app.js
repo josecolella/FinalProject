@@ -3,6 +3,9 @@
 var i = 0;
 var rightStateClass = "glyphicon-chevron-right";
 var downStateClass = 'glyphicon-chevron-down';
+var csv;
+var downloadData = [];
+var columnHeaders = [];
 /**
  * Function created to manage the change of icons when a user clicks to see
  * the visualization model. Uses $(this) to make sure that only one caret moves
@@ -122,106 +125,6 @@ $("#export").click(function() {
 });
 
 
-/*
- var generatePDF = function() {
- alert("Hello");
- //    var doc = new jsPDF();
- //    doc.text(20, 20, 'Hello world!');
- //    doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
- //    doc.addPage();
- //    doc.text(20, 20, 'Do you like that?');
- //    doc.setProperties({
- //        title: 'Title',
- //        subject: 'This is the subject',
- //        author: 'James Hall',
- //        keywords: 'generated, javascript, web 2.0, ajax',
- //        creator: 'MEEE'
- //    });
- //
- //
- //    doc.save('Test.pdf');
- //    var name = prompt('What is your name?');
- //    var multiplier = prompt('Enter a number:');
- //    multiplier = parseInt(multiplier);
- //
- //    var doc = new jsPDF();
- //    doc.setFontSize(22);
- //    doc.text(20, 20, 'Questions');
- //    doc.setFontSize(16);
- //    doc.setFont("helvetica");
- //    doc.setFontSize(16);
- //    doc.text(20, 30, 'This belongs to: ' + name);
- //
- //    for(var i = 1; i <= 12; i ++) {
- //        doc.text(20, 30 + (i * 10), i + ' x ' + multiplier + ' = ___');
- //    }
- //
- //    doc.addPage();
- //    doc.setFontSize(22);
- //    doc.text(20, 20, 'Answers');
- //    doc.setFontSize(16);
- //
- //    for(var i = 1; i <= 12; i ++) {
- //        doc.text(20, 30 + (i * 10), i + ' x ' + multiplier + ' = ' + (i * multiplier));
- //    }
- //    doc.save('Test.pdf');
- //    var doc = new jsPDF();
- //
- //doc.text(20, 20, 'This is the default font.');
- //
- //doc.setFont("courier");
- //doc.text(20, 30, 'This is courier normal.');
- //
- //doc.setFont("times");
- //doc.setFontType("italic");
- //doc.text(20, 40, 'This is times italic.');
- //
- //doc.setFont("helvetica");
- //doc.setFontType("bold");
- //doc.text(20, 50, 'This is helvetica bold.');
- //doc.setTextColor(150);
- //doc.setFont("courier");
- //doc.setFontType("bolditalic");
- //doc.text(20, 60, 'This is courier bolditalic.');
- //
- //doc.save('Test.pdf');
- var pdf = new jsPDF('p','in','letter')
-
- // source can be HTML-formatted string, or a reference
- // to an actual DOM element from which the text will be scraped.
- , source = $('#playground')[0]
-
- // we support special element handlers. Register them with jQuery-style
- // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
- // There is no support for any other type of selectors
- // (class, of compound) at this time.
- , specialElementHandlers = {
- // element with id of "bypass" - jQuery style selector
- '#bypassme': function(element, renderer){
- // true = "handled elsewhere, bypass text extraction"
- return true
- }
- }
-
- // all coords and widths are in jsPDF instance's declared units
- // 'inches' in this case
- pdf.fromHTML(
- source // HTML string or DOM elem ref.
- , 0.5 // x coord
- , 0.5 // y coord
- , {
- 'width':7.5 // max width of content on PDF
- , 'elementHandlers': specialElementHandlers
- }
- )
-
- pdf.save('Test.pdf');
-
- };
-
- */
-
-
 /**
  * Function that retrieves the example description for the visualization model that
  * is passed as a parameter
@@ -306,35 +209,43 @@ var showAddPopOver = function() {
  * This function manages the integration of an excel-like grid that
  * mirrors the model that is being visualized
  */
-var addDataGrid = function() {
+var addDataGrid = function(data) {
 
-    $("#data-grid").click(function() {
+
+    var dataTable = $('#dataTable');
+    var window = $(window);
+
+
+    $("#data-grid").click(function(data) {
         manageImportClose();
         hideEditor();
         var workspace = $("#workspace");
         var dataTableDiv = $("#dataTable");
         //Doesn't exist create it
+
         if (dataTableDiv.length == 0) {
-            workspace.append('<div id="dataTable"></div>');
+            workspace.append('<div id="dataTable" style="overflow: scroll"></div>');
             $("#dataTable").handsontable({
-                data: [],
-                dataSchema: {id: null, name: {first: null, last: null}, address: null},
-                startRows: 5,
-                startCols: 4,
-                colHeaders: [' ', ' ', ' ', ' '],
-                columns: [
-                    {data: "id"},
-                    {data: "name.first"},
-                    {data: "name.last"},
-                    {data: "address"}
-                ],
-                minSpareRows: 1
+                startRows: 20,
+                startCols: 6,
+                rowHeaders: true,
+                colHeaders: true,
+                minSpareRows: 1,
+                contextMenu: true,
+                manualColumnResize: true,
+                stretchH: 'all',
+                width: 1140,
+                height: 400
             });
+
+
         } else if(dataTableDiv.is(":visible")){
             dataTableDiv.fadeOut();
         } else {
             dataTableDiv.fadeIn();
         }
+
+
     });
 };
 
@@ -414,12 +325,6 @@ var getVisualizationModelTitles = function() {
 
 var visualizationModels = getVisualizationModelTitles();
 
-var exportCSV = function() {
-
-};
-
-
-
 var saveFileAsPrompt = function(chart, file) {
     vex.dialog.prompt({
         message: 'Save '+file.toUpperCase()+' file as...',
@@ -435,7 +340,7 @@ var saveFileAsPrompt = function(chart, file) {
 
 $(function() {
     //Shows the Filter feature for the search input functionality
-     $("#search-term").bind('input', function() {
+    $("#search-term").bind('input', function() {
 
         var input = $(this).val();
         var regex = new RegExp(input.replace(input, '^'+ input), "i");
@@ -449,7 +354,6 @@ $(function() {
     });
 
     $("#authetication").click(function() {
-        console.log("Hello");
         vex.dialog.open({
             message: 'Enter your username and password:',
             input: "<input name=\"username\" type=\"text\" placeholder=\"Username\" required />\n<input name=\"password\" type=\"password\" placeholder=\"Password\" required />",
@@ -488,6 +392,68 @@ $(function() {
         hideVisualizationModel();
     });
 
+
+    $(".file-location").click(function(e) {
+        e.preventDefault();
+        $('#data-grid').click();
+
+        var url = $(this).attr('href');
+
+
+        var fetchFileContents = function(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'html',
+                headers: {
+                    'X-CSRFToken' : $.cookie('csrftoken')
+                },
+                success: function(data) {
+                    csv = data;
+                    downloadData = [];
+                    columnHeaders = [];
+                    $.each(csv.split("\n"), function(index, value) {
+                        if (value !== '') {
+                            downloadData.push(value.split(","))
+                        }
+                    });
+                    var handsontable = $('#dataTable').data('handsontable');
+                    console.log(downloadData);
+                    console.log(downloadData[0]);
+                    $.each(downloadData[0], function(index, value) {
+                        var col = {};
+                        col.data = value;
+                        col.title = value;
+                        col.type = "text";
+                        columnHeaders.push(col);
+                    });
+                    console.log(columnHeaders);
+
+                    handsontable.loadData(downloadData);
+//                    var ht = $('#dataTable').handsontable('getInstance');
+//                    ht.updateSettings({ columns: columnHeaders , data: downloadData.slice(1)});
+//                    ht.render();
+
+
+                },
+                error: function() {
+                    console.log('Error');
+                }
+            })
+                .done(function() {
+                    console.log("success");
+                })
+                .fail(function() {
+                    console.log("error");
+                })
+                .always(function() {
+                    console.log("complete");
+                });
+
+        };
+
+        fetchFileContents(url);
+    });
 
     $('#exportCsv').click(function () {
 
