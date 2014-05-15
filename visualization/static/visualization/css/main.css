@@ -1,6 +1,5 @@
 #playground {
     padding:1em;
-    overflow: scroll;
 }
 
 #dropzone {
@@ -93,7 +92,7 @@ footer {
     margin-top: 4em;
 }
 
-#container svg,
+
 #chart svg {
     height: 400px;
 

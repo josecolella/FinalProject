@@ -55,7 +55,13 @@ var manageImportOpen = function() {
         hideEditor();
         hideDataGrid();
         hideImportPanelButtons();
+        hideFileTable();
 
+        if ($('#file').length !== 0) {
+
+            $('#files-table').css('display', 'none');
+
+        }
         var dropzone = $("#dropzone");
         if (dropzone.is(":visible")) {
             dropzone.fadeOut("slow");
@@ -90,11 +96,11 @@ var hideImportPanelButtons = function() {
 };
 
 var showVisualizationModel = function() {
-    $("#container").show();
+    $("#chart").show();
 };
 
 var hideVisualizationModel = function() {
-    $("#container").hide();
+    $("#chart").hide();
 };
 
 var showEditor = function() {
@@ -111,6 +117,15 @@ var showDataGrid = function() {
 
 var hideDataGrid = function() {
     $("#dataTable").hide();
+};
+
+var showFileTable = function() {
+
+    $("#files-table").css('display', 'inline-grid');
+};
+
+var hideFileTable = function() {
+    $("#files-table").css('display', 'none');
 };
 
 $("#workspace-view").click(function() {
@@ -234,7 +249,7 @@ var addDataGrid = function(data) {
                 contextMenu: true,
                 manualColumnResize: true,
                 stretchH: 'all',
-                width: 1140,
+                width: 1120,
                 height: 400
             });
 
@@ -388,19 +403,28 @@ $(function() {
 
     $(document).on('click','#files' ,function() {
 
-        $("#files-table").css('display', 'inline-grid');
+        showFileTable();
         hideVisualizationModel();
+
     });
 
 
     $(".file-location").click(function(e) {
         e.preventDefault();
+        hideFileTable();
+        showVisualizationModel();
+
         $('#data-grid').click();
 
         var url = $(this).attr('href');
 
-
-        var fetchFileContents = function(url) {
+        /**
+         * Processes the CSV file that is located in the url that is passed
+         * as a parameter
+         *
+         * @param url
+         */
+        var processCSVFileContents = function(url) {
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -411,29 +435,18 @@ $(function() {
                 success: function(data) {
                     csv = data;
                     downloadData = [];
-                    columnHeaders = [];
                     $.each(csv.split("\n"), function(index, value) {
                         if (value !== '') {
                             downloadData.push(value.split(","))
                         }
                     });
-                    var handsontable = $('#dataTable').data('handsontable');
-                    console.log(downloadData);
-                    console.log(downloadData[0]);
-                    $.each(downloadData[0], function(index, value) {
-                        var col = {};
-                        col.data = value;
-                        col.title = value;
-                        col.type = "text";
-                        columnHeaders.push(col);
+                    //Loading columns and data into grid
+                    columnHeaders = downloadData[0];
+
+                    $('#dataTable').handsontable({
+                        data: downloadData.slice(1),
+                        colHeaders: columnHeaders
                     });
-                    console.log(columnHeaders);
-
-                    handsontable.loadData(downloadData);
-//                    var ht = $('#dataTable').handsontable('getInstance');
-//                    ht.updateSettings({ columns: columnHeaders , data: downloadData.slice(1)});
-//                    ht.render();
-
 
                 },
                 error: function() {
@@ -452,7 +465,7 @@ $(function() {
 
         };
 
-        fetchFileContents(url);
+        processCSVFileContents(url);
     });
 
     $('#exportCsv').click(function () {

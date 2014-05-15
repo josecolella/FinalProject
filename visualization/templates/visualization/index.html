@@ -14,11 +14,11 @@
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/tern.css' %} "/>
     <link rel="stylesheet" href="{% static 'visualization/vex/vex.css' %}"/>
     <link rel="stylesheet" href="{% static 'visualization/vex/vex-theme-flat-attack.css' %}"/>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.css"/>
+    <link rel="stylesheet" href="{% static 'visualization/jquery/jquery.handsontable.full.css' %}"/>
 {% endblock stylesheets %}
 {% block headjs %}
     <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
-    <script src="//cdn.jsdelivr.net/jquery.handsontable/0.10.5/jquery.handsontable.full.js"></script>
+    <script src="{% static "visualization/jquery/jquery.handsontable.full.js" %}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js" charset="utf-8"></script>
     <script src="//cdn.jsdelivr.net/nvd3/1.1.15-beta/nv.d3.min.js"></script>
     <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
@@ -62,7 +62,7 @@
             </div>
 
 
-            <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div id="playground"  class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main container-fluid">
                 <div id="menu">
                     <ul class="nav nav-tabs menu-options">
                         <li class="dropdown" id="workspace-view">
@@ -123,27 +123,8 @@
 
                     </span>
                     </div>
-                    <div id="container" class="chart">
+                    <div id="chart">
                         <svg>
-                            <rect x="0" y="99.93608898716047" width="20" height="0.25564405135810375" fill="rgb(0, 0, 0.6391101283952594)"></rect>
-                            <rect x="48" y="82.70467814290896" width="20" height="69.18128742836416" fill="rgb(0, 0, 172.9532185709104)"></rect>
-                            <rect x="72" y="76.16569978184998" width="20" height="95.33720087260008" fill="rgb(0, 0, 238.3430021815002)"></rect>
-                            <rect x="96" y="87.89635605178773" width="20" height="48.414575792849064" fill="rgb(0, 0, 121.03643948212266)"></rect>
-                            <rect x="120" y="90.27451384812593" width="20" height="38.90194460749626" fill="rgb(0, 0, 97.25486151874065)"></rect>
-                            <rect x="144" y="78.2426892593503" width="20" height="87.0292429625988" fill="rgb(0, 0, 217.573107406497)"></rect>
-                            <rect x="168" y="90.7219203026034" width="20" height="37.112318789586425" fill="rgb(0, 0, 92.78079697396606)"></rect>
-                            <rect x="192" y="87.87821516860276" width="20" height="48.48713932558894" fill="rgb(0, 0, 121.21784831397235)"></rect>
-                            <rect x="216" y="89.7445843857713" width="20" height="41.02166245691478" fill="rgb(0, 0, 102.55415614228696)"></rect>
-                            <rect x="240" y="81.89703780924901" width="20" height="72.41184876300395" fill="rgb(0, 0, 181.02962190750986)"></rect>
-                            <rect x="264" y="86.09844483435154" width="20" height="55.60622066259384" fill="rgb(0, 0, 139.0155516564846)"></rect>
-                            <rect x="288" y="85.26989130303264" width="20" height="58.92043478786945" fill="rgb(0, 0, 147.30108696967363)"></rect>
-                            <rect x="312" y="96.30623895907775" width="20" height="14.775044163689017" fill="rgb(0, 0, 36.93761040922254)"></rect>
-                            <rect x="336" y="71.00287860725075" width="20" height="115.988485570997" fill="rgb(0, 0, 289.9712139274925)"></rect>
-                            <rect x="360" y="96.06189443264157" width="20" height="15.752422269433737" fill="rgb(0, 0, 39.38105567358434)"></rect>
-                            <rect x="384" y="78.63153313053772" width="20" height="85.47386747784913" fill="rgb(0, 0, 213.68466869462281)"></rect>
-                            <rect x="408" y="83.978997154627" width="20" height="64.08401138149202" fill="rgb(0, 0, 160.21002845373005)"></rect>
-                            <rect x="432" y="85.72604364482686" width="20" height="57.09582542069256" fill="rgb(0, 0, 142.7395635517314)"></rect>
-                            <rect x="456" y="95.33667707582936" width="20" height="18.653291696682572" fill="rgb(0, 0, 46.63322924170643)"></rect>
                         </svg>
                     </div>
                     <div style="display: none;font-size: 1.3em;" class="bs-example" id="files-table">
