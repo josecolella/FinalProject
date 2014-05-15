@@ -16,10 +16,11 @@ Finished
 - ~~Found spreadsheet library so that user can insert data~~
 - ~~Integrated add button~~
 - ~~Implement search functionality~~
-- 
+
 Todos
 =====
 
+- After the user has uploaded a file, if the user should click on a file, the information is loaded to the excel chart so that the user may view it.
 - Using vex for modals, integrate them into the examples
     - Vex will be used to load the modal of the examples of
     the visualization models.
