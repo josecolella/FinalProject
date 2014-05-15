@@ -9,6 +9,14 @@
     background-color: #e5e5e5;
 }
 
+#toggle-sidebar {
+    margin-left: 15.5em;
+    background-color: #f8f8f8;
+    border: 1px solid #e8e8e8;
+    z-index: auto;
+    border-bottom-right-radius: 0.4em;
+    border-top-right-radius: 0.4em;
+}
 
 .titles {
     padding-left: 1em;

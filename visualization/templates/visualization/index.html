@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'visualization/vex/vex.css' %}"/>
     <link rel="stylesheet" href="{% static 'visualization/vex/vex-theme-flat-attack.css' %}"/>
     <link rel="stylesheet" href="{% static 'visualization/jquery/jquery.handsontable.full.css' %}"/>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 {% endblock stylesheets %}
 {% block headjs %}
     <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
@@ -26,6 +27,9 @@
 {% endblock headjs %}
 {% block content %}
     <div class="container-fluid">
+        <div class="row">
+            <button id="toggle-sidebar"><i class="fa fa-arrows-h"></i></button>
+        </div>
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar panel panel-info">
                 <form name="search" id="search" role="form">
@@ -179,6 +183,7 @@
 
     <script src="{% static "visualization/js/exports.js" %}"></script>
     <script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>
 
     <script type="text/javascript">
