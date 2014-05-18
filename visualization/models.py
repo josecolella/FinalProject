@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 import jsonfield
 
+
 class VisualizationModelDescription(models.Model):
 
     """
@@ -57,6 +58,7 @@ class VisualizationModelDescription(models.Model):
         except Exception:
             print("Cannot compare objects")
 
+
 class UploadFile(models.Model):
 
     """
@@ -68,6 +70,7 @@ class UploadFile(models.Model):
     def __str__(self):
         return self.file.url
 
+
 class UploadSVGFile(models.Model):
     """
     This class represents the class where the svg files are uploaded
@@ -76,6 +79,7 @@ class UploadSVGFile(models.Model):
 
     def __str__(self):
         return self.file.url
+
 
 class UserUploadedFiles(models.Model):
     """
@@ -90,5 +94,4 @@ class UserUploadedFiles(models.Model):
         Returns the users username, email, and uploadedFiles
         """
         return str(self.user)
-
 

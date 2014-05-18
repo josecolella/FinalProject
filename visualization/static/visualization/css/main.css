@@ -9,6 +9,35 @@
     background-color: #e5e5e5;
 }
 
+#tabs {
+    width: 50%;
+}
+
+#tabs ul  {
+    display: inline-flex;
+    float: left;
+    border-radius: 0.5em;
+    overflow-x: auto;
+    width: inherit;
+}
+
+#tabs > ul > li > a {
+    background-color: #e8e8e8;
+}
+
+#tabs > ul > li > a:hover {
+    top: -0.2em;
+    height: 3.23em;
+    border: 1px solid;
+}
+
+
+#menu {
+    float: right;
+    overflow-x: auto;
+}
+
+
 #toggle-sidebar {
     margin-left: 15.5em;
     background-color: #f8f8f8;

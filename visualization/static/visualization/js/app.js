@@ -230,12 +230,14 @@ var addDataGrid = function(data) {
 
 
     var dataTable = $('#dataTable');
-    var window = $(window);
 
-
+    //Event handler for when the data-grid btn is clicked
     $("#data-grid").click(function(data) {
         manageImportClose();
         hideEditor();
+        showVisualizationModel();
+        $("#files-table").hide();
+
         var workspace = $("#workspace");
         var dataTableDiv = $("#dataTable");
         //Doesn't exist create it
@@ -339,7 +341,7 @@ var addDataGrid = function(data) {
                 contextMenu: true,
                 manualColumnResize: true,
                 stretchH: 'all',
-                width: 1120,
+                width: 1140,
                 height: 400,
                 afterGetColHeader: function (col, rowHeader) {
                     var instance = this;
@@ -508,6 +510,7 @@ $(function() {
 
         showFileTable();
         hideVisualizationModel();
+        $("#dataTable").hide();
 
     });
 
@@ -630,6 +633,38 @@ $(function() {
         placement: "right",
         title: toggleSideBarMessage,
         trigger: 'manual'
+    });
+
+
+
+    $(document).on('click','#addTab',function() {
+        console.log('Here');
+        var addTabToWorkspace = function() {
+            var tabList = $("#myTabs");
+            var tabIndex = tabList.children().length;
+            var lastTab = tabList.find("li:last-child");
+
+            var newTab = $('<li></li>');
+
+            var createLink = function() {
+                var link = $('<a></a>');
+
+                link.attr({
+                    'data-toggle': 'tab',
+                    'href': '#tab'+ tabIndex
+                })
+                    .text('tab' + tabIndex);
+
+                return link;
+            };
+
+            newTab.append(createLink());
+            newTab.insertBefore(lastTab);
+
+
+        };
+
+        addTabToWorkspace();
     });
 
 });
