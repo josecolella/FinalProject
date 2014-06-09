@@ -135,8 +135,9 @@ def authenticateView(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 if user.is_active:
+                    print("Hello")
                     login(request, user)
-                    request.session['user'] = user
+                    request.session['user'] = user.username
                     response_data['status'] = reverse('index')
                     return HttpResponse(json.dumps(response_data), content_type="application/json")
                 else:

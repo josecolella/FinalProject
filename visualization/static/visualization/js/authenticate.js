@@ -209,13 +209,4 @@ $(function () {
 
     });
 
-
-    $(document).on('click', '#signinbutton', function() {
-
-    });
-
-
-
-
-
 });

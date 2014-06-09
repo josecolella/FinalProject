@@ -8,6 +8,7 @@ var downloadData = [];
 var columnHeaders = [];
 var offState = true;
 var toggleSideBarMessage = 'Hide Sidebar';
+var tmp = [];
 /**
  * Function created to manage the change of icons when a user clicks to see
  * the visualization model. Uses $(this) to make sure that only one caret moves
@@ -522,7 +523,31 @@ $(function() {
 
         $('#data-grid').click();
 
-        var url = $(this).attr('href');
+        var file = $(this);
+        var url = file.attr('href');
+
+
+        /**
+         * returns the extension for the file
+         * @param filename
+         * @returns {Array|{index: number, input: string}}
+         */
+        var fileExtension = function(filename) {
+            var regex = /\.([a-z]+)/;
+            var fileExten = regex.exec(filename);
+
+            if (fileExten != null) {
+                fileExten = fileExten[1];
+            }
+
+            return fileExten;
+
+        };
+
+
+
+        var extension = fileExtension($.trim(file.text()));
+
 
         /**
          * Processes the CSV file that is located in the url that is passed
@@ -531,47 +556,98 @@ $(function() {
          * @param url
          */
         var processCSVFileContents = function(url) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'html',
-                headers: {
-                    'X-CSRFToken' : $.cookie('csrftoken')
-                },
-                success: function(data) {
-                    csv = data;
-                    downloadData = [];
-                    $.each(csv.split("\n"), function(index, value) {
-                        if (value !== '') {
-                            downloadData.push(value.split(","))
-                        }
-                    });
-                    //Loading columns and data into grid
-                    columnHeaders = downloadData[0];
+            d3.csv(url, function(error, data) {
+                if (!error) {
+                    console.log(data);
 
-                    $('#dataTable').handsontable({
-                        data: downloadData.slice(1),
-                        colHeaders: columnHeaders
-                    });
-
-                },
-                error: function() {
-                    console.log('Error');
                 }
-            })
-                .done(function() {
-                    console.log("success");
-                })
-                .fail(function() {
-                    console.log("error");
-                })
-                .always(function() {
-                    console.log("complete");
-                });
+            });
+
+
+//            $.ajax({
+//                url: url,
+//                type: 'GET',
+//                dataType: 'html',
+//                headers: {
+//                    'X-CSRFToken' : $.cookie('csrftoken')
+//                },
+//                success: function(data) {
+//                    csv = data;
+//                    downloadData = [];
+//                    tmp = crossfilter(data);
+//                    $.each(csv.split("\n"), function(index, value) {
+//                        if (value !== '') {
+//                            downloadData.push(value.split(","))
+//                        }
+//                    });
+//                    console.log('Here'+downloadData);
+//                    //Loading columns and data into grid
+//                    columnHeaders = downloadData[0];
+//
+//                    $('#dataTable').handsontable({
+//                        data: downloadData.slice(1),
+//                        colHeaders: columnHeaders
+//                    });
+//
+//                },
+//                error: function() {
+//                    console.log('Error');
+//                }
+//            })
+//                .done(function() {
+//                    console.log("success");
+//                })
+//                .fail(function() {
+//                    console.log("error");
+//                })
+//                .always(function() {
+//                    console.log("complete");
+//                });
 
         };
 
-        processCSVFileContents(url);
+
+
+        var processJSONFileContents = function(url) {
+            var data = [];
+
+            d3.json(url, function(error, data) {
+                 var columns = Object.keys(data);
+
+                 $('#dataTable').handsontable({
+                        data: data,
+                        colHeaders: columns
+                    });
+
+            });
+        };
+
+
+       var initializeDataGrid = function(headers, data) {
+
+       };
+
+        switch (extension) {
+
+            case 'json':
+                console.log('Its a JSON file');
+                processJSONFileContents(url);
+                break;
+            case 'csv':
+                console.log('Its a CSV file');
+                processCSVFileContents(url);
+                break;
+
+            default:
+                break;
+        }
+
+
+
+
+
+
+
     });
 
     $('#exportCsv').click(function () {
@@ -637,35 +713,35 @@ $(function() {
 
 
 
-    $(document).on('click','#addTab',function() {
-        console.log('Here');
-        var addTabToWorkspace = function() {
-            var tabList = $("#myTabs");
-            var tabIndex = tabList.children().length;
-            var lastTab = tabList.find("li:last-child");
-
-            var newTab = $('<li></li>');
-
-            var createLink = function() {
-                var link = $('<a></a>');
-
-                link.attr({
-                    'data-toggle': 'tab',
-                    'href': '#tab'+ tabIndex
-                })
-                    .text('tab' + tabIndex);
-
-                return link;
-            };
-
-            newTab.append(createLink());
-            newTab.insertBefore(lastTab);
-
-
-        };
-
-        addTabToWorkspace();
-    });
+//    $(document).on('click','#addTab',function() {
+//        console.log('Here');
+//        var addTabToWorkspace = function() {
+//            var tabList = $("#myTabs");
+//            var tabIndex = tabList.children().length;
+//            var lastTab = tabList.find("li:last-child");
+//
+//            var newTab = $('<li></li>');
+//
+//            var createLink = function() {
+//                var link = $('<a></a>');
+//
+//                link.attr({
+//                    'data-toggle': 'tab',
+//                    'href': '#tab'+ tabIndex
+//                })
+//                    .text('tab' + tabIndex);
+//
+//                return link;
+//            };
+//
+//            newTab.append(createLink());
+//            newTab.insertBefore(lastTab);
+//
+//
+//        };
+//
+//        addTabToWorkspace();
+//    });
 
 });
 
