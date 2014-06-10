@@ -26,7 +26,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.js "></script>
-    <script src="{% static "visualization/js/app.js" %}" type="application/javascript"></script>
+    <script src="{% static "visualization/js/visualize.js" %}"></script>
+    <script src="{% static "visualization/js/app.js" %}"></script>
 
 
 {% endblock headjs %}
@@ -93,24 +94,24 @@
                         </li>
                         <li class="dropdown" id="export">
                             <a class="dropdown-toggle menu-option" data-toggle="dropdown" href="#">Export<span class="glyphicon glyphicon-export menu-glyphicons"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="dropdown-option" id="exportPdf"><a href="#">PDF</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportPng"><a href="#">PNG</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportSVG"><a href="#">SVG</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportJpeg"><a href="#">JPEG</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportCsv"><a href="#">CSV</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportR"><a href="#">R</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportPython"><a href="#">Python</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-option" id="exportExcel"><a href="#">Excel</a></li>
-
-                            </ul>
+{#                            <ul class="dropdown-menu" role="menu">#}
+{#                                <li class="dropdown-option" id="exportPdf"><a href="#">PDF</a></li>#}
+{#                                <li class="divider"></li>#}
+{#                                <li class="dropdown-option" id="exportPng"><a href="#">PNG</a></li>#}
+{#                                <li class="divider"></li>#}
+{#                                <li class="dropdown-option" id="exportSVG"><a href="#">SVG</a></li>#}
+{#                                <li class="divider"></li>#}
+{#                                <li class="dropdown-option" id="exportJpeg"><a href="#">JPEG</a></li>#}
+{#                                <li class="divider"></li>#}
+{#                                <li class="dropdown-option" id="exportCsv"><a href="#">CSV</a></li>#}
+{#                                <li class="divider"></li>#}
+{#                                <li class="dropdown-option" id="exportR"><a href="#">R</a></li>#}
+{#                                <li class="divider"></li>#}
+{#                                <li class="dropdown-option" id="exportPython"><a href="#">Python</a></li>#}
+{#                                <li class="divider"></li>#}
+{#                                <li class="dropdown-option" id="exportExcel"><a href="#">Excel</a></li>#}
+{##}
+{#                            </ul>#}
                         </li>
                         {% if user.is_authenticated %}
                             <li class="dropdown" id="files">
@@ -301,22 +302,22 @@
     <script src="{% static "visualization/jquery/jquery.base64.min.js" %}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" async></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js" async></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/codemirror.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/addon/dialog/dialog.js" async></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/mode/javascript/javascript.js" async></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/mode/python/python.js" async></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/mode/r/r.js" async></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/addon/hint/show-hint.js" async></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/addon/tern/tern.js" async></script>
-    <script src="http://marijnhaverbeke.nl/acorn/acorn.js" async></script>
-    <script src="http://marijnhaverbeke.nl/acorn/acorn_loose.js" async></script>
-    <script src="http://marijnhaverbeke.nl/acorn/util/walk.js" async></script>
-    <script src="http://ternjs.net/doc/demo/polyfill.js" async></script>
-    <script src="http://ternjs.net/lib/signal.js" async></script>
-    <script src="http://ternjs.net/lib/tern.js" async></script>
-    <script src="http://ternjs.net/lib/def.js" async></script>
-    <script src="http://ternjs.net/lib/comment.js" async></script>
-    <script src="http://ternjs.net/lib/infer.js" async></script>
-    <script src="http://ternjs.net/plugin/doc_comment.js" async></script>
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/codemirror.min.js"></script>#}
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/addon/dialog/dialog.js" async></script>#}
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/mode/javascript/javascript.js" async></script>#}
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/mode/python/python.js" async></script>#}
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/mode/r/r.js" async></script>#}
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/addon/hint/show-hint.js" async></script>#}
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/addon/tern/tern.js" async></script>#}
+{#    <script src="http://marijnhaverbeke.nl/acorn/acorn.js" async></script>#}
+{#    <script src="http://marijnhaverbeke.nl/acorn/acorn_loose.js" async></script>#}
+{#    <script src="http://marijnhaverbeke.nl/acorn/util/walk.js" async></script>#}
+{#    <script src="http://ternjs.net/doc/demo/polyfill.js" async></script>#}
+{#    <script src="http://ternjs.net/lib/signal.js" async></script>#}
+{#    <script src="http://ternjs.net/lib/tern.js" async></script>#}
+{#    <script src="http://ternjs.net/lib/def.js" async></script>#}
+{#    <script src="http://ternjs.net/lib/comment.js" async></script>#}
+{#    <script src="http://ternjs.net/lib/infer.js" async></script>#}
+{#    <script src="http://ternjs.net/plugin/doc_comment.js" async></script>#}
 
 {% endblock javascript %}

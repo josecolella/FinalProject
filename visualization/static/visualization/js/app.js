@@ -138,9 +138,6 @@ $("#workspace-view").click(function() {
 
 });
 
-$("#export").click(function() {
-    manageImportClose();
-});
 
 
 /**
@@ -444,8 +441,6 @@ var getVisualizationModelTitles = function() {
     return visualizationModels;
 };
 
-var visualizationModels = getVisualizationModelTitles();
-
 var saveFileAsPrompt = function(chart, file) {
     vex.dialog.prompt({
         message: 'Save '+file.toUpperCase()+' file as...',
@@ -511,6 +506,7 @@ $(function() {
 
         showFileTable();
         hideVisualizationModel();
+
         $("#dataTable").hide();
 
     });
@@ -556,76 +552,79 @@ $(function() {
          * @param url
          */
         var processCSVFileContents = function(url) {
-            d3.csv(url, function(error, data) {
-                if (!error) {
-                    console.log(data);
-
-                }
-            });
-
-
-//            $.ajax({
-//                url: url,
-//                type: 'GET',
-//                dataType: 'html',
-//                headers: {
-//                    'X-CSRFToken' : $.cookie('csrftoken')
-//                },
-//                success: function(data) {
-//                    csv = data;
-//                    downloadData = [];
+//            d3.csv(url, function(error, data) {
+//                if (!error) {
 //                    tmp = crossfilter(data);
-//                    $.each(csv.split("\n"), function(index, value) {
-//                        if (value !== '') {
-//                            downloadData.push(value.split(","))
-//                        }
-//                    });
-//                    console.log('Here'+downloadData);
-//                    //Loading columns and data into grid
-//                    columnHeaders = downloadData[0];
 //
-//                    $('#dataTable').handsontable({
-//                        data: downloadData.slice(1),
-//                        colHeaders: columnHeaders
-//                    });
-//
-//                },
-//                error: function() {
-//                    console.log('Error');
 //                }
-//            })
-//                .done(function() {
-//                    console.log("success");
-//                })
-//                .fail(function() {
-//                    console.log("error");
-//                })
-//                .always(function() {
-//                    console.log("complete");
-//                });
+//            });
+
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'html',
+                headers: {
+                    'X-CSRFToken' : $.cookie('csrftoken')
+                },
+                success: function(data) {
+                    csv = data;
+                    downloadData = [];
+                    tmp = crossfilter(data);
+                    $.each(csv.split("\n"), function(index, value) {
+                        if (value !== '') {
+                            downloadData.push(value.split(","))
+                        }
+                    });
+                    console.log('Here'+downloadData);
+                    //Loading columns and data into grid
+                    columnHeaders = downloadData[0];
+
+                    $('#dataTable').handsontable({
+                        data: downloadData.slice(1),
+                        colHeaders: columnHeaders
+                    });
+
+                },
+                error: function() {
+                    console.log('Error');
+                }
+            })
+                .done(function() {
+                    console.log("success");
+                })
+                .fail(function() {
+                    console.log("error");
+                })
+                .always(function() {
+                    console.log("complete");
+                });
 
         };
 
 
 
         var processJSONFileContents = function(url) {
-            var data = [];
+            var processData = [];
+            var crossfilter;
 
             d3.json(url, function(error, data) {
-                 var columns = Object.keys(data);
+                var columns = Object.keys(data);
+                console.log(data);
+                processData = data;
 
-                 $('#dataTable').handsontable({
-                        data: data,
-                        colHeaders: columns
-                    });
 
+
+                console.log(processData);
+                crossfilter = crossfilter(processData);
+                console.log(crossfilter);
             });
         };
 
 
-       var initializeDataGrid = function(headers, data) {
+        var initializeDataGrid = function(headers, data) {
 
-       };
+        };
 
         switch (extension) {
 
@@ -648,6 +647,21 @@ $(function() {
 
 
 
+    });
+
+    $("#export").click(function() {
+        console.log('here');
+        manageImportClose();
+        vex.dialog.open({
+            message: 'Export as...',
+            input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n  <div class=\"vex-custom-input-wrapper\">\n        <select class=\"form-control\">\n  <option>1</option>\n  <option>2</option>\n  <option>3</option>\n  <option>4</option>\n  <option>5</option>\n</select>\n    </div>\n</div>\n",
+            callback: function(data) {
+                if (data === false) {
+                    return console.log('Cancelled');
+                }
+                return "Hello";
+            }
+        });
     });
 
     $('#exportCsv').click(function () {
@@ -711,6 +725,13 @@ $(function() {
         trigger: 'manual'
     });
 
+    $("#addpie").click(function() {
+        pieChart();
+    });
+
+    $("#addline").click(function() {
+        lineChart();
+    });
 
 
 //    $(document).on('click','#addTab',function() {
