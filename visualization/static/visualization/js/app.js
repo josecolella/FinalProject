@@ -649,31 +649,43 @@ $(function() {
 
     });
 
+    /**
+     * Click handler for when the export button is clicked.
+     */
     $("#export").click(function() {
-        console.log('here');
         manageImportClose();
+        hideFileTable();
+        showVisualizationModel();
         vex.dialog.open({
             message: 'Export as...',
-            input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n  <div class=\"vex-custom-input-wrapper\">\n        <select class=\"form-control\">\n  <option>1</option>\n  <option>2</option>\n  <option>3</option>\n  <option>4</option>\n  <option>5</option>\n</select>\n    </div>\n</div>\n",
+            input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n  <div class=\"vex-custom-input-wrapper\">\n        <select class=\"form-control\" id=\"exportSelect\">\n  <option>PDF</option>\n  <option>PNG</option>\n  <option>SVG</option>\n  <option>JPEG</option>\n  <option>JPEG</option>\n <option>CSV</option>\n <option>R</option>\n <option>Python</option>\n <option>Excel</option>\n</select>\n    </div>\n</div>\n",
             callback: function(data) {
                 if (data === false) {
                     return console.log('Cancelled');
                 }
-                return "Hello";
+                var fileType = $("#exportSelect option:selected").text();
+                switch (fileType) {
+                    case 'PDF':
+                        break;
+                    case 'PNG':
+                        break;
+                    case 'SVG':
+                        break;
+                    case 'JPEG':
+                        break;
+                    case 'CSV':
+                        break;
+                    case 'R':
+                        break;
+                    case 'Python':
+                        break;
+                    case 'Excel':
+                        break;
+
+                }
+                return console.log();
             }
         });
-    });
-
-    $('#exportCsv').click(function () {
-
-    });
-
-    $('#exportR').click(function() {
-        saveFileAsPrompt(chart, "r");
-    });
-
-    $('#exportPython').click(function() {
-        saveFileAsPrompt(chart, "py");
     });
 
     $("#toggle-sidebar").click(function() {
