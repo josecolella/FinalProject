@@ -67,7 +67,9 @@ class Index (ListView):
             if form.is_valid():
 
                 new_file = UploadFile(file=request.FILES['file'])
+                print(new_file)
                 userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
+                print(userUploadedFiles.uploadedFiles)
                 userUploadedFiles.uploadedFiles.append({
                     'filename': new_file.file.name,
                     'fileurl': re.sub(r'/media/', r'/media/files/', new_file.file.url),

@@ -52,7 +52,7 @@
                         all the visualization models
                     {% endcomment %}
                     {% for model in models %}
-                        <div class="panel-group accordion" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <div class="panel-group accordion">
                             <div class="panel-default">
                                 <h4 class="panel-title">
                                     <li class="active titles" data-toggle="collapse" data-parent=".accordion" href="#collapse{{ model.title|slugify }}">
@@ -141,10 +141,11 @@
                     </span>
                     </div>
                     <div id="chart">
-                        <svg>
-                        </svg>
+                        {% comment %}
+                            Chart goes here
+                        {% endcomment %}
                     </div>
-                    <div style="display: none;font-size: 1.3em;" class="bs-example" id="files-table">
+                    <div style="display: none;font-size: 1.3em;margin-top: 2em" class="bs-example" id="files-table">
                         <table class="table table-hover">
                             <thead>
                             <tr>

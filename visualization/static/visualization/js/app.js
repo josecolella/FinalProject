@@ -6,6 +6,7 @@ var downStateClass = 'glyphicon-chevron-down';
 var csv;
 var downloadData = [];
 var columnHeaders = [];
+var cross;
 var offState = true;
 var toggleSideBarMessage = 'Hide Sidebar';
 
@@ -506,7 +507,7 @@ $(function() {
 
         showFileTable();
         hideVisualizationModel();
-
+        manageImportClose();
         $("#dataTable").hide();
 
     });
@@ -552,53 +553,18 @@ $(function() {
          * @param url
          */
         var processCSVFileContents = function(url) {
-//            d3.csv(url, function(error, data) {
-//                if (!error) {
-//                    tmp = crossfilter(data);
-//
-//                }
-//            });
-
-
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'html',
-                headers: {
-                    'X-CSRFToken' : $.cookie('csrftoken')
-                },
-                success: function(data) {
-                    csv = data;
-                    downloadData = [];
-
-                    $.each(csv.split("\n"), function(index, value) {
-                        if (value !== '') {
-                            downloadData.push(value.split(","))
-                        }
-                    });
-                    console.log('Here'+downloadData);
-                    //Loading columns and data into grid
-                    columnHeaders = downloadData[0];
-
+            d3.csv(url, function(error, data) {
+                if (!error) {
+                    downloadData = data;
+                    var columnNames = Object.keys(data[0]);
+                    var inputData = data;
+                    cross = crossfilter(inputData);
                     $('#dataTable').handsontable({
-                        data: downloadData.slice(1),
-                        colHeaders: columnHeaders
+                        data: inputData,
+                        colHeaders: columnNames
                     });
-
-                },
-                error: function() {
-                    console.log('Error');
                 }
-            })
-                .done(function() {
-                    console.log("success");
-                })
-                .fail(function() {
-                    console.log("error");
-                })
-                .always(function() {
-                    console.log("complete");
-                });
+            });
 
         };
 
@@ -711,15 +677,25 @@ $(function() {
         }
     });
 
-
     $("#toggle-sidebar").tooltip({
         placement: "right",
         title: toggleSideBarMessage,
-        trigger: 'manual'
+        trigger: 'hover'
     });
 
+    /**
+     *
+     * Click handler for when the user want to add a pie chart to the visualization model
+     */
     $("#addpie").click(function() {
-        pieChart();
+        var chart = $("#addpie").parent().text().toLowerCase();
+        if (cross !== undefined) {
+            hideDataGrid();
+            visualize.pieChart(cross, "state", "population", chart);
+        } else {
+            console.log('A dataset must be chosen');
+        }
+//        pieChart();
     });
 
     $("#addline").click(function() {
