@@ -39,12 +39,17 @@
 
 
 #toggle-sidebar {
-    margin-left: 15.5em;
+    margin-left: 15.50em;
     background-color: #f8f8f8;
     border: 1px solid #e8e8e8;
     z-index: auto;
     border-bottom-right-radius: 0.4em;
     border-top-right-radius: 0.4em;
+}
+
+
+#toggle-sidebar:hover{
+    margin-left: 16em;
 }
 
 .titles {

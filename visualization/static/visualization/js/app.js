@@ -8,7 +8,7 @@ var downloadData = [];
 var columnHeaders = [];
 var offState = true;
 var toggleSideBarMessage = 'Hide Sidebar';
-var tmp = [];
+
 /**
  * Function created to manage the change of icons when a user clicks to see
  * the visualization model. Uses $(this) to make sure that only one caret moves
@@ -570,7 +570,7 @@ $(function() {
                 success: function(data) {
                     csv = data;
                     downloadData = [];
-                    tmp = crossfilter(data);
+
                     $.each(csv.split("\n"), function(index, value) {
                         if (value !== '') {
                             downloadData.push(value.split(","))
@@ -688,6 +688,9 @@ $(function() {
         });
     });
 
+    //Click handler for when the toggle sidebar button is clicked
+    //This means that once it is clicked the sidebar is hidden,
+    //and if it clicked again the sidebar is shown again
     $("#toggle-sidebar").click(function() {
         var sidebar = $(".sidebar");
         if (sidebar.is(":hidden")) {
@@ -708,28 +711,6 @@ $(function() {
         }
     });
 
-    $("#toggle-sidebar").hover(function() {
-        var toggleButton = $("#toggle-sidebar");
-        toggleButton.tooltip('show');
-        var x = 5;
-        toggleButton.css('margin-left', function(index, value) {
-            if (isNaN(parseInt(value)))
-                return x;
-
-            return parseInt(value) + x
-        });
-    }, function() {
-        var toggleButton = $("#toggle-sidebar");
-        toggleButton.tooltip('hide');
-        var x = -5;
-        toggleButton.css('margin-left', function(index, value) {
-            if (isNaN(parseInt(value)))
-                return x;
-
-            return parseInt(value) + x
-        });
-    });
-
 
     $("#toggle-sidebar").tooltip({
         placement: "right",
@@ -746,35 +727,7 @@ $(function() {
     });
 
 
-//    $(document).on('click','#addTab',function() {
-//        console.log('Here');
-//        var addTabToWorkspace = function() {
-//            var tabList = $("#myTabs");
-//            var tabIndex = tabList.children().length;
-//            var lastTab = tabList.find("li:last-child");
-//
-//            var newTab = $('<li></li>');
-//
-//            var createLink = function() {
-//                var link = $('<a></a>');
-//
-//                link.attr({
-//                    'data-toggle': 'tab',
-//                    'href': '#tab'+ tabIndex
-//                })
-//                    .text('tab' + tabIndex);
-//
-//                return link;
-//            };
-//
-//            newTab.append(createLink());
-//            newTab.insertBefore(lastTab);
-//
-//
-//        };
-//
-//        addTabToWorkspace();
-//    });
+
 
 });
 
