@@ -7,7 +7,13 @@
 var visualize = {
     width: 800,
     height: 400,
-    pieChart : function(crossfilter, xAxis, yAxis, selector) {
+    inputData: null,
+    config: {
+        'x': null,
+        'y': null
+    },
+    cf: null,
+    pieChart : function(selector) {
 
         var chartSelector = selector+"-chart";
         $("#chart")
@@ -20,8 +26,8 @@ var visualize = {
         var pieChart = dc.pieChart("."+chartSelector);
 
 
-        var dimension= crossfilter.dimension(function(row) { return row[xAxis];});
-        var group = dimension.group().reduceSum(function(row) { return row[yAxis];});
+        var dimension= visualize.cf.dimension(function(row) { return row[visualize.config.x];});
+        var group = dimension.group().reduceSum(function(row) { return row[visualize.config.y];});
 
         pieChart.width(visualize.width)
                 .height(visualize.height)
@@ -32,73 +38,32 @@ var visualize = {
         dc.renderAll();
 
 
+    },
+    barChart: function(selector) {
+
+    },
+    boxChart: function(selector) {
+
+    },
+    curveChart: function(selector) {
+
+    },
+    histogram: function(selector) {
+
+    },
+    lineChart: function(selector) {
+
+    },
+    scatterChart: function(selector) {
+
+    },
+    stackedChart: function(selector) {
+
     }
 
 };
 
 
-
-
-
-
-
-
-//var pieChart = function() {
-//
-//    function exampleData() {
-//        return  [
-//            {
-//                "label": "One",
-//                "value" : 29.765957771107
-//            } ,
-//            {
-//                "label": "Two",
-//                "value" : 0
-//            } ,
-//            {
-//                "label": "Three",
-//                "value" : 32.807804682612
-//            } ,
-//            {
-//                "label": "Four",
-//                "value" : 196.45946739256
-//            } ,
-//            {
-//                "label": "Five",
-//                "value" : 0.19434030906893
-//            } ,
-//            {
-//                "label": "Six",
-//                "value" : 98.079782601442
-//            } ,
-//            {
-//                "label": "Seven",
-//                "value" : 13.925743130903
-//            } ,
-//            {
-//                "label": "Eight",
-//                "value" : 5.1387322875705
-//            }
-//        ];
-//    }
-//
-//
-//    nv.addGraph(function() {
-//        var chart = nv.models.pieChart()
-//            .x(function(d) { return d.label })
-//            .y(function(d) { return d.value })
-//            .showLabels(true);
-//
-//        d3.select("#chart svg")
-//            .datum(exampleData())
-//            .transition()
-//            .duration(1200)
-//            .call(chart);
-//
-//        return chart;
-//    });
-//
-//};
 
 
 

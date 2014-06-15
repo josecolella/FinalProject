@@ -6,7 +6,6 @@ var downStateClass = 'glyphicon-chevron-down';
 var csv;
 var downloadData = [];
 var columnHeaders = [];
-var cross;
 var offState = true;
 var toggleSideBarMessage = 'Hide Sidebar';
 
@@ -357,7 +356,6 @@ var addDataGrid = function(data) {
             });
 
 
-
         } else if(dataTableDiv.is(":visible")){
             dataTableDiv.fadeOut();
         } else {
@@ -555,12 +553,11 @@ $(function() {
         var processCSVFileContents = function(url) {
             d3.csv(url, function(error, data) {
                 if (!error) {
-                    downloadData = data;
+                    visualize.inputData = data;
                     var columnNames = Object.keys(data[0]);
-                    var inputData = data;
-                    cross = crossfilter(inputData);
+                    visualize.cf = crossfilter(visualize.inputData);
                     $('#dataTable').handsontable({
-                        data: inputData,
+                        data: visualize.inputData,
                         colHeaders: columnNames
                     });
                 }
@@ -571,19 +568,22 @@ $(function() {
 
 
         var processJSONFileContents = function(url) {
-            var processData = [];
-            var crossfilter;
+
 
             d3.json(url, function(error, data) {
-                var columns = Object.keys(data);
-                console.log(data);
-                processData = data;
+                if (!error) {
+                    console.log(data);
+//                    visualize.inputData = data;
+//                    var columnNames = Object.keys(data[0]);
+//                    visualize.cf = crossfilter(inputData);
+//                    $('#dataTable').handsontable({
+//                        data: visualize.inputData,
+//                        colHeaders: columnNames
+//                    });
+                }
 
 
 
-                console.log(processData);
-                crossfilter = crossfilter(processData);
-                console.log(crossfilter);
             });
         };
 
@@ -689,21 +689,35 @@ $(function() {
      */
     $("#addpie").click(function() {
         var chart = $("#addpie").parent().text().toLowerCase();
-        if (cross !== undefined) {
+        if (visualize.cf !== null) {
             hideDataGrid();
-            visualize.pieChart(cross, "state", "population", chart);
+            if (visualize.config.x != null && visualize.config.y != null) {
+                visualize.pieChart(chart);
+            } else {
+                vex.dialog.alert('An x and y axis must be chosen');
+            }
         } else {
             console.log('A dataset must be chosen');
         }
-//        pieChart();
+
     });
 
     $("#addline").click(function() {
         lineChart();
     });
 
+    $(document).on('click', '.htCore > thead > tr > th > .btn-group', function() {
+        var axisField = $(this);
+        var field = axisField.prev().text();
+        console.log(field);
+        var axis = axisField.find(".active").children("strong").text();
+        console.log(axis);
+        if (axis !== "") {
+            visualize.config[axis] = field;
+        }
 
 
+    });
 
 });
 
