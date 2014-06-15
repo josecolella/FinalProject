@@ -23,12 +23,12 @@
     <script src="{% static "visualization/jquery/jquery.handsontable.full.js" %}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.min.js"></script>
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.min.js"></script>#}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.js "></script>
     <script src="{% static "visualization/js/visualize.js" %}"></script>
+    <script src="{% static "visualization/js/exports.js" %}"></script>
     <script src="{% static "visualization/js/app.js" %}"></script>
-
-
 {% endblock headjs %}
 {% block content %}
 
@@ -179,7 +179,7 @@
 {% block javascript %}
     {% load staticfiles %}
 
-    <script src="{% static "visualization/js/exports.js" %}"></script>
+
     <script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>

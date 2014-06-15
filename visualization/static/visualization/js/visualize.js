@@ -3,7 +3,7 @@
  */
 'use strict';
 
-
+//Represents the encapsulation of the visualize module
 var visualize = {
     width: 800,
     height: 400,
@@ -27,19 +27,88 @@ var visualize = {
 
 
         var dimension= visualize.cf.dimension(function(row) { return row[visualize.config.x];});
-        var group = dimension.group().reduceSum(function(row) { return row[visualize.config.y];});
+
+        var group;
+        if (visualize.config.x !== visualize.config.y) {
+            group = dimension.group().reduceSum(function(row) {
+                return row[visualize.config.y];
+            });
+        } else {
+            group = dimension.group().reduceCount(function(row) {
+                return row[visualize.config.y];
+            });
+        }
 
         pieChart.width(visualize.width)
-                .height(visualize.height)
-                .dimension(dimension)
-                .group(group)
-                .innerRadius(0);
+            .height(visualize.height)
+            .dimension(dimension)
+            .group(group)
+            .innerRadius(0)
+            .title(function(p) {
 
+                return p.value;
+            })
+            .renderTitle(true);
         dc.renderAll();
 
 
     },
     barChart: function(selector) {
+        var chartSelector = selector+"-chart";
+        $("#chart")
+            .attr('class', chartSelector)
+            .css({
+                'height': '30em',
+                'margin-top': ''
+            });
+
+        //Defining the x scale is mandatory
+        var barChart = dc.barChart("."+chartSelector);
+
+
+        var dimension= visualize.cf.dimension(function(row) { return row[visualize.config.x];});
+
+        var group;
+        if (visualize.config.x !== visualize.config.y) {
+            group = dimension.group().reduceSum(function(row) {
+                return row[visualize.config.y];
+            });
+        } else {
+            group = dimension.group().reduceCount(function(row) {
+                return row[visualize.config.y];
+            });
+        }
+
+        console.log('HELLO');
+        console.log(group.all());
+        var groupByValue = function(d) {
+            return d.value;
+        };
+        var groupByKey = function(d) {
+            return d.key;
+        };
+
+        var ordinalX = $.map(group.all(), function(item, index) {
+            return item.key;
+        });
+        var linearY = d3.extent(group.all(), groupByValue);
+        console.log(ordinalX);
+        console.log(linearY);
+
+        barChart.width(visualize.width)
+            .height(visualize.height)
+            .margins({top: 10, right: 10, bottom: 20, left: 40})
+            .dimension(dimension)
+            .group(group)
+            .x(d3.scale.ordinal().domain(ordinalX))
+            .xUnits(dc.units.ordinal)
+            .y(d3.scale.linear().domain(linearY))
+            .brushOn(false)
+//            .renderHorizontalGridLines(true)
+//            .renderVerticalGridLines(true)
+            .centerBar(true);
+
+        dc.renderAll();
 
     },
     boxChart: function(selector) {
@@ -67,71 +136,3 @@ var visualize = {
 
 
 
-
-
-var lineChart = function() {
-  nv.addGraph(function() {
-  var chart = nv.models.lineChart()
-                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-                .transitionDuration(350)  //how fast do you want the lines to transition?
-                .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
-                .showYAxis(true)        //Show the y-axis
-                .showXAxis(true)        //Show the x-axis
-  ;
-
-  chart.xAxis     //Chart x-axis settings
-      .axisLabel('Time (ms)')
-      .tickFormat(d3.format(',r'));
-
-  chart.yAxis     //Chart y-axis settings
-      .axisLabel('Voltage (v)')
-      .tickFormat(d3.format('.02f'));
-
-  /* Done setting the chart up? Time to render it!*/
-  var myData = sinAndCos();   //You need data...
-
-  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.
-      .datum(myData)         //Populate the <svg> element with chart data...
-      .call(chart);          //Finally, render the chart!
-
-  //Update the chart when window resizes.
-  nv.utils.windowResize(function() { chart.update() });
-  return chart;
-});
-/**************************************
- * Simple test data generator
- */
-function sinAndCos() {
-  var sin = [],sin2 = [],
-      cos = [];
-
-  //Data is represented as an array of {x,y} pairs.
-  for (var i = 0; i < 100; i++) {
-    sin.push({x: i, y: Math.sin(i/10)});
-    sin2.push({x: i, y: Math.sin(i/10) *0.25 + 0.5});
-    cos.push({x: i, y: .5 * Math.cos(i/10)});
-  }
-
-  //Line chart data should be sent as an array of series objects.
-  return [
-    {
-      values: sin,      //values - represents the array of {x,y} data points
-      key: 'Sine Wave', //key  - the name of the series.
-      color: '#ff7f0e'  //color - optional: choose your own line color.
-    },
-    {
-      values: cos,
-      key: 'Cosine Wave',
-      color: '#2ca02c'
-    },
-    {
-      values: sin2,
-      key: 'Another sine wave',
-      color: '#7777ff',
-      area: true      //area - set to true if you want this line to turn into a filled area chart.
-    }
-  ];
-}
-
-};

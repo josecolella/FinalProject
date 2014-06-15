@@ -573,13 +573,13 @@ $(function() {
             d3.json(url, function(error, data) {
                 if (!error) {
                     console.log(data);
-//                    visualize.inputData = data;
-//                    var columnNames = Object.keys(data[0]);
-//                    visualize.cf = crossfilter(inputData);
-//                    $('#dataTable').handsontable({
-//                        data: visualize.inputData,
-//                        colHeaders: columnNames
-//                    });
+                    visualize.inputData = data;
+                    var columnNames = Object.keys(data[0]);
+                    visualize.cf = crossfilter(visualize.inputData);
+                    $('#dataTable').handsontable({
+                        data: visualize.inputData,
+                        colHeaders: columnNames
+                    });
                 }
 
 
@@ -607,6 +607,7 @@ $(function() {
                 break;
         }
 
+        $("#dataTable").focus();
 
 
 
@@ -624,32 +625,39 @@ $(function() {
         showVisualizationModel();
         vex.dialog.open({
             message: 'Export as...',
-            input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n  <div class=\"vex-custom-input-wrapper\">\n        <select class=\"form-control\" id=\"exportSelect\">\n  <option>PDF</option>\n  <option>PNG</option>\n  <option>SVG</option>\n  <option>JPEG</option>\n  <option>JPEG</option>\n <option>CSV</option>\n <option>R</option>\n <option>Python</option>\n <option>Excel</option>\n</select>\n    </div>\n</div>\n",
+            input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n  <div class=\"vex-custom-input-wrapper\">\n        <select class=\"form-control\" id=\"exportSelect\">\n  <option>PDF</option>\n  <option>PNG</option>\n  <option>SVG</option>\n  <option>JPEG</option>\n <option>CSV</option>\n <option>R</option>\n <option>Python</option>\n <option>Excel</option>\n</select>\n    </div>\n</div>\n",
             callback: function(data) {
                 if (data === false) {
                     return console.log('Cancelled');
                 }
-                var fileType = $("#exportSelect option:selected").text();
-                switch (fileType) {
-                    case 'PDF':
-                        break;
-                    case 'PNG':
-                        break;
-                    case 'SVG':
-                        break;
-                    case 'JPEG':
-                        break;
-                    case 'CSV':
-                        break;
-                    case 'R':
-                        break;
-                    case 'Python':
-                        break;
-                    case 'Excel':
-                        break;
+                if ($("#chart > svg").length !== 0) {
+                    var fileType = $("#exportSelect option:selected").text();
+                    switch (fileType) {
+                        case 'PDF':
+                            break;
+                        case 'PNG':
+                            break;
+                        case 'SVG':
+                            sendSVGInfo();
+//                            exportTo('pdf');
+                            console.log('here');
+                            break;
+                        case 'JPEG':
+                            break;
+                        case 'CSV':
+                            break;
+                        case 'R':
+                            break;
+                        case 'Python':
+                            break;
+                        case 'Excel':
+                            break;
 
+                    }
+                    return console.log();
+                } else {
+                    vex.dialog.alert('To export, a visualization model must be created first.');
                 }
-                return console.log();
             }
         });
     });
@@ -683,37 +691,69 @@ $(function() {
         trigger: 'hover'
     });
 
+
     /**
-     *
-     * Click handler for when the user want to add a pie chart to the visualization model
+     * Click handler for when the user wants to add a visualization model to the workspace
      */
-    $("#addpie").click(function() {
-        var chart = $("#addpie").parent().text().toLowerCase();
+    $(".addbtn").click(function() {
+        var visualizationModel = $(this);
+        var chart = visualizationModel.parent().text().toLowerCase();
+        hideDataGrid();
         if (visualize.cf !== null) {
-            hideDataGrid();
             if (visualize.config.x != null && visualize.config.y != null) {
-                visualize.pieChart(chart);
+                switch (chart) {
+                    case 'pie': //Generate a pie chart
+                        visualize.pieChart(chart);
+                        break;
+                    case 'bar':
+                        visualize.barChart(chart);
+                        break;
+                    case 'box':
+                        visualize.boxChart(chart);
+                        break;
+                    case 'curve':
+                        visualize.curveChart(chart);
+                        break;
+                    case 'histogram':
+                        visualize.histogram(chart);
+                        break;
+                    case 'line':
+                        visualize.lineChart(chart);
+                        break;
+                    case 'scatter/bubble':
+                        visualize.scatterChart(chart);
+                        break;
+                    case 'stacked area':
+                        visualize.stackedChart(chart);
+                        break;
+                    default :
+                        break;
+
+                }
             } else {
                 vex.dialog.alert('An x and y axis must be chosen');
             }
         } else {
-            console.log('A dataset must be chosen');
+            vex.dialog.alert('A dataset must be chosen');
         }
 
     });
 
-    $("#addline").click(function() {
-        lineChart();
-    });
-
-    $(document).on('click', '.htCore > thead > tr > th > .btn-group', function() {
+    //Click handler to set the axis for the visualization model
+   $(document).on('click', '.htCore > thead > tr > th > .btn-group', function() {
         var axisField = $(this);
         var field = axisField.prev().text();
-        console.log(field);
         var axis = axisField.find(".active").children("strong").text();
-        console.log(axis);
+
         if (axis !== "") {
-            visualize.config[axis] = field;
+            //The user wants the column as the x and y axis
+            if (axis.length > 1) {
+                var cleanAxis = axis.charAt(axis.length - 1);
+                visualize.config[cleanAxis] = field;
+            }
+            if (visualize.config.axis == null) {
+                visualize.config[axis] = field;
+            }
         }
 
 
