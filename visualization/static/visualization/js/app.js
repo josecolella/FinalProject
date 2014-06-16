@@ -721,7 +721,9 @@ $(function() {
                         visualize.lineChart(chart);
                         break;
                     case 'scatter/bubble':
-                        visualize.scatterChart(chart);
+                        var regex = /\/(.+)/;
+                        var chart = regex.exec(chart) !== null ? regex.exec(chart)[1] : '';
+                        visualize.bubbleChart(chart);
                         break;
                     case 'stacked area':
                         visualize.stackedChart(chart);
