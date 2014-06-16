@@ -21,8 +21,12 @@
 }
 
 
+
 .three-img {
     border-radius: 2em;
     border-radius: 16em;
+}
 
+.about-footer {
+    margin-top: -4em;
 }

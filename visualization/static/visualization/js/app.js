@@ -8,6 +8,7 @@ var downloadData = [];
 var columnHeaders = [];
 var offState = true;
 var toggleSideBarMessage = 'Hide Sidebar';
+
 /**
  * Function created to manage the change of icons when a user clicks to see
  * the visualization model. Uses $(this) to make sure that only one caret moves
@@ -137,9 +138,6 @@ $("#workspace-view").click(function() {
 
 });
 
-$("#export").click(function() {
-    manageImportClose();
-});
 
 
 /**
@@ -230,12 +228,14 @@ var addDataGrid = function(data) {
 
 
     var dataTable = $('#dataTable');
-    var window = $(window);
 
-
+    //Event handler for when the data-grid btn is clicked
     $("#data-grid").click(function(data) {
         manageImportClose();
         hideEditor();
+        showVisualizationModel();
+        $("#files-table").hide();
+
         var workspace = $("#workspace");
         var dataTableDiv = $("#dataTable");
         //Doesn't exist create it
@@ -339,7 +339,7 @@ var addDataGrid = function(data) {
                 contextMenu: true,
                 manualColumnResize: true,
                 stretchH: 'all',
-                width: 1120,
+                width: 1140,
                 height: 400,
                 afterGetColHeader: function (col, rowHeader) {
                     var instance = this;
@@ -354,7 +354,6 @@ var addDataGrid = function(data) {
                     }
                 }
             });
-
 
 
         } else if(dataTableDiv.is(":visible")){
@@ -441,8 +440,6 @@ var getVisualizationModelTitles = function() {
     return visualizationModels;
 };
 
-var visualizationModels = getVisualizationModelTitles();
-
 var saveFileAsPrompt = function(chart, file) {
     vex.dialog.prompt({
         message: 'Save '+file.toUpperCase()+' file as...',
@@ -508,6 +505,8 @@ $(function() {
 
         showFileTable();
         hideVisualizationModel();
+        manageImportClose();
+        $("#dataTable").hide();
 
     });
 
@@ -519,7 +518,31 @@ $(function() {
 
         $('#data-grid').click();
 
-        var url = $(this).attr('href');
+        var file = $(this);
+        var url = file.attr('href');
+
+
+        /**
+         * returns the extension for the file
+         * @param filename
+         * @returns {Array|{index: number, input: string}}
+         */
+        var fileExtension = function(filename) {
+            var regex = /\.([a-z]+)/;
+            var fileExten = regex.exec(filename);
+
+            if (fileExten != null) {
+                fileExten = fileExten[1];
+            }
+
+            return fileExten;
+
+        };
+
+
+
+        var extension = fileExtension($.trim(file.text()));
+
 
         /**
          * Processes the CSV file that is located in the url that is passed
@@ -528,61 +551,120 @@ $(function() {
          * @param url
          */
         var processCSVFileContents = function(url) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'html',
-                headers: {
-                    'X-CSRFToken' : $.cookie('csrftoken')
-                },
-                success: function(data) {
-                    csv = data;
-                    downloadData = [];
-                    $.each(csv.split("\n"), function(index, value) {
-                        if (value !== '') {
-                            downloadData.push(value.split(","))
-                        }
-                    });
-                    //Loading columns and data into grid
-                    columnHeaders = downloadData[0];
-
+            d3.csv(url, function(error, data) {
+                if (!error) {
+                    visualize.inputData = data;
+                    var columnNames = Object.keys(data[0]);
+                    visualize.cf = crossfilter(visualize.inputData);
                     $('#dataTable').handsontable({
-                        data: downloadData.slice(1),
-                        colHeaders: columnHeaders
+                        data: visualize.inputData,
+                        colHeaders: columnNames
                     });
-
-                },
-                error: function() {
-                    console.log('Error');
                 }
-            })
-                .done(function() {
-                    console.log("success");
-                })
-                .fail(function() {
-                    console.log("error");
-                })
-                .always(function() {
-                    console.log("complete");
-                });
+            });
 
         };
 
-        processCSVFileContents(url);
+
+
+        var processJSONFileContents = function(url) {
+
+
+            d3.json(url, function(error, data) {
+                if (!error) {
+                    console.log(data);
+                    visualize.inputData = data;
+                    var columnNames = Object.keys(data[0]);
+                    visualize.cf = crossfilter(visualize.inputData);
+                    $('#dataTable').handsontable({
+                        data: visualize.inputData,
+                        colHeaders: columnNames
+                    });
+                }
+
+
+
+            });
+        };
+
+
+        var initializeDataGrid = function(headers, data) {
+
+        };
+
+        switch (extension) {
+
+            case 'json':
+                console.log('Its a JSON file');
+                processJSONFileContents(url);
+                break;
+            case 'csv':
+                console.log('Its a CSV file');
+                processCSVFileContents(url);
+                break;
+
+            default:
+                break;
+        }
+
+        $("#dataTable").focus();
+
+
+
+
+
+
     });
 
-    $('#exportCsv').click(function () {
+    /**
+     * Click handler for when the export button is clicked.
+     */
+    $("#export").click(function() {
+        manageImportClose();
+        hideFileTable();
+        showVisualizationModel();
+        vex.dialog.open({
+            message: 'Export as...',
+            input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n  <div class=\"vex-custom-input-wrapper\">\n        <select class=\"form-control\" id=\"exportSelect\">\n  <option>PDF</option>\n  <option>PNG</option>\n  <option>SVG</option>\n  <option>JPEG</option>\n <option>CSV</option>\n <option>R</option>\n <option>Python</option>\n <option>Excel</option>\n</select>\n    </div>\n</div>\n",
+            callback: function(data) {
+                if (data === false) {
+                    return console.log('Cancelled');
+                }
+                if ($("#chart > svg").length !== 0) {
+                    var fileType = $("#exportSelect option:selected").text();
+                    switch (fileType) {
+                        case 'PDF':
+                            break;
+                        case 'PNG':
+                            break;
+                        case 'SVG':
+                            sendSVGInfo();
+//                            exportTo('pdf');
+                            console.log('here');
+                            break;
+                        case 'JPEG':
+                            break;
+                        case 'CSV':
+                            break;
+                        case 'R':
+                            break;
+                        case 'Python':
+                            break;
+                        case 'Excel':
+                            break;
 
+                    }
+                    return console.log();
+                } else {
+                    vex.dialog.alert('To export, a visualization model must be created first.');
+                }
+            }
+        });
     });
 
-    $('#exportR').click(function() {
-        saveFileAsPrompt(chart, "r");
-    });
-
-    $('#exportPython').click(function() {
-        saveFileAsPrompt(chart, "py");
-    });
-
+    //Click handler for when the toggle sidebar button is clicked
+    //This means that once it is clicked the sidebar is hidden,
+    //and if it clicked again the sidebar is shown again
     $("#toggle-sidebar").click(function() {
         var sidebar = $(".sidebar");
         if (sidebar.is(":hidden")) {
@@ -603,33 +685,81 @@ $(function() {
         }
     });
 
-    $("#toggle-sidebar").hover(function() {
-        var toggleButton = $("#toggle-sidebar");
-        toggleButton.tooltip('show');
-        var x = 5;
-        toggleButton.css('margin-left', function(index, value) {
-            if (isNaN(parseInt(value)))
-                return x;
-
-            return parseInt(value) + x
-        });
-    }, function() {
-        var toggleButton = $("#toggle-sidebar");
-        toggleButton.tooltip('hide');
-        var x = -5;
-        toggleButton.css('margin-left', function(index, value) {
-            if (isNaN(parseInt(value)))
-                return x;
-
-            return parseInt(value) + x
-        });
-    });
-
-
     $("#toggle-sidebar").tooltip({
         placement: "right",
         title: toggleSideBarMessage,
-        trigger: 'manual'
+        trigger: 'hover'
+    });
+
+
+    /**
+     * Click handler for when the user wants to add a visualization model to the workspace
+     */
+    $(".addbtn").click(function() {
+        var visualizationModel = $(this);
+        var chart = visualizationModel.parent().text().toLowerCase();
+        hideDataGrid();
+        if (visualize.cf !== null) {
+            if (visualize.config.x != null && visualize.config.y != null) {
+                switch (chart) {
+                    case 'pie': //Generate a pie chart
+                        visualize.pieChart(chart);
+                        break;
+                    case 'bar':
+                        visualize.barChart(chart);
+                        break;
+                    case 'box':
+                        visualize.boxChart(chart);
+                        break;
+                    case 'curve':
+                        visualize.curveChart(chart);
+                        break;
+                    case 'histogram':
+                        visualize.histogram(chart);
+                        break;
+                    case 'line':
+                        visualize.lineChart(chart);
+                        break;
+                    case 'scatter/bubble':
+                        var regex = /\/(.+)/;
+                        var chart = regex.exec(chart) !== null ? regex.exec(chart)[1] : '';
+                        visualize.bubbleChart(chart);
+                        break;
+                    case 'stacked area':
+                        var chart = (chart.split(" ")).join("");
+                        visualize.stackedChart(chart);
+                        break;
+                    default :
+                        break;
+
+                }
+            } else {
+                vex.dialog.alert('An x and y axis must be chosen');
+            }
+        } else {
+            vex.dialog.alert('A dataset must be chosen');
+        }
+
+    });
+
+    //Click handler to set the axis for the visualization model
+   $(document).on('click', '.htCore > thead > tr > th > .btn-group', function() {
+        var axisField = $(this);
+        var field = axisField.prev().text();
+        var axis = axisField.find(".active").children("strong").text();
+
+        if (axis !== "") {
+            //The user wants the column as the x and y axis
+            if (axis.length > 1) {
+                var cleanAxis = axis.charAt(axis.length - 1);
+                visualize.config[cleanAxis] = field;
+            }
+            if (visualize.config.axis == null) {
+                visualize.config[axis] = field;
+            }
+        }
+
+
     });
 
 });

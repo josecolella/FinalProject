@@ -67,7 +67,9 @@ class Index (ListView):
             if form.is_valid():
 
                 new_file = UploadFile(file=request.FILES['file'])
+                print(new_file)
                 userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
+                print(userUploadedFiles.uploadedFiles)
                 userUploadedFiles.uploadedFiles.append({
                     'filename': new_file.file.name,
                     'fileurl': re.sub(r'/media/', r'/media/files/', new_file.file.url),
@@ -136,7 +138,7 @@ def authenticateView(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    request.session['user'] = user
+                    request.session['user'] = user.username
                     response_data['status'] = reverse('index')
                     return HttpResponse(json.dumps(response_data), content_type="application/json")
                 else:
@@ -172,8 +174,6 @@ def authenticateView(request):
 
 
         else:
-
-            print("asdasd")
             response_data['status'] = form.error_messages
             return HttpResponse(response_data['status'])
 
@@ -275,17 +275,6 @@ def some_view_csv(request):
     return response
 
 
-class CSVReader(View):
-    """
-    The view that deals with the generation of csv
-    """
-    def get(self, request, *args, **kwargs):
-        """
-        The get method
-        """
-        pass
-
-
 
 def createSVGview(request):
     """
@@ -294,12 +283,19 @@ def createSVGview(request):
     if request.is_ajax():
         newFile = ContentFile('newfile.svg', 'w')
         newFile.name = 'newfile.svg'
-        newFile.write(str(base64.b64decode(request.POST['svg'])).strip())
+
+        fileContent = base64.b64decode(request.POST['svg']).decode('utf-8')
+
+        newFile.write(fileContent)
+
 
         newFileDB = UploadSVGFile(file=newFile)
         newFileDB.save()
 
 
-        response_data = {'url': re.sub(r'/media/', r'/media/files/', newFileDB.file.url)}
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
+        # response_data = {'url': newFileDB.file.url, 'file': newFile}
+        # return HttpResponse(json.dumps(response_data), content_type="application/json")
+        response = HttpResponse(newFile, mimetype='image/svg+xml')
+        response['Content-Disposition'] = 'attachment; filename="newfile.svg"'
+        return response

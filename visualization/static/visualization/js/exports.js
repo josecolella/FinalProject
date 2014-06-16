@@ -15,10 +15,13 @@
  * @return
  *
  */
-var exportSVG = function(outputFormat) {
+var exportTo = function(outputFormat) {
     var processUrl;
 
-
+    /**
+     * This returns the url that will be used to send the input file
+     * @param outputFormat
+     */
     var convertSVGToOutput = function(outputFormat) {
 
 
@@ -57,8 +60,8 @@ var exportSVG = function(outputFormat) {
             dataType: 'json',
             data: {
                 input: "download",
-                file: "http://cl.ly/1X310P2q3132/test2.svg",
-                filename: "test2.svg",
+                file: "http://cl.ly/0S3P0o3X192J/newfile.svg",
+                filename: "newfile.svg",
                 outputformat: outputFormat
             },
             success: function(data) {
@@ -85,67 +88,48 @@ var exportSVG = function(outputFormat) {
 };
 
 
-$(document).ready(function() {
+var createSVGFileInformation = function() {
+    var html = d3.select("svg")
+        .attr("title", "test2")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .node().parentNode.innerHTML.trim();
 
-    $('#exportPng').on('click', function() {
-        exportSVG("png");
-    });
+    return html;
+};
 
-    $('#exportPdf').on('click', function() {
-        exportSVG("pdf");
-    });
+var sendSVGInfo = function() {
+    var svg = createSVGFileInformation();
 
-    $('#exportJpeg').on('click', function() {
-        exportSVG("jpg");
-    });
+    console.log(svg);
 
-    $('#exportExcel').click(function() {
+    $.ajax({
+        url: 'createSVG/',
+        type: 'POST',
+        dataType: 'html',
+        headers: {
+            'X-CSRFToken' : $.cookie('csrftoken')
+        },
+        data: {
+            svg: $.base64.encode(svg)
+        },
+        success: function(response) {
+            console.log(response);
+//            var url = response.url;
 
-    });
+        },
+        error: function() {
+            console.log("error");
+        }
+    })
+        .done(function() {
+            console.log("success");
+        })
+        .fail(function() {
+            console.log("error");
+        })
+        .always(function() {
+            console.log("complete");
+        });
 
-
-    $('#exportSVG').on('click', function() {
-
-        var createSVGFileInformation = function() {
-            var html = d3.select("svg")
-                        .attr("title", "test2")
-                        .attr("version", 1.1)
-                        .attr("xmlns", "http://www.w3.org/2000/svg")
-                        .node().parentNode.innerHTML.trim();
-
-            return html;
-        };
-
-        var sendSVGInfo = function(svg) {
-            $.ajax({
-                url: 'createSVG/',
-                type: 'POST',
-                dataType: 'html',
-                headers: {
-                    'X-CSRFToken' : $.cookie('csrftoken')
-                },
-                data: {
-                    svg: $.base64.encode(createSVGFileInformation())
-                },
-                success: function(data) {
-                    console.log(data);
-                },
-                error: function() {
-                    console.log("error");
-                }
-            })
-                .done(function() {
-                    console.log("success");
-                })
-                .fail(function() {
-                    console.log("error");
-                })
-                .always(function() {
-                    console.log("complete");
-                });
-
-        };
-
-        sendSVGInfo();
-    });
-});
+};

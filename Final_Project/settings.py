@@ -111,3 +111,7 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'visualization/templates')
 )
 
+import mimetypes
+
+mimetypes.add_type("image/svg+xml", ".svg", True)
+mimetypes.add_type("image/svg+xml", ".svgz", True)
