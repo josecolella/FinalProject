@@ -726,6 +726,7 @@ $(function() {
                         visualize.bubbleChart(chart);
                         break;
                     case 'stacked area':
+                        var chart = (chart.split(" ")).join("");
                         visualize.stackedChart(chart);
                         break;
                     default :
