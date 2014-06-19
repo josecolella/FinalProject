@@ -11,11 +11,13 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.core.files import File
 from django.core.servers.basehttp import FileWrapper
+from django.http import StreamingHttpResponse
 
 from .forms import UploadFileForm, SignUpForm, SignInForm
 from .models import UploadFile, UserUploadedFiles,VisualizationModelDescription, UploadSVGFile
+from .GraphicsFileWriter import *
+from .ExportUtils import *
 
-from reportlab.pdfgen import canvas
 import csv
 import re
 import base64
@@ -67,9 +69,8 @@ class Index (ListView):
             if form.is_valid():
 
                 new_file = UploadFile(file=request.FILES['file'])
-                print(new_file)
+
                 userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
-                print(userUploadedFiles.uploadedFiles)
                 userUploadedFiles.uploadedFiles.append({
                     'filename': new_file.file.name,
                     'fileurl': re.sub(r'/media/', r'/media/files/', new_file.file.url),
@@ -227,33 +228,6 @@ class AboutView (TemplateView):
 
 
 
-
-
-def some_view(request):
-
-    # Create the HttpResponse object with the appropriate PDF headers.
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
-
-    buffer = BytesIO()
-
-    # Create the PDF object, using the BytesIO object as its "file."
-    p = canvas.Canvas(buffer)
-    p.setFont("Helvetica", 14)
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
-    p.drawString(100, 100, "Hello world.")
-
-    # Close the PDF object cleanly.
-    p.showPage()
-    p.save()
-
-    # Get the value of the BytesIO buffer and write it to the response.
-    pdf = buffer.getvalue()
-    buffer.close()
-    response.write(pdf)
-    return response
-
 class DropZoneView(TemplateView):
     """
     This class manages the dropzone where the user can upload files
@@ -262,16 +236,57 @@ class DropZoneView(TemplateView):
     form_class = UploadFileForm
 
 
+def exportDataView(request):
+
+    if request.is_ajax():
+        ExportUtils.initializeExportData(request.POST['data'],
+                                         request.POST['xAxis'],
+                                         request.POST['yAxis'],
+                                         request.POST['type'])
+
+        if ExportUtils.isValidExport():
+            response_data = {'success': 1}
+        else:
+            response_data = {'success': 0}
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+
+def exportView(request, filename):
+
+    response = None
+    if re.search('py', filename):
+        print(filename)
+        if ExportUtils.isValidExport():
+            print(ExportUtils.data)
+            print(ExportUtils.xAxis.decode())
+            print(ExportUtils.yAxis)
+            print(ExportUtils.graphType.decode())
+
+            pyGraph = PythonGraphicsFileWriter(ExportUtils.data,
+                                               ExportUtils.xAxis.decode('utf-8'),
+                                               ExportUtils.yAxis.decode('utf-8'),
+                                               ExportUtils.graphType.decode('utf-8'))
+            print(pyGraph.fileContent)
+            pyGraph.write(filename, toFile=False)
+            response = HttpResponse(pyGraph.fileContent, content_type='text/x-python')
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+        else:
+            response = HttpResponseRedirect(reverse('index'))
+    return response
+
 
 def some_view_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
 
-    writer = csv.writer(response)
-    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
-    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+    # newFile = ContentFile('p.py', "w")
+    # newFile.write('Hello')
+    #
+    # response = HttpResponse(newFile,content_type='text/x-python')
+    # response['Content-Disposition'] = 'attachment; filename="hello.python"'
 
+    response = HttpResponse('Hello', content_type='text/x-python')
+    response['Content-Disposition'] = 'attachment; filename="hello.py"'
     return response
 
 

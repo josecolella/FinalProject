@@ -9,6 +9,7 @@ var columnHeaders = [];
 var offState = true;
 var toggleSideBarMessage = 'Hide Sidebar';
 
+
 /**
  * Function created to manage the change of icons when a user clicks to see
  * the visualization model. Uses $(this) to make sure that only one caret moves
@@ -338,6 +339,9 @@ var addDataGrid = function(data) {
                 minSpareRows: 1,
                 contextMenu: true,
                 manualColumnResize: true,
+                currentRowClassName: 'currentRow',
+                currentColClassName: 'currentCol',
+                autoWrapRow: true,
                 stretchH: 'all',
                 width: 1140,
                 height: 400,
@@ -440,20 +444,33 @@ var getVisualizationModelTitles = function() {
     return visualizationModels;
 };
 
-var saveFileAsPrompt = function(chart, file) {
+
+/**
+ * Loads the save as dialog so that the user can put a file name
+ *
+ * @param extension The extension of the file
+ */
+var saveFileAsPrompt = function(extension) {
+
+
+
     vex.dialog.prompt({
-        message: 'Save '+file.toUpperCase()+' file as...',
-        placeholder: 'data.'+file.toLowerCase()+'...',
+        message: 'Save as...',
+        placeholder: 'filename.'+extension+' here...',
         contentClassName: 'alert-vex-content',
         closeClassName: 'alert-vex-close',
-        callback: function(value) {
-            console.log(value)
+        callback: function(filename) {
+            console.log(filename);
+            exportFile[extension](filename);
+
         }
     });
 };
 
 
 $(function() {
+
+
     //Shows the Filter feature for the search input functionality
     $("#search-term").bind('input', function() {
 
@@ -553,12 +570,13 @@ $(function() {
         var processCSVFileContents = function(url) {
             d3.csv(url, function(error, data) {
                 if (!error) {
+                    console.log(data);
                     visualize.inputData = data;
                     var columnNames = Object.keys(data[0]);
                     visualize.cf = crossfilter(visualize.inputData);
                     $('#dataTable').handsontable({
-                        data: visualize.inputData,
-                        colHeaders: columnNames
+                        colHeaders: columnNames,
+                        data: visualize.inputData
                     });
                 }
             });
@@ -572,7 +590,7 @@ $(function() {
 
             d3.json(url, function(error, data) {
                 if (!error) {
-                    console.log(data);
+
                     visualize.inputData = data;
                     var columnNames = Object.keys(data[0]);
                     visualize.cf = crossfilter(visualize.inputData);
@@ -632,28 +650,8 @@ $(function() {
                 }
                 if ($("#chart > svg").length !== 0) {
                     var fileType = $("#exportSelect option:selected").text();
-                    switch (fileType) {
-                        case 'PDF':
-                            break;
-                        case 'PNG':
-                            break;
-                        case 'SVG':
-                            sendSVGInfo();
-//                            exportTo('pdf');
-                            console.log('here');
-                            break;
-                        case 'JPEG':
-                            break;
-                        case 'CSV':
-                            break;
-                        case 'R':
-                            break;
-                        case 'Python':
-                            break;
-                        case 'Excel':
-                            break;
-
-                    }
+                    var extension = exportExtensions[fileType]
+                    saveFileAsPrompt(extension);
                     return console.log();
                 } else {
                     vex.dialog.alert('To export, a visualization model must be created first.');
@@ -661,6 +659,7 @@ $(function() {
             }
         });
     });
+
 
     //Click handler for when the toggle sidebar button is clicked
     //This means that once it is clicked the sidebar is hidden,
@@ -743,7 +742,7 @@ $(function() {
     });
 
     //Click handler to set the axis for the visualization model
-   $(document).on('click', '.htCore > thead > tr > th > .btn-group', function() {
+    $(document).on('click', '.htCore > thead > tr > th > .btn-group', function() {
         var axisField = $(this);
         var field = axisField.prev().text();
         var axis = axisField.find(".active").children("strong").text();

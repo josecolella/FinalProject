@@ -5,7 +5,16 @@
  * of the svg that is present in the interface
  */
 
-
+var exportExtensions = {
+    "PDF": "pdf",
+    "PNG": "png",
+    "SVG": "svg",
+    "JPEG": "jpg",
+    "CSV": "csv",
+    "R": "R",
+    "Python": "py",
+    "Excel": "xslx"
+};
 
 /**
  * This method deals with the exportation of the SVG
@@ -132,4 +141,34 @@ var sendSVGInfo = function() {
             console.log("complete");
         });
 
+};
+
+
+
+var exportFile = {
+    name: undefined,
+    'pdf': function(filename) {
+
+    },
+    'py': function(filename) {
+        window.location = '/export/'+filename
+    },
+    "png": function() {
+
+    },
+    "svg": function() {
+
+    },
+    "jpg": function() {
+
+    },
+    "csv": function() {
+
+    },
+    "R": function() {
+
+    },
+    "xslx": function() {
+
+    }
 };

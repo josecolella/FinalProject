@@ -25,7 +25,8 @@ urlpatterns = patterns('',
                        url(r'^import/', views.DropZoneView.as_view(), name='import'),
                        url(r'^files/', views.fileview, name='file'),
                        url(r'^createSVG/', views.createSVGview, name='createcsv'),
-                       url(r'^csv/', views.some_view_csv, name='csv'),
+                       url(r'^exportData/', views.exportDataView, name='exportData'),
+                       url(r'^export/(?P<filename>[a-zA-Z]+\d*\.[a-zA-Z]{1,4})', views.exportView, name='export'),
                        url(r'^admin/', include(admin.site.urls), name='admin'),
 
 

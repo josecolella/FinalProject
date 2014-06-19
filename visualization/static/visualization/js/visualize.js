@@ -39,6 +39,8 @@ var visualize = {
             });
         }
 
+        visualize.exportData(group.all(), visualize.config.x, visualize.config.y, 'piePlot');
+
         pieChart.width(visualize.width)
             .height(visualize.height)
             .dimension(dimension)
@@ -49,6 +51,19 @@ var visualize = {
                 return p.value;
             })
             .renderTitle(true);
+
+        var svg = d3.select("svg");
+        console.log(svg);
+        svg.append("text")
+            .attr("x", (visualize.width / 2))
+            .attr("y", 50)
+            .attr("id", 'Helo')
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("text-decoration", "underline")
+            .text("Value vs Date Graph");
+
+        console.log(svg);
         dc.renderAll();
 
 
@@ -110,9 +125,55 @@ var visualize = {
     },
     boxChart: function(selector) { //present in dc.js dev
 
-    },
-    curveChart: function(selector) {
+        var chartSelector = selector+"-chart";
+        $("#chart")
+            .attr('class', chartSelector)
+            .css({
+                'height': '30em',
+                'margin-top': ''
+            });
 
+        //Defining the x scale is mandatory
+        var boxPlot = dc.boxPlot("."+chartSelector);
+
+
+        var dimension= visualize.cf.dimension(function(row) { return row[visualize.config.x];});
+
+        var group;
+        if (visualize.config.x !== visualize.config.y) {
+            group = dimension.group().reduceSum(function(row) {
+                return row[visualize.config.y];
+            });
+        } else {
+            group = dimension.group().reduceCount(function(row) {
+                return row[visualize.config.y];
+            });
+        }
+
+
+        var groupByValue = function(d) {
+            return d.value;
+        };
+        var groupByKey = function(d) {
+            return d.key;
+        };
+
+        var ordinalX = $.map(group.all(), function(item, index) {
+            return item.key;
+        });
+        var linearY = d3.extent(group.all(), groupByValue);
+
+        boxPlot.width(visualize.width)
+            .height(visualize.height)
+            .margins({top: 10, right: 50, bottom: 30, left: 50})
+            .dimension(dimension)
+            .group(group)
+            .x(d3.scale.ordinal().domain(ordinalX))
+            .xUnits(dc.units.ordinal)
+            .elasticY(true) //Turn on/off elastic y axis
+            .elasticX(true);
+
+        dc.renderAll();
     },
     histogram: function(selector) {
         var chartSelector = selector+"-chart";
@@ -345,6 +406,44 @@ var visualize = {
 
 
         dc.renderAll();
+    },
+    exportData: function(data, xAxis, yAxis, type) {
+        console.log(data);
+        console.log(JSON.stringify(data))
+        $.ajax({
+                url: '/exportData/',
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    'X-CSRFToken' : $.cookie('csrftoken')
+                },
+                data: {
+                    data: JSON.stringify(data),
+                    xAxis:  $.base64.encode(xAxis),
+                    yAxis: $.base64.encode(yAxis),
+                    type: $.base64.encode(type)
+                },
+                success: function(response) {
+                    if (response.success !== 1) {
+                        vex.dialog.alert('Unable to send export data. Try again');
+                    }
+
+                },
+                error: function() {
+                    console.log('Error');
+                }
+            })
+                .done(function() {
+                    console.log("success");
+                })
+                .fail(function() {
+                    console.log("error");
+                })
+                .always(function() {
+                    console.log("complete");
+                });
+
+
     }
 
 };
