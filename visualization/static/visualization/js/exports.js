@@ -165,8 +165,8 @@ var exportFile = {
     "csv": function() {
 
     },
-    "R": function() {
-
+    "R": function(filename) {
+        window.location = '/export/'+filename
     },
     "xslx": function() {
 

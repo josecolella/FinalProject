@@ -408,8 +408,6 @@ var visualize = {
         dc.renderAll();
     },
     exportData: function(data, xAxis, yAxis, type) {
-        console.log(data);
-        console.log(JSON.stringify(data))
         $.ajax({
                 url: '/exportData/',
                 type: 'POST',

@@ -27,6 +27,7 @@ urlpatterns = patterns('',
                        url(r'^createSVG/', views.createSVGview, name='createcsv'),
                        url(r'^exportData/', views.exportDataView, name='exportData'),
                        url(r'^export/(?P<filename>[a-zA-Z]+\d*\.[a-zA-Z]{1,4})', views.exportView, name='export'),
+                       url(r'^exportClear/', views.exportClearView, name='exportClear'),
                        url(r'^admin/', include(admin.site.urls), name='admin'),
 
 

@@ -34,3 +34,8 @@ class ExportUtils:
             isValid = True
         return isValid
 
+    @staticmethod
+    def clear():
+        ExportUtils.data = None
+        ExportUtils.xAxis = None
+        ExportUtils.yAxis

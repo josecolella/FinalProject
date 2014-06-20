@@ -7,7 +7,7 @@ dc.js library to R using ggplot2 and python using matplotlib
 
 
 from abc import ABCMeta, abstractmethod
-import json
+import re
 
 class AbstractGraphicsFileWriter(metaclass=ABCMeta):
 
@@ -18,11 +18,16 @@ class AbstractGraphicsFileWriter(metaclass=ABCMeta):
         """
         Parameters
         -----------------------------------
-        data: json encoded data that is to be visualized
+        data: the incoming data that is to be visualized
         xAxis: The name of the xAxis
         yAxis: The name of the yAxis
         jsChartType: The dc js model that is to be translated
         """
+        assert type(data) == list, 'The data is a list of dictionaries'
+        assert type(xAxis) == str, 'The xAxis is a string representing the x axis of the model'
+        assert type(yAxis) == str, 'The yAxis is a string representing the y axis of the model'
+        assert type(jsChartType) == str, 'The jsChartType is a string that represents the model that is visualized in the client'
+
         self.data = data
         self.xAxis = xAxis
         self.yAxis = yAxis
@@ -106,13 +111,18 @@ class RGraphicsFileWriter(AbstractGraphicsFileWriter):
         """
         AbstractGraphicsFileWriter.__init__(self, data, xAxis, yAxis, chartType)
         self._initializeFileContent()
+        self.rXList = self.pyListToRArray(self.x)
+        self.rYList = self.pyListToRArray(self.y)
+        self.rXAxis = self.rAxis(self.xAxis)
+        self.rYAxis = self.rAxis(self.yAxis)
+        self.generateRDataFrame()
 
     def write(self, filename, toFile=True):
         """
         """
         self.filename = filename
 
-        if self.filename is not None :
+        if self.filename is not None:
             self.chartFunction()
             if toFile:
                 with open('{}.R'.format(self.filename), 'w') as f:
@@ -134,38 +144,66 @@ library(xlsx) # To process excel files
 library(gdata) # To process older excel files
         """
 
+    def rAxis(self, pyAxis):
+        """
+        Returns the axis with R format so that axis that have spaces
+        are translated to '.''
+            Example: "Number of Crimes" -> "Number.of.Crimes"
+        """
+        rAxis = ".".join(pyAxis.split(" "))
+        return rAxis
+
+    def pyListToRArray(self, pyList):
+        """
+        Method created to transform a python list [1,2,3,...] to an
+        R array c(1,2,3,)
+        """
+        assert type(pyList) == list, 'The parameter must be a python list'
+        rlistStr = re.sub('\]', ')', re.sub('\[', 'c(', str(pyList)))
+        return rlistStr
+
+    def generateRDataFrame(self):
+        assert self.rXList is not None and self.rYList is not None, "The x axis and y axis must be set"
+        self.fileContent += """# R data frame
+x <- {}
+y <- {}
+data <- data.frame(x,y)
+        """.format(self.rXList, self.rYList)
+
     def _addScatterPlot(self):
         self.fileContent += """# A scatter plot with labels
-qplot(data$Year, data$Number.of.Crimes) + geom_text(aes(label=data$Number.of.Crimes),vjust=-0.2)
-
-        """
+qplot(data${}, data${}) + geom_text(aes(label=data${}),vjust=-0.2)
+        """.format('x', 'y', 'y')
 
     def _addLinePlot(self):
         self.fileContent += """# A line plot
-qplot(data$Year, data$Number.of.Crimes, geom=c("line")) + geom_text(aes(label=data$Number.of.Crimes), vjust=-0.2)
-        """
+qplot(data${}, data${}, geom=c("line")) + geom_text(aes(label=data${}), vjust=-0.2)
+        """.format('x', 'y', 'y')
 
     def _addBarPlot(self):
         self.fileContent += """# A bar plot
-qplot(data$Year, data$Number.of.Crimes, geom="bar", stat="identity") + geom_text(aes(label=data$Number.of.Crimes), vjust=-0.2)"""
+qplot(data${}, data${}, geom="bar", stat="identity") + geom_text(aes(label=data${}), vjust=-0.2)
+    """.format('x', 'y', 'y')
 
     def _addHistogram(self):
         self.fileContent += """# A histogram
-qplot(data$Year)
-        """
+qplot(data${})
+        """.format('x')
 
     def _addBoxPlot(self):
         self.fileContent += """# A Box plot
-qplot(data2$Women, data2$Men, geom="boxplot")
-"""
+qplot(data${}, data${}, geom="boxplot")
+    """.format()
 
     def _addPiePlot(self):
         self.fileContent += """# A pie plot
-pie(data$Number.of.Crimes, labels=c(data$Year))
-"""
+pie(data${}, labels=c(data${}))
+    """.format('y', 'x')
 
     def _addStackedPlot(self):
-        pass
+        self.fileContent += """
+
+"""
 
 
 class PythonGraphicsFileWriter(AbstractGraphicsFileWriter):

@@ -237,7 +237,9 @@ class DropZoneView(TemplateView):
 
 
 def exportDataView(request):
-
+    """
+    This allows for the data to be initialized so that it can be exported
+    """
     if request.is_ajax():
         ExportUtils.initializeExportData(request.POST['data'],
                                          request.POST['xAxis'],
@@ -250,29 +252,48 @@ def exportDataView(request):
             response_data = {'success': 0}
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
+def exportClearView(request):
+
+    if request.is_ajax():
+        ExportUtils.clear()
+        if not ExportUtils.isValidExport():
+            response_data = {'success': 1}
+        else:
+            response_data = {'success': 0}
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 def exportView(request, filename):
-
+    """
+    This view provides the R and Python files
+    """
     response = None
-    if re.search('py', filename):
-        print(filename)
+    if re.search(r'[a-zA-Z]+\d*\.{}'.format('py'), filename):
         if ExportUtils.isValidExport():
-            print(ExportUtils.data)
-            print(ExportUtils.xAxis.decode())
-            print(ExportUtils.yAxis)
-            print(ExportUtils.graphType.decode())
-
             pyGraph = PythonGraphicsFileWriter(ExportUtils.data,
                                                ExportUtils.xAxis.decode('utf-8'),
                                                ExportUtils.yAxis.decode('utf-8'),
                                                ExportUtils.graphType.decode('utf-8'))
-            print(pyGraph.fileContent)
             pyGraph.write(filename, toFile=False)
             response = HttpResponse(pyGraph.fileContent, content_type='text/x-python')
             response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
         else:
             response = HttpResponseRedirect(reverse('index'))
+    elif re.search(r"[a-zA-Z]+\d*\.{}".format("R"), filename):
+        if ExportUtils.isValidExport():
+            rGraph = RGraphicsFileWriter(ExportUtils.data,
+                                         ExportUtils.xAxis.decode('utf-8'),
+                                         ExportUtils.yAxis.decode('utf-8'),
+                                         ExportUtils.graphType.decode('utf-8'))
+            rGraph.write(filename, toFile=False)
+            response = HttpResponse(rGraph.fileContent, content_type='text/plain')
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+        else:
+            response = HttpResponseRedirect(reverse('index'))
+    elif re.search(r"[a-zA-Z]+\d*\.{}".format("svg")):
+        pass
+
+
     return response
 
 

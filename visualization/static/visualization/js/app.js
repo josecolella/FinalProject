@@ -467,6 +467,29 @@ var saveFileAsPrompt = function(extension) {
     });
 };
 
+/**
+ * Removes the currently viewed visualization model
+ */
+var clearCurrentVisualizationModel = function() {
+    $("#chart").children().remove();
+    $.ajax({
+            url: '/exportClear/',
+            type: 'POST',
+            dataType: 'json',
+            headers: {
+                'X-CSRFToken' : $.cookie('csrftoken')
+            },
+            success: function(response) {
+                if (response.success !== 1) {
+                    vex.dialog.alert('Unable to clear data');
+                }
+
+            },
+            error: function() {
+                console.log('Error');
+            }
+        });
+};
 
 $(function() {
 
@@ -650,7 +673,7 @@ $(function() {
                 }
                 if ($("#chart > svg").length !== 0) {
                     var fileType = $("#exportSelect option:selected").text();
-                    var extension = exportExtensions[fileType]
+                    var extension = exportExtensions[fileType];
                     saveFileAsPrompt(extension);
                     return console.log();
                 } else {
@@ -760,6 +783,21 @@ $(function() {
 
 
     });
+
+
+    $("#clearCurrentModel").on('click', function() {
+       var chart = $("#chart");
+       if (chart.children().length !== 0) {
+           clearCurrentVisualizationModel();
+       }
+    });
+
+    $("#clearCurrentModel").tooltip({
+        trigger: 'hover',
+        title: 'Clear Visualization Model',
+        placement: 'right'
+    });
+
 
 });
 

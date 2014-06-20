@@ -132,6 +132,10 @@ footer {
 }
 
 
+#clearCurrentModel {
+    background-color: rgb(229, 229, 229);
+}
+
 
 #chart{
     height: 25em;
@@ -176,7 +180,8 @@ footer {
 
 #uploadButton:focus,
 #clearAllButton:focus
-.addbtn:focus{
+.addbtn:focus,
+#clearCurrentModel:focus{
     outline: 0 !important;
     -webkit-appearance:none;
 
