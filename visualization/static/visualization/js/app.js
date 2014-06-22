@@ -629,10 +629,6 @@ $(function() {
         };
 
 
-        var initializeDataGrid = function(headers, data) {
-
-        };
-
         switch (extension) {
 
             case 'json':

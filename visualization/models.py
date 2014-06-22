@@ -80,6 +80,9 @@ class UploadSVGFile(models.Model):
     def __str__(self):
         return self.file.url
 
+    def delete(self, *args, **kwargs):
+        self.image.delete(False)
+        super(UploadSVGFile, self).delete(*args, **kwargs)
 
 class UserUploadedFiles(models.Model):
     """

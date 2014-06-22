@@ -95,7 +95,7 @@ class Index (ListView):
 
 def fileview(request):
     """
-    This view manages the ajax request for a user's files
+    This view manages the ajax request for a user's files. Returns the user's uploaded files
     """
 
     if request.is_ajax():
@@ -106,9 +106,6 @@ def fileview(request):
                 return HttpResponse(userFiles.uploadedFiles)
             else:
                 return HttpResponse(json.dumps(userFiles.uploadedFiles), content_type="application/json")
-        else:
-            #Return error
-            pass
 
 
 
@@ -184,7 +181,7 @@ def authenticateView(request):
 
 def signin(request):
     """
-    This view provides the
+    This view provides the sign in for the user
     """
     template_name = 'visualization/authentication/signin.html'
     sign_in_form = SignInForm
@@ -196,6 +193,9 @@ def signin(request):
 
 
 def signup(request):
+    """
+    This view provides the signup for the user
+    """
     template_name = 'visualization/authentication/signup.html'
     sign_up_form = SignUpForm
 
@@ -239,15 +239,6 @@ class AboutView (TemplateView):
     template_name = 'visualization/about.html'
 
 
-
-class DropZoneView(TemplateView):
-    """
-    This class manages the dropzone where the user can upload files
-    """
-    template_name = 'visualization/dropzone.html'
-    form_class = UploadFileForm
-
-
 def exportDataView(request):
     """
     This allows for the data to be initialized so that it can be exported
@@ -280,6 +271,7 @@ def exportView(request, filename):
     This view provides the R and Python files
     """
     response = None
+
     if re.search(r'[a-zA-Z]+\d*\.{}'.format('py'), filename):
         if ExportUtils.isValidExport():
             pyGraph = PythonGraphicsFileWriter(ExportUtils.data,
@@ -302,24 +294,15 @@ def exportView(request, filename):
             response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
         else:
             response = HttpResponseRedirect(reverse('index'))
-    elif re.search(r"[a-zA-Z]+\d*\.{}".format("svg")):
-        pass
 
 
-    return response
-
-
-def some_view_csv(request):
-    # Create the HttpResponse object with the appropriate CSV header.
-
-    # newFile = ContentFile('p.py', "w")
-    # newFile.write('Hello')
-    #
-    # response = HttpResponse(newFile,content_type='text/x-python')
-    # response['Content-Disposition'] = 'attachment; filename="hello.python"'
-
-    response = HttpResponse('Hello', content_type='text/x-python')
-    response['Content-Disposition'] = 'attachment; filename="hello.py"'
+def exportSVG(request, filename, svg):
+    """
+    View that returns an svg file with the visualization model
+    """
+    svgContent = base64.b64decode(svg)
+    response = HttpResponse(svgContent, content_type='image/svg+xml')
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
     return response
 
 

@@ -96,26 +96,31 @@ var exportTo = function(outputFormat) {
 
 };
 
+/**
+     * Inializes the current svg with namespaces and title attributes so
+     * that it can be sent to the server
+     * @param filename
+     * @returns {string|*}
+     */
+    var initializeSVG = function(filename) {
+        var html = d3.select("svg")
+            .attr("title", $.trim(filename))
+            .attr("version", 1.1)
+            .attr("xmlns", "http://www.w3.org/2000/svg")
+            .node().parentNode.innerHTML.trim();
 
-var createSVGFileInformation = function() {
-    var html = d3.select("svg")
-        .attr("title", "test2")
-        .attr("version", 1.1)
-        .attr("xmlns", "http://www.w3.org/2000/svg")
-        .node().parentNode.innerHTML.trim();
+        return html;
+    };
 
-    return html;
-};
+var sendSVGInfo = function(filename) {
 
-var sendSVGInfo = function() {
-    var svg = createSVGFileInformation();
 
-    console.log(svg);
+    var svg = initializeSVG(filename);
 
     $.ajax({
-        url: 'createSVG/',
+        url: '/export/'+filename,
         type: 'POST',
-        dataType: 'html',
+        dataType: 'JSON',
         headers: {
             'X-CSRFToken' : $.cookie('csrftoken')
         },
@@ -123,8 +128,9 @@ var sendSVGInfo = function() {
             svg: $.base64.encode(svg)
         },
         success: function(response) {
-            console.log(response);
-//            var url = response.url;
+            if (response.success === 1) {
+                window.location = response.url;
+            }
 
         },
         error: function() {
@@ -156,8 +162,10 @@ var exportFile = {
     "png": function() {
 
     },
-    "svg": function() {
+    "svg": function(filename) {
 
+        var svg = btoa(initializeSVG(filename));
+        window.location = '/exportSVG/'+filename+'/'+svg+'/'
     },
     "jpg": function() {
 

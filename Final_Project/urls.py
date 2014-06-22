@@ -12,7 +12,7 @@ from django.contrib import admin
 
 
 admin.autodiscover()
-
+base64_pattern = r'(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$'
 urlpatterns = patterns('',
                        # Examples:
                        url(r'^$', views.Index.as_view(), name='index'),
@@ -23,12 +23,12 @@ urlpatterns = patterns('',
                        url(r'^example/(?P<visualization>\w+)',
                            views.ExampleView.as_view(), name='example'),
                        url(r'^about/', views.AboutView.as_view(), name='about'),
-                       url(r'^import/', views.DropZoneView.as_view(), name='import'),
                        url(r'^files/', views.fileview, name='file'),
                        url(r'^createSVG/', views.createSVGview, name='createcsv'),
                        url(r'^exportData/', views.exportDataView, name='exportData'),
                        url(r'^export/(?P<filename>[a-zA-Z]+\d*\.[a-zA-Z]{1,4})', views.exportView, name='export'),
                        url(r'^exportClear/', views.exportClearView, name='exportClear'),
+                       url(r'^exportSVG/(?P<filename>[a-zA-Z]+\d*\.[a-zA-Z]{1,4})/(?P<svg>.+)', views.exportSVG, name='exportSVG'),
                        url(r'^admin/', include(admin.site.urls), name='admin'),
 
 
