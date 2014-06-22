@@ -109,7 +109,7 @@ var visualize = {
 
         barChart.width(visualize.width)
             .height(visualize.height)
-            .margins({top: 10, right: 10, bottom: 20, left: 40})
+            .margins({top: 40, right: 50, bottom: 30, left: 60})
             .dimension(dimension)
             .group(group)
             .x(d3.scale.ordinal().domain(ordinalX))

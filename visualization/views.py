@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, TemplateView, View
 from django.template import RequestContext
 from setuptools.compat import BytesIO
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.files.base import ContentFile
@@ -110,6 +110,8 @@ def fileview(request):
             #Return error
             pass
 
+
+
 def authenticateView(request):
     """
     The view that manages the authentication of the user
@@ -203,7 +205,17 @@ def signup(request):
         }, context_instance = RequestContext(request))
 
 
+def logoutView(request):
+    """
+    The view that logout an authenticated user that was signed in with dajngo auth
+    logout(request) -> HTTPResponseRedirect(reverse('index')) -> Send to index page
+    """
+    # Log out user that was logged in with django auth
 
+    logout(request)
+    request.session.clear()
+
+    return HttpResponseRedirect(reverse('about'))
 
 class ExampleView (ListView):
     """
