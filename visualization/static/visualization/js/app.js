@@ -461,7 +461,18 @@ var saveFileAsPrompt = function(extension) {
         closeClassName: 'alert-vex-close',
         callback: function(filename) {
             console.log(filename);
-            exportFile[extension](filename);
+            var regex = /(\w+\d*)(\.[a-zA-Z]+)?/;
+            var checkFilename = regex.exec($.trim(filename));
+            var cleanfilename;
+            //Check for incorrect filename and add appropiate extension if needed
+            if (checkFilename[2] === undefined && checkFilename[1] !== undefined) {
+                cleanfilename = $.trim(checkFilename[1]) + "."+ extension;
+                exportFile[extension](cleanfilename);
+            } else {
+                exportFile[extension]($.trim(filename));
+            }
+
+
 
         }
     });

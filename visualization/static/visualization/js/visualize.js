@@ -94,6 +94,8 @@ var visualize = {
             });
         }
 
+        visualize.exportData(group.all(), visualize.config.x, visualize.config.y, 'barPlot');
+
 
         var groupByValue = function(d) {
             return d.value;
@@ -150,6 +152,7 @@ var visualize = {
             });
         }
 
+        visualize.exportData(group.all(), visualize.config.x, visualize.config.y, 'boxPlot');
 
         var groupByValue = function(d) {
             return d.value;
@@ -201,6 +204,7 @@ var visualize = {
             });
         }
 
+        visualize.exportData(group.all(), visualize.config.x, visualize.config.y, 'histogram');
 
         var groupByValue = function(d) {
             return d.value;
@@ -253,6 +257,8 @@ var visualize = {
                 return row[visualize.config.y];
             });
         }
+
+        visualize.exportData(group.all(), visualize.config.x, visualize.config.y, 'linePlot');
 
 
         var groupByValue = function(d) {
@@ -310,6 +316,8 @@ var visualize = {
             });
         }
 
+
+        visualize.exportData(group.all(), visualize.config.x, visualize.config.y, 'scatter');
 
         var groupByValue = function(d) {
             return d.value;
@@ -378,6 +386,10 @@ var visualize = {
                 return row[visualize.config.y];
             });
         }
+
+
+        visualize.exportData(group.all(), visualize.config.x, visualize.config.y, 'stackedArea');
+
 
 
         var groupByValue = function(d) {

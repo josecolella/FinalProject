@@ -295,6 +295,8 @@ def exportView(request, filename):
         else:
             response = HttpResponseRedirect(reverse('index'))
 
+    return response
+
 
 def exportSVG(request, filename, svg):
     """
