@@ -50,7 +50,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'south',
+    'gunicorn',
     'visualization',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -72,8 +74,12 @@ WSGI_APPLICATION = 'Final_Project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'visualizationdb',
+        'USER': 'final_project',
+        'PASSWORD': '17855874',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
