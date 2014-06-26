@@ -1,47 +1,29 @@
-import json
+# Django modules
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic import ListView, TemplateView, View
+from django.views.generic import ListView, TemplateView
 from django.template import RequestContext
-from setuptools.compat import BytesIO
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.files.base import ContentFile
-from django.core.files.storage import FileSystemStorage
-from django.core.files import File
-from django.core.servers.basehttp import FileWrapper
-from django.http import StreamingHttpResponse
-
+# Application modules
 from .forms import UploadFileForm, SignUpForm, SignInForm
 from .models import UploadFile, UserUploadedFiles,VisualizationModelDescription, UploadSVGFile
 from .GraphicsFileWriter import *
 from .ExportUtils import *
-
-import csv
+# Python modules
 import re
 import base64
-
-import tempfile
-from pandas import Series, DataFrame
-import pandas
-
-import io
-#The render() function takes the request object as its first argument,
-#  a template name as its second argument and a dictionary as its optional third argument.
-#  It returns an HttpResponse object of the given template rendered with the given context.
-
-# def index(request):
-#     latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
-#     context = {'latest_poll_list': latest_poll_list}
-#     return render(request, 'visualization/index.html')
 
 
 class Index (ListView):
     """
     This is the view that deals with the main page.
     This deals with the different visualization models
-    and the user's workspace
+    and the user's workspace.
+        - Checks if the user is authenticated. If he is
+        authenticated exposes the user's uploaded files
     """
     template_name = 'visualization/index.html'
     form_class = UploadFileForm
