@@ -1,5 +1,4 @@
 .idea/*
 db.sqlite3
 .DS_STORE
-visualization/migrations/*
 media/*
