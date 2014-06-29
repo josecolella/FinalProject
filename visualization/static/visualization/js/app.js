@@ -4,9 +4,7 @@ var i = 0;
 var rightStateClass = "glyphicon-chevron-right";
 var downStateClass = 'glyphicon-chevron-down';
 var csv;
-var downloadData = [];
 var columnHeaders = [];
-var offState = true;
 var toggleSideBarMessage = 'Hide Sidebar';
 
 
@@ -518,7 +516,12 @@ var fileExtension = function(filename) {
 
 };
 
-
+/**
+ * Sets the handsontable with the columns and data that it needs to show to
+ * the user in the step dubbed `pre-visualization`
+ * @param object columns The column names
+ * @param object data The reference to the data
+ */
 var initializeDataGrid = function(columns, data) {
     $('#dataTable').handsontable({
         colHeaders: columns,
@@ -537,9 +540,8 @@ var processXMLFileContents = function(url)  {
     d3.xml(url, function(error, data) {
         if (!error) {
             console.log(data);
-            visualize.inputData = $.map(data.documentElement.getElementsByTagName("element"), function(item, index) {
-                return x2js.xml2json(item);
-            });
+            var xmlDocument = x2js.xml2json(data.documentElement);
+            visualize.inputData = xmlDocument[Object.keys(xmlDocument)[0]];
             var columnNames = Object.keys(visualize.inputData[0]);
             visualize.cf = crossfilter(visualize.inputData);
             initializeDataGrid(columnNames, visualize.inputData);
