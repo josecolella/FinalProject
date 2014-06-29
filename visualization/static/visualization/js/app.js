@@ -74,7 +74,7 @@ var manageImportOpen = function() {
 
         } else {
             dropzone.fadeIn("slow");
-            dropzone.prepend("<div class='alert alert-info fade in' id='import-info'><button type='button' class='close data-dismiss='alert' aria-hidden='true' onclick='closeAlert();'>×</button><strong>Drop</strong> or <strong>Click</strong> on the panel below to import your data sets</div>");
+            dropzone.prepend("<div class='alert alert-info fade in' id='import-info'><button type='button' class='close data-dismiss='alert' aria-hidden='true'>×</button><strong>Drop</strong> or <strong>Click</strong> on the panel below to import your data sets <b>(Accepted Files: <em>excel [xlsx, xls]</em>, <em>json</em>, <em>csv</em>, <em>txt</em>)</b></div>");
 
         }
 
@@ -492,7 +492,6 @@ var clearCurrentVisualizationModel = function() {
             if (response.success !== 1) {
                 vex.dialog.alert('Unable to clear data');
             }
-
         },
         error: function() {
             console.log('Error');
@@ -520,8 +519,33 @@ var fileExtension = function(filename) {
 };
 
 
+var initializeDataGrid = function(columns, data) {
+    $('#dataTable').handsontable({
+        colHeaders: columns,
+        data: data
+    });
+};
 
 
+/**
+ * Process the XML file that is located at the specified url, initialize the
+ * data for the visualization model, and executes a callback
+ */
+var processXMLFileContents = function(url)  {
+    var x2js = new X2JS();
+
+    d3.xml(url, function(error, data) {
+        if (!error) {
+            console.log(data);
+            visualize.inputData = $.map(data.documentElement.getElementsByTagName("element"), function(item, index) {
+                return x2js.xml2json(item);
+            });
+            var columnNames = Object.keys(visualize.inputData[0]);
+            visualize.cf = crossfilter(visualize.inputData);
+            initializeDataGrid(columnNames, visualize.inputData);
+        }
+    });
+};
 
 /**
  * Processes the CSV file that is located in the url that is passed
@@ -537,17 +561,18 @@ var processCSVFileContents = function(url) {
             visualize.inputData = data;
             var columnNames = Object.keys(data[0]);
             visualize.cf = crossfilter(visualize.inputData);
-            $('#dataTable').handsontable({
-                colHeaders: columnNames,
-                data: visualize.inputData
-            });
+            initializeDataGrid(columnNames, visualize.inputData);
         }
     });
 
 };
 
 
-
+/**
+ * Processes the json that is located in the url, initializes the data and
+ * binds the data to the grid
+ * @param string url The url where the json is located
+ */
 var processJSONFileContents = function(url) {
 
     d3.json(url, function(error, data) {
@@ -555,10 +580,7 @@ var processJSONFileContents = function(url) {
             visualize.inputData = data;
             var columnNames = Object.keys(data[0]);
             visualize.cf = crossfilter(visualize.inputData);
-            $('#dataTable').handsontable({
-                data: visualize.inputData,
-                colHeaders: columnNames
-            });
+            initializeDataGrid(columnNames, visualize.inputData);
         }
 
     });
@@ -568,8 +590,8 @@ var processJSONFileContents = function(url) {
 /**
  * This function processes the contents of an excel file and binds the data to the handsontable
  *
- * @param url
- * @param extension
+ * @param string url The url where the excel file (xlsx, xls) is located
+ * @param string extension The extension for the file
  */
 var processExcelFileContents = function(url, extension) {
 
@@ -612,10 +634,7 @@ var processExcelFileContents = function(url, extension) {
 
         var columnNames = Object.keys(visualize.inputData[0]);
         visualize.cf = crossfilter(visualize.inputData);
-        $('#dataTable').handsontable({
-            data: visualize.inputData,
-            colHeaders: columnNames
-        });
+        initializeDataGrid(columnNames, visualize.inputData);
     };
 
     ajaxRequest.send();
@@ -710,6 +729,10 @@ $(function() {
             case 'xls':
                 console.log('It\'s an excel file');
                 processExcelFileContents(url, extension);
+                break;
+            case 'xml':
+                console.log('It\'s and XML file');
+                processXMLFileContents(url);
                 break;
             default:
                 break;

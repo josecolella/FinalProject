@@ -124,7 +124,7 @@
 
                 <!-- Workspace -->
                 <div id="workspace">
-                    <div id="dropzone"  style="display: none" >
+                    <div id="dropzone"  style="display: none;margin-top: 1.5em;" >
                         <!-- IMPORTANT enctype attribute! -->
                         <form class="dropzone" id="myDropzone" action="#" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -197,7 +197,7 @@
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue : false,
             // The filter for the accepted files
-            acceptedFiles: '.xls,.xlsx,.txt,.json,text/csv',
+            acceptedFiles: '.xls,.xlsx,.txt,.json,text/,.xml',
             parallelUploads: limit -1 ,
             maxFiles: limit,
 
@@ -283,6 +283,7 @@
         };
     </script>
     <script src="{% static "visualization/jquery/jquery.base64.min.js" %}"></script>
+    <script src="//x2js.googlecode.com/hg/xml2json.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.6-i/xlsx.core.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/xls/0.7.0/xls.core.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" async></script>
