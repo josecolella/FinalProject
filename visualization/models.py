@@ -12,8 +12,6 @@ class VisualizationModelDescription(models.Model):
     """
     title = models.CharField(primary_key=True, max_length=50, db_index=True)
     description = models.TextField(db_index=True, max_length=350)
-    image = models.FilePathField(db_index=True, blank=True)
-    link = models.CharField(db_index=True, blank=True, max_length=50)
 
     def __str__(self):
         return self.title + " " + self.link

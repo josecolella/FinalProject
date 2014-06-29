@@ -115,10 +115,17 @@ $(function () {
                         if(data.status !== 0) {
                             location.href = data.status
                         } else if(data.status == 0)
-                            alertify.error("Unsuccessful Sign In");
+                            vex.dialog.alert("Unsuccessful Sign In");
+                            var clearForm = function() {
+                                var username = $("#id_username");
+                                username.val('');
+                                $("#id_password").val('');
+                                username.focus();
+                            }
+                        clearForm();
                     },
                     error: function(data) {
-                        alertify.error("User could not be saved")
+                        vex.dialog.alert("User could not be saved");
                     }
                 })
                     .done(function() {
@@ -176,19 +183,16 @@ $(function () {
                         password1: password,
                         password2: password2
                     },
-                    success: function(data) {
-                        console.log(data);
-                        if(data.status == 1) {
-                            console.log("HERE");
-
+                    success: function(response) {
+                        console.log(response);
+                        if(response.status == 1) {
                             location.href = '/';
-                            alertify.success("Your account has been created");
                         } else if(data.status == 0) {
-                            alertify.error("Unable to create account");
+                            vex.dialog.alert("Unable to create account");
                         }
                     },
                     error: function(data) {
-                        alertify.error("User could not be saved")
+                        vex.dialog.alert("User could not be saved");
                     }
                 })
                     .done(function() {

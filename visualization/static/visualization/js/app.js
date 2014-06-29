@@ -452,8 +452,6 @@ var getVisualizationModelTitles = function() {
  */
 var saveFileAsPrompt = function(extension) {
 
-
-
     vex.dialog.prompt({
         message: 'Save as...',
         placeholder: 'filename.'+extension+' here...',
@@ -484,23 +482,145 @@ var saveFileAsPrompt = function(extension) {
 var clearCurrentVisualizationModel = function() {
     $("#chart").children().remove();
     $.ajax({
-            url: '/exportClear/',
-            type: 'POST',
-            dataType: 'json',
-            headers: {
-                'X-CSRFToken' : $.cookie('csrftoken')
-            },
-            success: function(response) {
-                if (response.success !== 1) {
-                    vex.dialog.alert('Unable to clear data');
-                }
-
-            },
-            error: function() {
-                console.log('Error');
+        url: '/exportClear/',
+        type: 'POST',
+        dataType: 'json',
+        headers: {
+            'X-CSRFToken' : $.cookie('csrftoken')
+        },
+        success: function(response) {
+            if (response.success !== 1) {
+                vex.dialog.alert('Unable to clear data');
             }
-        });
+
+        },
+        error: function() {
+            console.log('Error');
+        }
+    });
 };
+
+
+
+/**
+ * returns the extension for the file
+ * @param filename
+ * @returns {Array|{index: number, input: string}}
+ */
+var fileExtension = function(filename) {
+    var regex = /\.([a-z]+)$/;
+    var fileExten = regex.exec(filename);
+
+    if (fileExten != null) {
+        fileExten = fileExten[1];
+    }
+
+    return fileExten;
+
+};
+
+
+
+
+
+/**
+ * Processes the CSV file that is located in the url that is passed
+ * as a parameter
+ *
+ * @param url
+ */
+var processCSVFileContents = function(url) {
+
+    d3.csv(url, function(error, data) {
+        if (!error) {
+            console.log(data);
+            visualize.inputData = data;
+            var columnNames = Object.keys(data[0]);
+            visualize.cf = crossfilter(visualize.inputData);
+            $('#dataTable').handsontable({
+                colHeaders: columnNames,
+                data: visualize.inputData
+            });
+        }
+    });
+
+};
+
+
+
+var processJSONFileContents = function(url) {
+
+    d3.json(url, function(error, data) {
+        if (!error) {
+            visualize.inputData = data;
+            var columnNames = Object.keys(data[0]);
+            visualize.cf = crossfilter(visualize.inputData);
+            $('#dataTable').handsontable({
+                data: visualize.inputData,
+                colHeaders: columnNames
+            });
+        }
+
+    });
+};
+
+
+/**
+ * This function processes the contents of an excel file and binds the data to the handsontable
+ *
+ * @param url
+ * @param extension
+ */
+var processExcelFileContents = function(url, extension) {
+
+    var ajaxRequest = new XMLHttpRequest();
+    ajaxRequest.open("GET", url, true);
+    ajaxRequest.responseType = "arraybuffer";
+    //The excel file
+    var workbook;
+    var sheetList;
+
+    ajaxRequest.onload = function(e) {
+        var arraybuffer = ajaxRequest.response;
+
+        /* convert data to binary string */
+        var data = new Uint8Array(arraybuffer);
+        var arr = [];
+        for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+        var bstr = arr.join("");
+
+        //Check whether it is an excel 2007+ document (xlsx) or an (xls) document
+        if (extension === "xlsx") {
+            //Read the data from the excel (xlsl) document
+            workbook = XLSX.read(bstr, {type:"binary"});
+            // All the sheets that are present in the notebook
+            sheetList = workbook.SheetNames;
+            //Transform data into json
+            visualize.inputData = $.map(sheetList, function(sheet, index) {
+                return XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
+            });
+        } else if(extension === "xls") {
+            //Read the data from the excel (xls) document
+            workbook = XLS.read(bstr, {type:"binary"});
+            //All the sheets in the workbook
+            sheetList = workbook.SheetNames;
+            //Transform data inot json
+            visualize.inputData = $.map(sheetList, function(sheet, index) {
+                return XLS.utils.sheet_to_json(workbook.Sheets[sheet]);
+            });
+        }
+
+        var columnNames = Object.keys(visualize.inputData[0]);
+        visualize.cf = crossfilter(visualize.inputData);
+        $('#dataTable').handsontable({
+            data: visualize.inputData,
+            colHeaders: columnNames
+        });
+    };
+
+    ajaxRequest.send();
+};
+
 
 $(function() {
 
@@ -573,71 +693,7 @@ $(function() {
         var url = file.attr('href');
 
 
-        /**
-         * returns the extension for the file
-         * @param filename
-         * @returns {Array|{index: number, input: string}}
-         */
-        var fileExtension = function(filename) {
-            var regex = /\.([a-z]+)/;
-            var fileExten = regex.exec(filename);
-
-            if (fileExten != null) {
-                fileExten = fileExten[1];
-            }
-
-            return fileExten;
-
-        };
-
-
-
         var extension = fileExtension($.trim(file.text()));
-
-
-        /**
-         * Processes the CSV file that is located in the url that is passed
-         * as a parameter
-         *
-         * @param url
-         */
-        var processCSVFileContents = function(url) {
-            d3.csv(url, function(error, data) {
-                if (!error) {
-                    console.log(data);
-                    visualize.inputData = data;
-                    var columnNames = Object.keys(data[0]);
-                    visualize.cf = crossfilter(visualize.inputData);
-                    $('#dataTable').handsontable({
-                        colHeaders: columnNames,
-                        data: visualize.inputData
-                    });
-                }
-            });
-
-        };
-
-
-
-        var processJSONFileContents = function(url) {
-
-
-            d3.json(url, function(error, data) {
-                if (!error) {
-
-                    visualize.inputData = data;
-                    var columnNames = Object.keys(data[0]);
-                    visualize.cf = crossfilter(visualize.inputData);
-                    $('#dataTable').handsontable({
-                        data: visualize.inputData,
-                        colHeaders: columnNames
-                    });
-                }
-
-
-
-            });
-        };
 
 
         switch (extension) {
@@ -650,7 +706,11 @@ $(function() {
                 console.log('Its a CSV file');
                 processCSVFileContents(url);
                 break;
-
+            case 'xlsx':
+            case 'xls':
+                console.log('It\'s an excel file');
+                processExcelFileContents(url, extension);
+                break;
             default:
                 break;
         }
@@ -793,10 +853,10 @@ $(function() {
 
 
     $("#clearCurrentModel").on('click', function() {
-       var chart = $("#chart");
-       if (chart.children().length !== 0) {
-           clearCurrentVisualizationModel();
-       }
+        var chart = $("#chart");
+        if (chart.children().length !== 0) {
+            clearCurrentVisualizationModel();
+        }
     });
 
     $("#clearCurrentModel").tooltip({

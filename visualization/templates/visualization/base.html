@@ -11,8 +11,10 @@
     {% load staticfiles %}
     <!--Favicon.ico-->
     <link rel="shortcut icon" href="{% static "visualization/favicon.png" %}">
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/font-comicneue/1.1/font.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'visualization/vex/vex.css' %}"/>
+    <link rel="stylesheet" href="{% static 'visualization/vex/vex-theme-flat-attack.css' %}"/>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -66,6 +68,8 @@
 {% block content %}
 {% endblock %}
 {% block javascript %}{% endblock javascript %}
+<script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
+<script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
 </body>

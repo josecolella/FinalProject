@@ -4,7 +4,8 @@
     {% load staticfiles %}
     <!-- Project CSS-->
 
-    <link rel="stylesheet" href="{% static "visualization/css/dropzone.css" %}"/>
+{#    <link rel="stylesheet" href="{% static "visualization/css/dropzone.css" %}"/>#}
+{#    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/dropzone/3.9.0/css/dropzone.css"/>#}
     <link rel="stylesheet" href="{% static "visualization/dropzone-3.8.4/css/dropzone.min.css" %}"/>
     <link rel="stylesheet" href="{% static "visualization/codemirror/lib/codemirror.css" %}"/>
     <link rel="stylesheet" href="{% static "visualization/css/dashboard.css"%}" />
@@ -12,13 +13,10 @@
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/dialog.css' %} "/>
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/show-hint.css' %}" />
     <link rel="stylesheet" href="{% static 'visualization/codemirror/lib/tern.css' %} "/>
-    <link rel="stylesheet" href="{% static 'visualization/vex/vex.css' %}"/>
-    <link rel="stylesheet" href="{% static 'visualization/vex/vex-theme-flat-attack.css' %}"/>
     <link rel="stylesheet" href="{% static 'visualization/jquery/jquery.handsontable.full.css' %}"/>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css"/>
 
 {#    <link rel="stylesheet" href="http://dc-js.github.io/dc.js/css/dc.css"/>#}
-    <link rel="stylesheet" href="{% static 'visualization/css/colorbrewer.css' %}"/>
 {% endblock stylesheets %}
 {% block headjs %}
     <script src="{% static "visualization/jquery/jquery.handsontable.full.js" %}"></script>
@@ -180,11 +178,8 @@
 {% endblock %}
 {% block javascript %}
     {% load staticfiles %}
-
-
-    <script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    <script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/dropzone/3.9.0/dropzone.min.js"></script>#}
     <script src="{% static "visualization/dropzone-3.8.4/dropzone.min.js" %}"></script>
     <script type="text/javascript">
         var limit = 15;
@@ -202,7 +197,7 @@
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue : false,
             // The filter for the accepted files
-            acceptedFiles: 'application/vnd.ms-excel,.txt,.json,text/csv',
+            acceptedFiles: '.xls,.xlsx,.txt,.json,text/csv',
             parallelUploads: limit -1 ,
             maxFiles: limit,
 
@@ -288,6 +283,8 @@
         };
     </script>
     <script src="{% static "visualization/jquery/jquery.base64.min.js" %}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.6-i/xlsx.core.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/xls/0.7.0/xls.core.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" async></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js" async></script>
 
