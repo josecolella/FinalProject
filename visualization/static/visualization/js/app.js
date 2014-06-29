@@ -1,6 +1,5 @@
 'use strict';
 
-var i = 0;
 var rightStateClass = "glyphicon-chevron-right";
 var downStateClass = 'glyphicon-chevron-down';
 var csv;
@@ -236,7 +235,7 @@ var addDataGrid = function(data) {
         $("#files-table").hide();
 
         var workspace = $("#workspace");
-        var dataTableDiv = $("#dataTable");
+
         //Doesn't exist create it
         function buildMenu(activeCellType){
             var menu = $('<ul></ul>').addClass('changeTypeMenu');
@@ -433,10 +432,9 @@ var getVisualizationModelTitles = function() {
     var visualizationModels = {};
     var titles = $(".titles p");
     var containerElement = $(".titles");
-    var i = 0;
-    titles.each(function() {
-        visualizationModels[$(this).text()] = containerElement[i];
-        i++;
+
+    $.each(titles, function(index, vistitle) {
+        visualizationModels[$(vistitle).text()] = containerElement[index];
     });
 
     return visualizationModels;
@@ -519,7 +517,7 @@ var fileExtension = function(filename) {
 /**
  * Sets the handsontable with the columns and data that it needs to show to
  * the user in the step dubbed `pre-visualization`
- * @param object columns The column names
+ * @param Array columns The column names
  * @param object data The reference to the data
  */
 var initializeDataGrid = function(columns, data) {
@@ -645,19 +643,24 @@ var processExcelFileContents = function(url, extension) {
 
 $(function() {
 
+    var modelTitles = getVisualizationModelTitles();
 
     //Shows the Filter feature for the search input functionality
     $("#search-term").bind('input', function() {
-
         var input = $(this).val();
-        var regex = new RegExp(input.replace(input, '^'+ input), "i");
-        $.each(modelTitles, function(index, value) {
-            if (!regex.exec(index)) {
-                $(value).slideUp();
-            } else if(input === "") {
-                $(value).slideDown();
-            }
-        });
+        try {
+            var regex = new RegExp(input.replace(input, '^'+ input), "i");
+            $.each(modelTitles, function(index, value) {
+                if (!regex.exec(index)) {
+                    $(value).slideUp();
+                } else if(input === "") {
+                    $(value).slideDown();
+                }
+            });
+        }
+        catch(err) {
+            console.log(err);
+        }
     });
 
     $("#authetication").click(function() {
@@ -681,7 +684,7 @@ $(function() {
         });
     });
 
-    var modelTitles = getVisualizationModelTitles();
+
     changeTitleCaretAction();
     $("#dropzone").hide();
     $(".editor").hide();

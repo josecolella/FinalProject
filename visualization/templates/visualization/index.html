@@ -62,8 +62,7 @@
                             <div id="collapse{{ model.title|slugify }}" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     <p>{{ model.description }}</p>
-                                    <button type="button" class="btn btn-info"><a class="example-button" id="{{model.title|slugify}}" href="{{ model.link }}" data-toggle="modal" data-target="#modal-{{ model.title|slugify }}">Show an example</a></button>
-
+                                    <button type="button" class="btn btn-info"><a class="example-button" id="{{model.title|slugify}}-example" href="#" data-toggle="modal" data-target="#modal-{{ model.title|slugify }}">Show an example</a></button>
                                 </div>
                             </div>
                         </div>
