@@ -14,7 +14,7 @@ class VisualizationModelDescription(models.Model):
     description = models.TextField(db_index=True, max_length=350)
 
     def __str__(self):
-        return self.title + " " + self.link
+        return self.title
 
     def __lt__(self, other):
         try:

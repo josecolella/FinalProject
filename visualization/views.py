@@ -31,12 +31,18 @@ class Index (ListView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
-            data = {
-                'models': self.model,
-                'form': self.form_class,
-                'files': userUploadedFiles.uploadedFiles
-            }
+            try:
+                userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
+                data = {
+                    'models': self.model,
+                    'form': self.form_class,
+                    'files': userUploadedFiles.uploadedFiles
+                }
+            except UserUploadedFiles.DoesNotExist:
+                data = {
+                    'models': self.model,
+                    'form': self.form_class
+                }
         else:
             data = {
                 'models': self.model,
