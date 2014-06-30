@@ -300,6 +300,20 @@ def exportSVG(request, filename, svg):
     response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
     return response
 
+def exportCSV(request, filename):
+
+    pass
+
+
+def exportJSON(request, filename):
+
+    content = json.dumps(ExportUtils.data)
+    response = HttpResponse(content, content_type='application/json')
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+    return response
+
+def exportExcel(request, filename):
+    pass
 
 
 def createSVGView(request, filename):

@@ -761,7 +761,7 @@ $(function() {
         showVisualizationModel();
         vex.dialog.open({
             message: 'Export as...',
-            input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n  <div class=\"vex-custom-input-wrapper\">\n        <select class=\"form-control\" id=\"exportSelect\">\n  <option>PDF</option>\n  <option>PNG</option>\n  <option>SVG</option>\n  <option>JPEG</option>\n <option>CSV</option>\n <option>R</option>\n <option>Python</option>\n <option>Excel</option>\n</select>\n    </div>\n</div>\n",
+            input: "<style>\n    .vex-custom-field-wrapper {\n        margin: 1em 0;\n    }\n    .vex-custom-field-wrapper > label {\n        display: inline-block;\n        margin-bottom: .2em;\n    }\n</style>\n<div class=\"vex-custom-field-wrapper\">\n  <div class=\"vex-custom-input-wrapper\">\n        <select class=\"form-control\" id=\"exportSelect\">\n  <option>PDF</option>\n  <option>PNG</option>\n  <option>SVG</option>\n  <option>JPEG</option>\n <option>JSON</option>\n <option>R</option>\n <option>Python</option>\n</select>\n    </div>\n</div>\n",
             callback: function(data) {
                 if (data === false) {
                     return console.log('Cancelled');

@@ -10,10 +10,9 @@ var exportExtensions = {
     "PNG": "png",
     "SVG": "svg",
     "JPEG": "jpg",
-    "CSV": "csv",
     "R": "R",
     "Python": "py",
-    "Excel": "xslx"
+    "JSON": "json"
 };
 
 /**
@@ -167,23 +166,20 @@ var exportFile = {
     'py': function(filename) {
         window.location = '/export/'+filename
     },
-    "png": function() {
+    "png": function(filename) {
         sendSVGInfo(filename);
     },
     "svg": function(filename) {
         var svg = btoa(initializeSVG(filename));
-        window.location = '/exportSVG/'+filename+'/'+svg+'/'
+        window.location = '/exportSVG/'+filename+'/'+svg+'/';
     },
-    "jpg": function() {
+    "jpg": function(filename) {
         sendSVGInfo(filename);
     },
-    "csv": function() {
-
-    },
     "R": function(filename) {
-        window.location = '/export/'+filename
+        window.location = '/export/'+filename;
     },
-    "xslx": function() {
-
+    "json": function(filename) {
+        window.location = '/exportJSON/'+filename;
     }
 };
