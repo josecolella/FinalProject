@@ -71,7 +71,7 @@ var manageImportOpen = function() {
 
         } else {
             dropzone.fadeIn("slow");
-            dropzone.prepend("<div class='alert alert-info fade in' id='import-info'><button type='button' class='close data-dismiss='alert' aria-hidden='true'>×</button><strong>Drop</strong> or <strong>Click</strong> on the panel below to import your data sets <b>(Accepted Files: <em>excel [xlsx, xls]</em>, <em>json</em>, <em>csv</em>, <em>txt</em>)</b></div>");
+            dropzone.prepend("<div class='alert alert-info fade in' id='import-info'><button type='button' class='close data-dismiss='alert' aria-hidden='true'>×</button><strong>Drop</strong> or <strong>Click</strong> on the panel below to import your data sets <b>(Accepted Files: <em>excel [xlsx, xls]</em>, <em>json</em>, <em>csv</em>, <em>xml</em>, <em>txt</em>)</b></div>");
 
         }
 
@@ -324,7 +324,7 @@ var addDataGrid = function(data) {
             return $('<button></button>').addClass('changeType').html('\u25BC');
         };
 
-        if (dataTableDiv.length == 0) {
+        if (dataTable.length == 0) {
             workspace.append('<div id="dataTable" style="overflow: scroll"></div>');
             $("#dataTable").handsontable({
                 minRows: 20,
@@ -357,10 +357,10 @@ var addDataGrid = function(data) {
             });
 
 
-        } else if(dataTableDiv.is(":visible")){
-            dataTableDiv.fadeOut();
+        } else if(dataTable.is(":visible")){
+            dataTable.fadeOut();
         } else {
-            dataTableDiv.fadeIn();
+            dataTable.fadeIn();
         }
 
 
@@ -727,6 +727,7 @@ $(function() {
                 processJSONFileContents(url);
                 break;
             case 'csv':
+            case 'txt':
                 console.log('Its a CSV file');
                 processCSVFileContents(url);
                 break;
