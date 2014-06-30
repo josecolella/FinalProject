@@ -68,9 +68,6 @@ class Index (ListView):
 
                 new_file.save()
                 userUploadedFiles.save()
-            else:
-                form = self.form_class
-                return HttpResponseRedirect(reverse('authenticate'))
 
             data = {
                 'form': form,
@@ -78,7 +75,10 @@ class Index (ListView):
             }
 
             return render_to_response(self.template_name, data, context_instance=RequestContext(request))
-
+        else:
+            print('Here2')
+            response_data = {'success': 0, 'message': 'Only authenticated user can upload files'}
+            return HttpResponse(json.dumps(response_data), content_type='application/json');
 
 
 def fileview(request):

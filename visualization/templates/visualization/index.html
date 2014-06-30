@@ -261,10 +261,15 @@
                 });
 
                 //Even for when the file is successfully sent to server
-                this.on("success",  function(file) {
-                    ///Todo: Create a table with all the uploaded files
+                this.on("success",  function(file, response) {
+
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                        location.reload(true);
+{#                        location.reload(true);#}
+
+                        if (response.success !== undefined && response.success == 0) {
+                            vex.dialog.alert(response.message);
+                            myDropzone.removeAllFiles();
+                        }
                     }
                 });
 
