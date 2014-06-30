@@ -17,69 +17,27 @@ var exportExtensions = {
 };
 
 /**
- * This method deals with the exportation of the SVG
- * to the desired output format
  *
- * @param outputFormat The output format
- * @return
- *
+ * @param processUrl
+ * @param outputFormat
+ * @param fileUrl
+ * @param fileName
  */
-var exportTo = function(outputFormat) {
-    var processUrl;
+var startConversionProcess = function(processUrl, outputFormat, fileUrl, fileName) {
 
-    /**
-     * This returns the url that will be used to send the input file
-     * @param outputFormat
-     */
-    var convertSVGToOutput = function(outputFormat) {
-
-
-        $.ajax({
-            url: 'https://api.cloudconvert.org/process',
-            type: 'POST',
-            dataType: '',
-            data: {
-                apikey: 't-APsbQ2IpfweLVeBQZgeZi4hEluptiRiJiImQuJuwiZ0ARQUIQ4hMCIDwSb8_Vg92Wp316XSdJDHUhIqzO1ug',
-                inputformat: "svg",
-                outputformat: outputFormat
-            },
-            success: function(data) {
-                processUrl = data.url;
-                convertProcess(outputFormat);
-            },
-            error: function() {
-                console.log("error");
-            }
-        })
-            .done(function() {
-                console.log("success");
-            })
-            .fail(function() {
-                console.log("error");
-            })
-            .always(function() {
-                console.log("complete");
-            });
-    };
-
-    var convertProcess = function(outputFormat) {
         $.ajax({
             url: 'https:'+processUrl,
             type: 'POST',
             dataType: 'json',
             data: {
                 input: "download",
-                file: "http://cl.ly/0S3P0o3X192J/newfile.svg",
-                filename: "newfile.svg",
+                file: fileUrl,
+                filename: fileName,
                 outputformat: outputFormat
             },
-            success: function(data) {
-                window.open(data.output.url);
-            },
-            error: function() {
-                console.log("error");
+            success: function(response) {
+                window.location = response.output.url;
             }
-
         })
             .done(function() {
                 console.log("success");
@@ -90,35 +48,82 @@ var exportTo = function(outputFormat) {
             .always(function() {
                 console.log("complete");
             });
-    };
-
-    convertSVGToOutput(outputFormat);
 
 };
 
+
 /**
-     * Inializes the current svg with namespaces and title attributes so
-     * that it can be sent to the server
-     * @param filename
-     * @returns {string|*}
-     */
-    var initializeSVG = function(filename) {
-        var html = d3.select("svg")
-            .attr("title", $.trim(filename))
-            .attr("version", 1.1)
-            .attr("xmlns", "http://www.w3.org/2000/svg")
-            .node().parentNode.innerHTML.trim();
+ *
+ * @param outputFormat
+ * @param fileUrl
+ * @param filename
+ */
+var createProcessID = function(outputFormat, fileUrl, filename) {
 
-        return html;
-    };
 
+    $.ajax({
+        url: 'https://api.cloudconvert.org/process',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            apikey: 't-APsbQ2IpfweLVeBQZgeZi4hEluptiRiJiImQuJuwiZ0ARQUIQ4hMCIDwSb8_Vg92Wp316XSdJDHUhIqzO1ug',
+            inputformat: "svg",
+            outputformat: outputFormat
+        },
+        success: function(response) {
+            if (response.url !== undefined) {
+                var processUrl = response.url;
+                startConversionProcess(processUrl, outputFormat, fileUrl, filename);
+            }
+        },
+        error: function() {
+            console.log("error");
+        }
+    })
+        .done(function() {
+            console.log("success");
+        })
+        .fail(function() {
+            console.log("error");
+        })
+        .always(function() {
+            console.log("complete");
+        });
+};
+
+
+
+/**
+ * Inializes the current svg with namespaces and title attributes so
+ * that it can be sent to the server
+ * @param filename
+ * @returns {string|*}
+ */
+var initializeSVG = function(filename) {
+    var html = d3.select("svg")
+        .attr("title", $.trim(filename))
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .node()
+        .parentNode
+        .innerHTML
+        .trim();
+
+    return html;
+};
+
+
+/**
+ *
+ * @param filename
+ */
 var sendSVGInfo = function(filename) {
 
 
     var svg = initializeSVG(filename);
 
     $.ajax({
-        url: '/export/'+filename,
+        url: '/createSVG/'+filename,
         type: 'POST',
         dataType: 'JSON',
         headers: {
@@ -129,7 +134,11 @@ var sendSVGInfo = function(filename) {
         },
         success: function(response) {
             if (response.success === 1) {
-                window.location = response.url;
+                createProcessID(response['extension'],response['url'], response['filename']);
+                console.log(response['extension']);
+                console.log(response['filename']);
+                console.log(response['url']);
+
             }
 
         },
@@ -152,23 +161,21 @@ var sendSVGInfo = function(filename) {
 
 
 var exportFile = {
-    name: undefined,
     'pdf': function(filename) {
-
+        sendSVGInfo(filename);
     },
     'py': function(filename) {
         window.location = '/export/'+filename
     },
     "png": function() {
-
+        sendSVGInfo(filename);
     },
     "svg": function(filename) {
-
         var svg = btoa(initializeSVG(filename));
         window.location = '/exportSVG/'+filename+'/'+svg+'/'
     },
     "jpg": function() {
-
+        sendSVGInfo(filename);
     },
     "csv": function() {
 

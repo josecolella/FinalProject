@@ -238,7 +238,9 @@ def exportDataView(request):
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def exportClearView(request):
-
+    """
+    This views clears the information held in ExportUtils
+    """
     if request.is_ajax():
         ExportUtils.clear()
         if not ExportUtils.isValidExport():
@@ -291,13 +293,18 @@ def exportSVG(request, filename, svg):
 
 
 
-def createSVGview(request):
+def createSVGView(request, filename):
     """
     This view receives the svg information from the workspace and saves the file
     """
     if request.is_ajax():
-        newFile = ContentFile('newfile.svg', 'w')
-        newFile.name = 'newfile.svg'
+        print('here')
+        filenameRegex = re.search(r'(?P<filename>[a-zA-Z]+[\d\.]*)\.(?P<extension>[a-zA-Z]{1,4}$)', filename)
+        cleanFileName = filenameRegex.group('filename')
+        cleanFileExtension = filenameRegex.group('extension')
+        newFile = ContentFile(cleanFileName+'.svg', 'w')
+        newFile.name = cleanFileName+'.svg'
+
 
         fileContent = base64.b64decode(request.POST['svg']).decode('utf-8')
 
@@ -310,7 +317,14 @@ def createSVGview(request):
 
 
         # response_data = {'url': newFileDB.file.url, 'file': newFile}
-        # return HttpResponse(json.dumps(response_data), content_type="application/json")
-        response = HttpResponse(newFile, mimetype='image/svg+xml')
-        response['Content-Disposition'] = 'attachment; filename="newfile.svg"'
-        return response
+        response_data = {
+            'success': 1,
+            'url': newFileDB.file.url,
+            'filename': filename,
+            'extension': cleanFileExtension
+        }
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        # response = HttpResponse(newFile, mimetype='image/svg+xml')
+        # response['Content-Disposition'] = 'attachment; filename="newfile.svg"'
+        # return response

@@ -454,7 +454,6 @@ var saveFileAsPrompt = function(extension) {
         contentClassName: 'alert-vex-content',
         closeClassName: 'alert-vex-close',
         callback: function(filename) {
-            console.log(filename);
             var regex = /(\w+\d*)(\.[a-zA-Z]+)?/;
             var checkFilename = regex.exec($.trim(filename));
             var cleanfilename;
