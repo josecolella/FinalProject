@@ -251,10 +251,8 @@ var addDataGrid = function(data) {
 
             });
 
-
             return menu;
-
-        };
+        }
 
         //Creates the x button so that the user can choose what the data represents
         var buildXCoordinateButton = function() {
@@ -322,10 +320,15 @@ var addDataGrid = function(data) {
 
         function buildButton() {
             return $('<button></button>').addClass('changeType').html('\u25BC');
-        };
+        }
 
-        if (dataTable.length == 0) {
+        var dataTableExists = $.inArray("dataTable",$.map($("#workspace").children(), function(item, index) {
+            return $(item).attr('id')})
+        );
+
+        if (dataTableExists === -1) {
             workspace.append('<div id="dataTable" style="overflow: scroll"></div>');
+
             $("#dataTable").handsontable({
                 minRows: 20,
                 maxRows: 1000,
@@ -700,8 +703,7 @@ $(function() {
         showFileTable();
         hideVisualizationModel();
         manageImportClose();
-        $("#dataTable").hide();
-
+        hideDataGrid();
     });
 
 
@@ -709,18 +711,16 @@ $(function() {
         e.preventDefault();
         hideFileTable();
         showVisualizationModel();
+        showDataGrid();
 
         $('#data-grid').click();
+        $("#dataTable").css('display', 'inline-block');
 
         var file = $(this);
         var url = file.attr('href');
-
-
         var extension = fileExtension($.trim(file.text()));
 
-
         switch (extension) {
-
             case 'json':
                 console.log('Its a JSON file');
                 processJSONFileContents(url);
@@ -742,11 +742,6 @@ $(function() {
             default:
                 break;
         }
-
-        $("#dataTable").focus();
-
-
-
 
 
 
@@ -815,7 +810,7 @@ $(function() {
     $(".addbtn").click(function() {
         var visualizationModel = $(this);
         var chart = visualizationModel.parent().text().toLowerCase();
-        hideDataGrid();
+//        hideDataGrid();
         if (visualize.cf !== null) {
             if (visualize.config.x != null && visualize.config.y != null) {
                 switch (chart) {
@@ -884,7 +879,121 @@ $(function() {
         var chart = $("#chart");
         if (chart.children().length !== 0) {
             clearCurrentVisualizationModel();
+
         }
+        //Doesn't exist create it
+        function buildMenu(activeCellType){
+            var menu = $('<ul></ul>').addClass('changeTypeMenu');
+
+            $.each(['text', 'numeric', 'date'], function (i, type) {
+                var item = $('<li></li>').data('colType', type).text(type);
+
+                if(activeCellType == type){
+                    item.addClass('active');
+                }
+
+                menu.append(item);
+
+            });
+
+            return menu;
+        }
+
+        //Creates the x button so that the user can choose what the data represents
+        var buildXCoordinateButton = function() {
+
+            var buttonX = $('<button></button>');
+
+            buttonX.attr({
+                'class':'btn btn-default btn-sm selectxlabel',
+                'data-toggle': 'button'
+            })
+                .html('Set as <strong>x</strong>');
+
+            buttonX.click(function() {
+                if (buttonX.hasClass('btn-primary')) {
+                    buttonX.removeClass('btn-primary')
+                        .addClass('btn-default');
+
+                } else {
+                    buttonX.removeClass('btn-default')
+                        .addClass('btn-primary');
+                }
+            });
+
+
+            return buttonX;
+        };
+        //Creates the y button so that the user can choose what the data represents
+        var buildYCoordinateButton = function() {
+
+
+            var buttonY = $('<button></button>');
+
+            buttonY.attr({
+                'class':'btn btn-default btn-sm selectylabel',
+                'data-toggle': 'button'
+            })
+                .html('Set as <strong>y</strong>');
+
+            //Click Handler for the y axis button
+            buttonY.click(function() {
+                if (buttonY.hasClass('btn-primary')) {
+                    buttonY.removeClass('btn-primary')
+                        .addClass('btn-default');
+
+                } else {
+                    buttonY.removeClass('btn-default')
+                        .addClass('btn-primary');
+                }
+            });
+            return buttonY;
+        };
+
+
+        var buildAxisButtonOptions = function() {
+
+            var axisButtonsSection = $('<div></div>');
+
+            axisButtonsSection.addClass('btn-group')
+                .append(buildXCoordinateButton())
+                .append(buildYCoordinateButton());
+
+
+            return axisButtonsSection;
+        };
+
+        function buildButton() {
+            return $('<button></button>').addClass('changeType').html('\u25BC');
+        };
+
+        $("#dataTable").handsontable({
+            data: [['','','','','','','','','','','',''],['','','','','','','','','','','',''],['','','','','','','','','','','','']],
+            minRows: 20,
+            maxRows: 1000,
+            minCols: 20,
+            maxCols: 50,
+            rowHeaders: true,
+            colHeaders: true,
+            minSpareRows: 5,
+            contextMenu: true,
+            manualColumnResize: true,
+            currentRowClassName: 'currentRow',
+            currentColClassName: 'currentCol',
+            autoWrapRow: true,
+            stretchH: 'all',
+            width: 1140,
+            height: 400,
+            cells: function (row, col, prop) {
+                if (row === 0) {
+                    var cellProperties = {
+                        type: 'text' //force text type for first row
+                    };
+                    return cellProperties;
+                }
+            }
+        });
+
     });
 
     $("#clearCurrentModel").tooltip({
