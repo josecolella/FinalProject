@@ -55,30 +55,33 @@ class Index (ListView):
         form = self.form_class(request.POST, request.FILES)
         if request.user.is_authenticated():
             if form.is_valid():
-
+                #Get file
                 new_file = UploadFile(file=request.FILES['file'])
-
+                # Add to file for useruploadedfiles
                 userUploadedFiles = UserUploadedFiles.objects.get(user=request.user)
                 userUploadedFiles.uploadedFiles.append({
                     'filename': new_file.file.name,
                     'fileurl': re.sub(r'/media/', r'/media/files/', new_file.file.url),
                     'filesize': new_file.file.size
                 })
-
-
-                new_file.save()
                 userUploadedFiles.save()
+                files = userUploadedFiles.uploadedFiles
 
-            data = {
-                'form': form,
-                'files': userUploadedFiles.uploadedFiles
-            }
 
-            return render_to_response(self.template_name, data, context_instance=RequestContext(request))
+                # Save to DB
+                # new_file.save()
+                userUploadedFiles.save()
+                response_data = {
+                    'success': 1,
+                    'files': files
+                }
+                return HttpResponse(json.dumps(response_data), content_type='application/json')
+            else:
+                response_data = {'success': 0, 'message': 'Invalid Upload'}
+                return HttpResponse(json.dumps(response_data), content_type='application/json')
         else:
-            print('Here2')
             response_data = {'success': 0, 'message': 'Only authenticated user can upload files'}
-            return HttpResponse(json.dumps(response_data), content_type='application/json');
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
 
 
 def fileview(request):
@@ -304,7 +307,6 @@ def createSVGView(request, filename):
     This view receives the svg information from the workspace and saves the file
     """
     if request.is_ajax():
-        print('here')
         filenameRegex = re.search(r'(?P<filename>[a-zA-Z]+[\d\.]*)\.(?P<extension>[a-zA-Z]{1,4}$)', filename)
         cleanFileName = filenameRegex.group('filename')
         cleanFileExtension = filenameRegex.group('extension')

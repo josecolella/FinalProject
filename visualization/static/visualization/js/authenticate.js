@@ -124,7 +124,7 @@ $(function () {
                             }
                         clearForm();
                     },
-                    error: function(data) {
+                    error: function() {
                         vex.dialog.alert("User could not be saved");
                     }
                 })
@@ -186,13 +186,14 @@ $(function () {
                     success: function(response) {
                         console.log(response);
                         if(response.status == 1) {
-                            location.href = '/';
+                            vex.dialog.alert('Account Created. Sign In');
+                            $("#signin").click();
                         } else if(data.status == 0) {
                             vex.dialog.alert("Unable to create account");
                         }
                     },
-                    error: function(data) {
-                        vex.dialog.alert("User could not be saved");
+                    error: function() {
+                        vex.dialog.alert("Invalid Sign Up");
                     }
                 })
                     .done(function() {
