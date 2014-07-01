@@ -23,6 +23,12 @@ var exportExtensions = {
  * @param fileName
  */
 var startConversionProcess = function(processUrl, outputFormat, fileUrl, fileName) {
+	var publicFileUrl = window.location.origin + fileUrl;
+	console.log(publicFileUrl);
+	console.log(outputFormat)
+	var realProcessUrl = 'https:'+processUrl;
+	console.log(realProcessUrl);
+	console.log(fileName);
 
         $.ajax({
             url: 'https:'+processUrl,
@@ -30,7 +36,7 @@ var startConversionProcess = function(processUrl, outputFormat, fileUrl, fileNam
             dataType: 'json',
             data: {
                 input: "download",
-                file: fileUrl,
+                file: publicFileUrl,
                 filename: fileName,
                 outputformat: outputFormat
             },
@@ -71,8 +77,15 @@ var createProcessID = function(outputFormat, fileUrl, filename) {
         },
         success: function(response) {
             if (response.url !== undefined) {
-                var processUrl = response.url;
-                startConversionProcess(processUrl, outputFormat, fileUrl, filename);
+                var processUrl = response.url
+		var regex = /\/([^\/]+\.[a-zA-Z]+)$/;
+		var regexResult = regex.exec(fileUrl);
+		if (regexResult) {
+			var realFileName = regexResult[1];
+			startConversionProcess(processUrl, outputFormat, fileUrl, realFileName); 
+		}
+
+
             }
         },
         error: function() {
@@ -134,9 +147,9 @@ var sendSVGInfo = function(filename) {
         success: function(response) {
             if (response.success === 1) {
                 createProcessID(response['extension'],response['url'], response['filename']);
-                console.log(response['extension']);
-                console.log(response['filename']);
-                console.log(response['url']);
+                console.log('Extension: '+response['extension']);
+                console.log('Filename: '+response['filename']);
+                console.log('Url: '+response['url']);
 
             }
 
