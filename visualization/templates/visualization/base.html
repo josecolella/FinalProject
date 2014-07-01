@@ -15,7 +15,8 @@
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'visualization/vex/vex.css' %}"/>
     <link rel="stylesheet" href="{% static 'visualization/vex/vex-theme-flat-attack.css' %}"/>
-
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.core.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.bootstrap.min.css"/>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static "visualization/css/base.css" %}"/>
@@ -68,6 +69,7 @@
 {% block content %}
 {% endblock %}
 {% block javascript %}{% endblock javascript %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.min.js"></script>
 <script src="{% static "visualization/vex/vex.combined.min.js" %}"></script>
 <script>vex.defaultOptions.className = 'vex-theme-flat-attack';</script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>

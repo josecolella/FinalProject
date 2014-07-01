@@ -64,16 +64,13 @@ class Index (ListView):
                     'fileurl': re.sub(r'/media/', r'/media/files/', new_file.file.url),
                     'filesize': new_file.file.size
                 })
+                # Save to DB
+                new_file.save()
                 userUploadedFiles.save()
                 files = userUploadedFiles.uploadedFiles
 
-
-                # Save to DB
-                # new_file.save()
-                userUploadedFiles.save()
                 response_data = {
-                    'success': 1,
-                    'files': files
+                    'success': 1
                 }
                 return HttpResponse(json.dumps(response_data), content_type='application/json')
             else:
@@ -336,9 +333,6 @@ def createSVGView(request, filename):
         newFileDB = UploadSVGFile(file=newFile)
         newFileDB.save()
 
-
-
-        # response_data = {'url': newFileDB.file.url, 'file': newFile}
         response_data = {
             'success': 1,
             'url': newFileDB.file.url,
@@ -347,6 +341,3 @@ def createSVGView(request, filename):
         }
 
         return HttpResponse(json.dumps(response_data), content_type="application/json")
-        # response = HttpResponse(newFile, mimetype='image/svg+xml')
-        # response['Content-Disposition'] = 'attachment; filename="newfile.svg"'
-        # return response

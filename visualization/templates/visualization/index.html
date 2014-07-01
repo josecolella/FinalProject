@@ -269,6 +269,9 @@
 
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                          location.reload(true);
+                    } else if(response.success == 1) {
+                        alertify.success('File uploaded successfully');
+                        console.log(response);
                     }
                 });
 
