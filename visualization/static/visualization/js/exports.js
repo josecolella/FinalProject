@@ -5,6 +5,11 @@
  * of the svg that is present in the interface
  */
 
+/**
+ * A javascript object that maps the name of the extension with the corresponding extension ending
+ *
+ * @type {{PDF: string, PNG: string, SVG: string, JPEG: string, R: string, Python: string, JSON: string}}
+ */
 var exportExtensions = {
     "PDF": "pdf",
     "PNG": "png",
@@ -16,11 +21,14 @@ var exportExtensions = {
 };
 
 /**
+ * This function sends the public file url, the output format, and the file name
+ * to the process url received in order to initiate the conversion process for
+ * the file
  *
- * @param processUrl
- * @param outputFormat
- * @param fileUrl
- * @param fileName
+ * @param string processUrl The process ID where the request will be made
+ * @param string outputFormat The output format to convert to
+ * @param string fileUrl The public url for the file
+ * @param string fileName The name of the file to export
  */
 var startConversionProcess = function(processUrl, outputFormat, fileUrl, fileName) {
 	var publicFileUrl = window.location.origin + fileUrl;
@@ -58,10 +66,11 @@ var startConversionProcess = function(processUrl, outputFormat, fileUrl, fileNam
 
 
 /**
- *
- * @param outputFormat
- * @param fileUrl
- * @param filename
+ * This function sends a request in order to retrieve a process ID (A url used
+ * by CloudConvert).
+ * @param string outputFormat The output format for the file
+ * @param string fileUrl The url for the file
+ * @param string filename The name of the file
  */
 var createProcessID = function(outputFormat, fileUrl, filename) {
 
@@ -126,8 +135,9 @@ var initializeSVG = function(filename) {
 
 
 /**
- *
- * @param filename
+ * This function sends the SVG representation of the visualization model to the server
+ * along with the fileName
+ * @param string filename The name of the file
  */
 var sendSVGInfo = function(filename) {
 
@@ -171,13 +181,18 @@ var sendSVGInfo = function(filename) {
 };
 
 
-
+/**
+ * A javascript object that maps an extension to a function that manages what action is
+ * to be taken for the extension.
+ *
+ * @type {{pdf: 'pdf', py: 'py', png: "png", svg: "svg", jpg: "jpg", R: "R", json: "json"}}
+ */
 var exportFile = {
     'pdf': function(filename) {
         sendSVGInfo(filename);
     },
     'py': function(filename) {
-        window.location = '/export/'+filename
+        window.location = '/export/'+filename;
     },
     "png": function(filename) {
         sendSVGInfo(filename);

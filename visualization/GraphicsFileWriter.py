@@ -208,7 +208,8 @@ pie(data${}, labels=c(data${}))
 
 class PythonGraphicsFileWriter(AbstractGraphicsFileWriter):
     """
-    docstring for PythonGraphicsFileWriter
+    The class that manages the translation of the visualization
+    models generated in JavaScript to Python (matplotlib)
     """
 
     def __init__(self, data, xAxis, yAxis, chartType):
@@ -283,7 +284,7 @@ plt.show()
 # Get the total for the y axis
 total = np.sum({})
 sizes = [(i/total) * 100 for i in {}]
-labels = ' '.join([str(i) for i in {}]).split(' ')
+labels = [str(i) for i in {}]
 explode = [0 for i in range(len({}))]
 plt.pie(sizes, explode=explode, labels=labels)
 plt.show()
