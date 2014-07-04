@@ -32,11 +32,7 @@ var exportExtensions = {
  */
 var startConversionProcess = function(processUrl, outputFormat, fileUrl, fileName) {
 	var publicFileUrl = window.location.origin + fileUrl;
-	console.log(publicFileUrl);
-	console.log(outputFormat)
 	var realProcessUrl = 'https:'+processUrl;
-	console.log(realProcessUrl);
-	console.log(fileName);
 
         $.ajax({
             url: 'https:'+processUrl,
@@ -157,10 +153,6 @@ var sendSVGInfo = function(filename) {
         success: function(response) {
             if (response.success === 1) {
                 createProcessID(response['extension'],response['url'], response['filename']);
-                console.log('Extension: '+response['extension']);
-                console.log('Filename: '+response['filename']);
-                console.log('Url: '+response['url']);
-
             }
 
         },
