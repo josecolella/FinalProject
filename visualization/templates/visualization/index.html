@@ -265,14 +265,13 @@
                     if (response.success !== undefined && response.success == 0) {
                         vex.dialog.alert(response.message);
                         myDropzone.removeAllFiles();
-                    }
+                    } else if(response.success == 1) {
+			myDropzone.processQueue();
+		    }
 
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                          location.reload(true);
-                    } else if(response.success == 1) {
-                        alertify.success('File uploaded successfully');
-                        console.log(response);
-                    }
+                    } 
                 });
 
 
